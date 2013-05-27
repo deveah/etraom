@@ -1,0 +1,35 @@
+
+	Roadmap for Etraom
+	--
+
+I.		Infrastructure
+
+	[x] tile struct
+	[x] map struct
+
+	[ ] entity struct
+
+	[ ] item struct
+
+	[ ] weapon struct
+	[ ] consumable struct
+	[ ] armor struct
+
+	[ ] transition char* -> buf_t*
+
+II.		Mechanics
+
+	[ ] inventory
+	[ ] main loop w/time system
+
+III.	Map generators
+
+	[x] dummy
+	[ ] dfa
+	[ ] dfa-dungeon
+	
+IV.		Combat
+
+	[ ] melee
+	[ ] ranged
+
