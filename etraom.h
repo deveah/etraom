@@ -9,10 +9,16 @@
 #define MAX_STRING_LENGTH 256
 #define MAX_LEVELS 10
 
+#define MAP_WIDTH 80
+#define MAP_HEIGHT 25
+
 #define TILEFLAG_SOLID				(1<<0)
 #define TILEFLAG_OPAQUE				(1<<1)
+#define TILEFLAG_SEEN				(1<<2)
 
 #define ENTITYFLAG_PLAYERCONTROL	(1<<0)
+
+#define MESSAGEFLAG_UNREAD			(1<<0)
 
 typedef struct
 {
@@ -69,8 +75,9 @@ typedef struct
 	int face;
 	unsigned char color[3];
 
-	int x, y;
-	map_t *map;
+	int x, y, z;
+
+	float ***lightmap;
 
 	int flags;
 } entity_t;
@@ -78,7 +85,7 @@ typedef struct
 extern FILE *logfile;
 
 extern int running;
-extern int player_turn;
+extern int global_turns;
 
 extern unsigned int nlevels;
 extern map_t **dungeon;
@@ -86,6 +93,12 @@ extern int main_seed;
 
 extern list_t *message_list;
 extern list_t *entity_list;
+extern entity_t *player; /* shortcut to player struct */
+
+/* sight.c */
+void clear_lightmap( entity_t *e, int n );
+void do_fov( entity_t *e, int radius );
+void cast_ray( entity_t *e, float x, float y, int radius );
 
 /* entity.c */
 entity_t *alloc_entity( buf_t *name );
@@ -96,8 +109,8 @@ int entity_move_rel( entity_t *e, int dx, int dy );
 
 /* message.c */
 void push_message( buf_t *b );
-void free_message( void *m );
-void free_message_list( void );
+void free_message( message_t *m );
+void free_messages( void );
 
 /* buf.c */
 buf_t *bufnew( char *str );
@@ -139,7 +152,7 @@ map_t *alloc_map( buf_t *name, int width, int height );
 void free_map( map_t *m );
 void clear_map( map_t *m );
 void debug_dump_map( map_t *m );
-int is_legal( map_t *m, int x, int y );
+int is_legal( int x, int y );
 
 /* mapgen.c */
 int make_dummy_map( map_t *m, int nwalls );

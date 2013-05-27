@@ -57,7 +57,17 @@ void free_map( map_t *m )
 
 void clear_map( map_t *m )
 {
+	int i, j;
+
 	m->name = NULL;
+
+	for( i = 0; i < m->width; i++ )
+	{
+		for( j = 0; j < m->height; j++ )
+		{
+			m->terrain[i][j] = &tile_void;
+		}
+	}
 }
 
 void debug_dump_map( map_t *m )
@@ -80,8 +90,8 @@ void debug_dump_map( map_t *m )
 	}
 }
 
-int is_legal( map_t *m, int x, int y )
+int is_legal( int x, int y )
 {
 	return(	( x >= 0 ) && ( y >= 0 ) &&
-			( x < m->width ) && ( y < m->height ) );
+			( x < MAP_WIDTH ) && ( y < MAP_HEIGHT ) );
 }

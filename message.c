@@ -8,20 +8,25 @@ void push_message( buf_t *b )
 	message_t *m = malloc( sizeof(message_t) );
 
 	m->msg = bufcpy( b );
-	m->flags = 0;
+	m->flags = MESSAGEFLAG_UNREAD;
 
 	list_add_tail( message_list, (void*)m );
 }
 
-void free_message( void *m )
+void free_message( message_t *m )
 {
-	bufdestroy( ((message_t*)m)->msg );
+	bufdestroy( m->msg );
 	free( m );
 }
 
-void free_message_list( void )
+void free_messages( void )
 {
-	list_traverse( message_list, free_message );
-	free_list( message_list );
+	list_element *m = message_list->head;
+
+	while( m )
+	{
+		free_message( (message_t*)m );
+		m = m->next;
+	}
 }
 

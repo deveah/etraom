@@ -6,7 +6,7 @@
 #include "etraom.h"
 
 int running = 0;
-int player_turn = 0;
+int global_turns = 0;
 
 unsigned int nlevels = 0;
 map_t **dungeon = NULL;
@@ -28,19 +28,19 @@ void new_game( unsigned int seed )
 
 	for( i = 0; i < nlevels; i++ )
 	{
-		dungeon[i] = alloc_map( map_name, 80, 25 );
+		dungeon[i] = alloc_map( map_name, MAP_WIDTH, MAP_HEIGHT );
 		make_dummy_map( dungeon[i], 80 );
 	}
 
 	bufdestroy( map_name );
 
 	buf_t *player_name = bufnew( "Player" );
-	entity_t *player = alloc_entity( player_name );
+	player = alloc_entity( player_name );
 	bufdestroy( player_name );
 
 	player->x = 10;
 	player->y = 10;
-	player->map = dungeon[0];
+	player->z = 0;
 	player->flags = ENTITYFLAG_PLAYERCONTROL;
 
 	list_add_head( entity_list, (void*)player );
@@ -85,11 +85,10 @@ int terminate_game( void )
 
 	free( dungeon );
 
-	/* TODO: condense free_entities and free_list? */
-	/* should do also with free_message_list -> free_messages */
 	free_entities();
 	free_list( entity_list );
-	free_message_list();
+	free_messages();
+	free_list( message_list );
 
 	log_add( "Done terminating game.\n" );
 
@@ -111,8 +110,11 @@ int game_loop( void )
 		while( e )
 		{
 			entity_act( (entity_t*)e->data );
+			do_fov( (entity_t*)e->data, 10 );
 			e = e->next;
 		}
+
+		global_turns++;
 
 		bl_delay( 10 );
 	}

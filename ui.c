@@ -15,27 +15,45 @@ int terminate_ui( void )
 int draw_main_screen( void )
 {
 	int i, j;
+	list_element *k;
+
+	bl_clear();
 
 	bl_foreground( 255, 255, 255 );
 	bl_background(   0,   0,   0 );
 	
-	for( i = 0; i < dungeon[0]->width; i++ )
+	for( i = 0; i < dungeon[player->z]->width; i++ )
 	{
-		for( j = 0; j < dungeon[0]->height; j++ )
+		for( j = 0; j < dungeon[player->z]->height; j++ )
 		{
-			tile_t *t = dungeon[0]->terrain[i][j];
+			tile_t *t = dungeon[player->z]->terrain[i][j];
 			bl_foreground( t->fg[0], t->fg[1], t->fg[2] );
 			bl_background( t->bg[0], t->bg[1], t->bg[2] );
-			bl_addch( i, j+1, t->face );
+
+			if( player->lightmap[player->z][i][j] > 0.0f )
+				bl_addch( i, j+1, t->face );
 		}
 	}
 
-	list_element *k = entity_list->head;
+	k = entity_list->head;
 	while( k )
 	{
 		entity_t *e = (entity_t*)k->data;
 		bl_foreground( e->color[0], e->color[1], e->color[2] );
 		bl_addch( e->x, e->y+1, e->face );
+		k = k->next;
+	}
+
+	k = message_list->head;
+	while( k )
+	{
+		/* TODO support for more than one message via --MORE-- */
+		message_t *m = (message_t*)k->data;
+		if( m->flags & MESSAGEFLAG_UNREAD )
+		{
+			bl_printf( 0, 0, "%s", m->msg->data );
+			m->flags &= ~MESSAGEFLAG_UNREAD;
+		}
 		k = k->next;
 	}
 
