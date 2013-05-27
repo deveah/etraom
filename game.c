@@ -6,6 +6,7 @@
 #include "etraom.h"
 
 int running = 0;
+int player_turn = 0;
 
 unsigned int nlevels = 0;
 map_t **dungeon = NULL;
@@ -14,6 +15,7 @@ int main_seed = 0;
 void new_game( unsigned int seed )
 {
 	unsigned int i;
+	buf_t *map_name = bufnew( "Dungeon" );
 
 	log_add( "Creating new game...\n" );
 
@@ -26,9 +28,22 @@ void new_game( unsigned int seed )
 
 	for( i = 0; i < nlevels; i++ )
 	{
-		dungeon[i] = alloc_map( "Dungeon", 80, 25 );
+		dungeon[i] = alloc_map( map_name, 80, 25 );
 		make_dummy_map( dungeon[i], 80 );
 	}
+
+	bufdestroy( map_name );
+
+	buf_t *player_name = bufnew( "Player" );
+	entity_t *player = alloc_entity( player_name );
+	bufdestroy( player_name );
+
+	player->x = 10;
+	player->y = 10;
+	player->map = dungeon[0];
+	player->flags = ENTITYFLAG_PLAYERCONTROL;
+
+	list_add_head( entity_list, (void*)player );
 
 	log_add( "Done creating new game.\n" );
 }
@@ -47,9 +62,10 @@ int init_game( int argc, char** argv )
 	open_logfile();
 	printf( "Etraom version %s, by Vlad Dumitru.\n", ETRAOM_VERSION );
 
-	new_game( time( 0 ) );
+	message_list = alloc_list();
+	entity_list = alloc_list();
 
-	test_messages();
+	new_game( time( 0 ) );
 
 	running = 1;
 
@@ -68,7 +84,13 @@ int terminate_game( void )
 	}
 
 	free( dungeon );
-	
+
+	/* TODO: condense free_entities and free_list? */
+	/* should do also with free_message_list -> free_messages */
+	free_entities();
+	free_list( entity_list );
+	free_message_list();
+
 	log_add( "Done terminating game.\n" );
 
 	terminate_ui();
@@ -79,21 +101,17 @@ int terminate_game( void )
 
 int game_loop( void )
 {
-	bl_input_t i;
-
+	list_element *e;
+	
 	while( running )
 	{
-		bl_clear_input( &i );
-
 		draw_main_screen();
 
-		if( bl_input( &i ) != -1 )
+		e = entity_list->head;
+		while( e )
 		{
-			if( i.key != -1 )
-				handle_key( i.key, i.mod );
-
-			if( i.quit )
-				running = 0;
+			entity_act( (entity_t*)e->data );
+			e = e->next;
 		}
 
 		bl_delay( 10 );
@@ -104,9 +122,21 @@ int game_loop( void )
 
 void handle_key( int key, int mod )
 {
-	log_add( "Received key 0x%08x(%c), mod 0x%08x\n", key, key, mod );
+	entity_t *player = (entity_t*)(entity_list->head->data);
+	
+	log_add( "[handle_key] Received key 0x%08x(%c), mod 0x%08x\n", key, key,
+		mod );
 
 	if( key == 'q' )
 		running = 0;
+	
+	if( key == 'h' )
+		entity_move_rel( player, -1,  0 );
+	if( key == 'j' )
+		entity_move_rel( player,  0,  1 );
+	if( key == 'k' )
+		entity_move_rel( player,  0, -1 );
+	if( key == 'l' )
+		entity_move_rel( player,  1,  0 );
 }
 

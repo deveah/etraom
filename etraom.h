@@ -9,8 +9,10 @@
 #define MAX_STRING_LENGTH 256
 #define MAX_LEVELS 10
 
-#define TILEFLAG_SOLID		(1<<0)
-#define TILEFLAG_OPAQUE		(1<<1)
+#define TILEFLAG_SOLID				(1<<0)
+#define TILEFLAG_OPAQUE				(1<<1)
+
+#define ENTITYFLAG_PLAYERCONTROL	(1<<0)
 
 typedef struct
 {
@@ -53,7 +55,7 @@ extern tile_t
 
 typedef struct
 {
-	char *name;
+	buf_t *name;
 	int width, height;
 
 	tile_t ***terrain;
@@ -61,22 +63,41 @@ typedef struct
 	int flags;
 } map_t;
 
+typedef struct
+{
+	buf_t *name;
+	int face;
+	unsigned char color[3];
+
+	int x, y;
+	map_t *map;
+
+	int flags;
+} entity_t;
+
 extern FILE *logfile;
 
 extern int running;
+extern int player_turn;
 
 extern unsigned int nlevels;
 extern map_t **dungeon;
 extern int main_seed;
 
 extern list_t *message_list;
+extern list_t *entity_list;
+
+/* entity.c */
+entity_t *alloc_entity( buf_t *name );
+void free_entity( entity_t *e );
+void free_entities( void );
+int entity_act( entity_t *e );
+int entity_move_rel( entity_t *e, int dx, int dy );
 
 /* message.c */
-void init_message_list( void );
 void push_message( buf_t *b );
 void free_message( void *m );
 void free_message_list( void );
-void test_messages( void );
 
 /* buf.c */
 buf_t *bufnew( char *str );
@@ -106,6 +127,7 @@ void handle_key( int key, int mod );
 int init_ui( void );
 int terminate_ui( void );
 int draw_main_screen( void );
+void wait_key( int *key, int *mod, int *quit );
 
 /* log.c */
 int open_logfile( void );
@@ -113,10 +135,11 @@ int close_logfile( void );
 void log_add( char *format, ... );
 
 /* map.c */
-map_t *alloc_map( char *name, int width, int height );
+map_t *alloc_map( buf_t *name, int width, int height );
 void free_map( map_t *m );
 void clear_map( map_t *m );
 void debug_dump_map( map_t *m );
+int is_legal( map_t *m, int x, int y );
 
 /* mapgen.c */
 int make_dummy_map( map_t *m, int nwalls );

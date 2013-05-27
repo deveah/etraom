@@ -3,7 +3,7 @@
 
 #include "etraom.h"
 
-map_t *alloc_map( char *name, int width, int height )
+map_t *alloc_map( buf_t *name, int width, int height )
 {
 	int i, j;
 	map_t *m = (map_t*) malloc( sizeof(map_t) );
@@ -23,9 +23,9 @@ map_t *alloc_map( char *name, int width, int height )
 	}
 
 	clear_map( m );
-	m->name = name;
+	m->name = bufcpy( name );
 
-	log_add( "Allocated map (0x%08x) of width %i and height %i.\n",
+	log_add( "[alloc_map] Allocated map (0x%08x) of width %i and height %i.\n",
 		m, width, height );
 
 	return m;
@@ -48,22 +48,24 @@ void free_map( map_t *m )
 			free( m->terrain );
 		}
 
+		bufdestroy( m->name );
+
 		free( m );
-		log_add( "Freed map 0x%08x.\n", m );
+		log_add( "[free_map] Freed map 0x%08x.\n", m );
 	}
 }
 
 void clear_map( map_t *m )
 {
-	m->name = "";
+	m->name = NULL;
 }
 
 void debug_dump_map( map_t *m )
 {
 	int i, j;
 
-	log_add( "Dumping map 0x%08x - width: %i, height: %i\n", m, m->width,
-		m->height );
+	log_add( "[debug_dump_map] Dumping map 0x%08x - width: %i, height: %i\n",
+		m, m->width, m->height );
 
 	for( j = 0; j < m->height; j++ )
 	{
@@ -76,4 +78,10 @@ void debug_dump_map( map_t *m )
 		}
 		log_add( "\n" );
 	}
+}
+
+int is_legal( map_t *m, int x, int y )
+{
+	return(	( x >= 0 ) && ( y >= 0 ) &&
+			( x < m->width ) && ( y < m->height ) );
 }
