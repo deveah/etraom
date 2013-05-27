@@ -18,7 +18,6 @@ void list_add_head( list_t *l, void *e )
 {
 	list_element *el = malloc( sizeof( list_element ) );
 	el->data = e;
-	el->allocated = 0;
 
 	if( l->head )
 	{
@@ -39,7 +38,6 @@ void list_add_tail( list_t *l, void *e )
 {
 	list_element *el = malloc( sizeof( list_element ) );
 	el->data = e;
-	el->allocated = 0;
 
 	if( l->tail )
 	{
@@ -102,9 +100,6 @@ void list_remove_index( list_t *l, int i )
 			temp = el->next;
 			el->next = temp->next;
 
-			if( temp->allocated )
-				free( temp->data );
-
 			free( temp );
 
 			l->length--;
@@ -124,9 +119,6 @@ void free_list( list_t *l )
 	{
 		temp = el;
 		el = el->next;
-
-		if( temp->allocated )
-			free( temp->data );
 
 		free( temp );
 	}

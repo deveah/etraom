@@ -44,13 +44,15 @@ void cast_ray( entity_t *e, float x, float y, int radius )
 	
 	for( i = 0; i < radius; i++ )
 	{
-    	e->lightmap[e->z][(int)ox][(int)oy] = 1.0f;
-		if( !( is_legal( ox, oy ) ) ||
-			( dungeon[e->z]->terrain[(int)ox][(int)oy]->flags & TILEFLAG_OPAQUE ) )
+		e->lightmap[e->z][(int)ox][(int)oy] = 1.0f;
+		if( dungeon[e->z]->terrain[(int)ox][(int)oy]->flags & TILEFLAG_OPAQUE )
 			return;
 		
 		ox += x;
 		oy += y;
+
+		if( !is_legal( ox, oy ) )
+			return;
 	}
 }
 

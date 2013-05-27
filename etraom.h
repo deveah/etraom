@@ -30,7 +30,6 @@ struct _list_element
 {
 	void *data;
 	struct _list_element *next;
-	int allocated;
 };
 
 typedef struct _list_element list_element;

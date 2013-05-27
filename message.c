@@ -21,12 +21,13 @@ void free_message( message_t *m )
 
 void free_messages( void )
 {
-	list_element *m = message_list->head;
+	list_element *m = message_list->head, *temp;
 
 	while( m )
 	{
-		free_message( (message_t*)m );
+		temp = m;
 		m = m->next;
+		free_message( (message_t*)temp->data );
 	}
 }
 
