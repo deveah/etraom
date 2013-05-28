@@ -7,6 +7,8 @@
 	cheers to its author!
 */
 
+/*	TODO fix artifacts where light is not continuous along walls */
+
 void clear_lightmap( entity_t *e, int n )
 {
 	int i, j;

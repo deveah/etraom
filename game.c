@@ -53,6 +53,7 @@ void new_game( unsigned int seed )
 	
 	player->flags = ENTITYFLAG_PLAYERCONTROL;
 	player->agility = 15;
+	player->ap = 0;
 
 	list_add_head( entity_list, (void*)player );
 
@@ -119,8 +120,6 @@ int game_loop( void )
 	
 	while( running )
 	{
-		draw_main_screen();
-
 		e = entity_list->head;
 		while( e )
 		{
@@ -190,9 +189,9 @@ void free_dungeon_memory( void )
 {
 	int i, j;
 
-	for( i = 0; i < MAP_WIDTH; i++ )
+	for( i = 0; i < MAX_LEVELS; i++ )
 	{
-		for( j = 0; j < MAX_LEVELS; j++ )
+		for( j = 0; j < MAP_WIDTH; j++ )
 		{
 			free( dungeon_memory[i][j] );
 		}
