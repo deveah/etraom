@@ -70,9 +70,17 @@ typedef struct
 
 typedef struct
 {
+	int x, y, linked;
+} room_t;
+
+typedef struct
+{
 	buf_t *name;
 	int face;
 	unsigned char color[3];
+
+	int ap;
+	int agility;
 
 	int x, y, z;
 
@@ -93,6 +101,7 @@ extern int main_seed;
 extern list_t *message_list;
 extern list_t *entity_list;
 extern entity_t *player; /* shortcut to player struct */
+extern int ***dungeon_memory;
 
 /* sight.c */
 void clear_lightmap( entity_t *e, int n );
@@ -103,7 +112,7 @@ void cast_ray( entity_t *e, float x, float y, int radius );
 entity_t *alloc_entity( buf_t *name );
 void free_entity( entity_t *e );
 void free_entities( void );
-int entity_act( entity_t *e );
+void entity_act( entity_t *e );
 int entity_move_rel( entity_t *e, int dx, int dy );
 
 /* message.c */
@@ -133,7 +142,9 @@ void new_game( unsigned int seed );
 int init_game( int argc, char** argv );
 int terminate_game( void );
 int game_loop( void );
-void handle_key( int key, int mod );
+int handle_key( int key, int mod );
+void alloc_dungeon_memory( void );
+void free_dungeon_memory( void );
 
 /* ui.c */
 int init_ui( void );
@@ -155,5 +166,12 @@ int is_legal( int x, int y );
 
 /* mapgen.c */
 int make_dummy_map( map_t *m, int nwalls );
+void dig_room( map_t *m, int x, int y, int w, int h );
+void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 );
+int closest_room( room_t **r, int nrooms, int n, float loop_chance );
+int all_rooms_linked( room_t **r, int nrooms );
+int make_grid_map(	map_t *m, int cell_width, int cell_height,
+					float room_chance, float node_chance,
+					float door_chance, float loop_chance );
 
 #endif

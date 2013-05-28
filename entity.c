@@ -73,27 +73,37 @@ void free_entities( void )
 	}
 }
 
-/* entity_act should return 1 if the action is successful, otherwise 0 */
-int entity_act( entity_t *e )
+void entity_act( entity_t *e )
 {
 	int key, mod, quit;
 
-	log_add( "[entity_act] Act: 0x%08x('%s').\n", e, e->name->data );
+	e->ap += e->agility;
 
-	if( e->flags & ENTITYFLAG_PLAYERCONTROL )
+	while( e->ap > 0 )
 	{
-		wait_key( &key, &mod, &quit );
-		if( quit )
-			running = 0;
+		log_add( "[entity_act] Act: 0x%08x('%s').\n", e, e->name->data );
+		log_add( "[entity_act]\tentity has agility %i and ap %i.\n", e->agility, e->ap );
 
-		handle_key( key, mod );
-	}
-	else
-	{
-		/* TODO */
-	}
+		if( e->flags & ENTITYFLAG_PLAYERCONTROL )
+		{
+			do_fov( e, 10 );
+			draw_main_screen(); /* TODO the right place for this? */
 
-	return 1;
+			wait_key( &key, &mod, &quit );
+			if( quit )
+				running = 0;
+
+			if( handle_key( key, mod ) == 1 )
+				e->ap -= 10; /* TODO action point consumption */
+
+			if( !running )
+				return;
+		}
+		else
+		{
+			/* TODO */
+		}
+	}
 }
 
 /* entity_move_rel should return 1 if the action is successful, otherwise 0 */

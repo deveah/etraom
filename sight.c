@@ -15,6 +15,9 @@ void clear_lightmap( entity_t *e, int n )
 	{
 		for( j = 0; j < MAP_HEIGHT; j++ )
 		{
+			if(	( e == player ) &&
+				( e->lightmap[n][i][j] > 0.0f ) )
+				dungeon_memory[n][i][j] = dungeon[n]->terrain[i][j]->face;
 			e->lightmap[n][i][j] = 0.0f;
 		}
 	}
@@ -44,7 +47,7 @@ void cast_ray( entity_t *e, float x, float y, int radius )
 	
 	for( i = 0; i < radius; i++ )
 	{
-		e->lightmap[e->z][(int)ox][(int)oy] = 1.0f;
+		e->lightmap[e->z][(int)ox][(int)oy] = 1.0f / (float)(radius+1);
 		if( dungeon[e->z]->terrain[(int)ox][(int)oy]->flags & TILEFLAG_OPAQUE )
 			return;
 		

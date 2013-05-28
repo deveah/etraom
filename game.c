@@ -12,6 +12,8 @@ unsigned int nlevels = 0;
 map_t **dungeon = NULL;
 int main_seed = 0;
 
+int ***dungeon_memory = NULL;
+
 void new_game( unsigned int seed )
 {
 	unsigned int i;
@@ -29,7 +31,8 @@ void new_game( unsigned int seed )
 	for( i = 0; i < nlevels; i++ )
 	{
 		dungeon[i] = alloc_map( map_name, MAP_WIDTH, MAP_HEIGHT );
-		make_dummy_map( dungeon[i], 80 );
+		//make_dummy_map( dungeon[i], 80 );
+		make_grid_map( dungeon[i], 20, 12, 0.6, 0.8, 0.2, 0.3 );
 	}
 
 	bufdestroy( map_name );
@@ -38,10 +41,18 @@ void new_game( unsigned int seed )
 	player = alloc_entity( player_name );
 	bufdestroy( player_name );
 
-	player->x = 10;
-	player->y = 10;
+	player->x = 0;
+	player->y = 0;
 	player->z = 0;
+
+	while( dungeon[player->z]->terrain[player->x][player->y] != &tile_floor )
+	{
+		player->x = rand() % MAP_WIDTH;
+		player->y = rand() % MAP_HEIGHT;
+	}
+	
 	player->flags = ENTITYFLAG_PLAYERCONTROL;
+	player->agility = 15;
 
 	list_add_head( entity_list, (void*)player );
 
@@ -64,6 +75,8 @@ int init_game( int argc, char** argv )
 
 	message_list = alloc_list();
 	entity_list = alloc_list();
+
+	alloc_dungeon_memory();
 
 	new_game( time( 0 ) );
 
@@ -90,6 +103,8 @@ int terminate_game( void )
 	free_messages();
 	free_list( message_list );
 
+	free_dungeon_memory();
+
 	log_add( "Done terminating game.\n" );
 
 	terminate_ui();
@@ -110,7 +125,6 @@ int game_loop( void )
 		while( e )
 		{
 			entity_act( (entity_t*)e->data );
-			do_fov( (entity_t*)e->data, 10 );
 			e = e->next;
 		}
 
@@ -122,7 +136,8 @@ int game_loop( void )
 	return 1;
 }
 
-void handle_key( int key, int mod )
+/* handle_key should return 1 if action is successful, otherwise 0 */
+int handle_key( int key, int mod )
 {
 	entity_t *player = (entity_t*)(entity_list->head->data);
 	
@@ -133,12 +148,56 @@ void handle_key( int key, int mod )
 		running = 0;
 	
 	if( key == 'h' )
-		entity_move_rel( player, -1,  0 );
+		return entity_move_rel( player, -1,  0 );
 	if( key == 'j' )
-		entity_move_rel( player,  0,  1 );
+		return entity_move_rel( player,  0,  1 );
 	if( key == 'k' )
-		entity_move_rel( player,  0, -1 );
+		return entity_move_rel( player,  0, -1 );
 	if( key == 'l' )
-		entity_move_rel( player,  1,  0 );
+		return entity_move_rel( player,  1,  0 );
+	if( key == 'y' )
+		return entity_move_rel( player, -1, -1 );
+	if( key == 'u' )
+		return entity_move_rel( player,  1, -1 );
+	if( key == 'b' )
+		return entity_move_rel( player, -1,  1 );
+	if( key == 'n' )
+		return entity_move_rel( player,  1,  1 );
+
+	return 0;
 }
 
+void alloc_dungeon_memory( void )
+{
+	int i, j, k;
+	
+	dungeon_memory = (int***) malloc( sizeof(int**) * MAX_LEVELS );
+	for( k = 0; k < MAX_LEVELS; k++ )
+	{
+		dungeon_memory[k] = (int**) malloc( sizeof(int*) * MAP_WIDTH );
+		for( i = 0; i < MAP_WIDTH; i++ )
+		{
+			dungeon_memory[k][i] = (int*) malloc( sizeof(int) * MAP_WIDTH );
+			for(  j = 0; j < MAP_HEIGHT; j++ )
+			{
+				dungeon_memory[k][i][j] = 0;
+			}
+		}
+	}
+}
+
+void free_dungeon_memory( void )
+{
+	int i, j;
+
+	for( i = 0; i < MAP_WIDTH; i++ )
+	{
+		for( j = 0; j < MAX_LEVELS; j++ )
+		{
+			free( dungeon_memory[i][j] );
+		}
+		free( dungeon_memory[i] );
+	}
+
+	free( dungeon_memory );
+}

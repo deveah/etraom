@@ -4,7 +4,7 @@
 
 int init_ui( void )
 {
-	return bl_initialize( "DejaVuSansMono.ttf", 16, 80, 30, "Etraom", 0 );
+	return bl_initialize( "fixedsys.ttf", 16, 80, 30, "Etraom", 0 );
 }
 
 int terminate_ui( void )
@@ -27,11 +27,19 @@ int draw_main_screen( void )
 		for( j = 0; j < dungeon[player->z]->height; j++ )
 		{
 			tile_t *t = dungeon[player->z]->terrain[i][j];
-			bl_foreground( t->fg[0], t->fg[1], t->fg[2] );
-			bl_background( t->bg[0], t->bg[1], t->bg[2] );
 
 			if( player->lightmap[player->z][i][j] > 0.0f )
+			{
+				bl_foreground( t->fg[0], t->fg[1], t->fg[2] );
+				bl_background( t->bg[0], t->bg[1], t->bg[2] );
 				bl_addch( i, j+1, t->face );
+			}
+			else if( dungeon_memory[player->z][i][j] )
+			{
+				bl_foreground(  64,  64,  64 );
+				bl_background(   0,   0,   0 );
+				bl_addch( i, j+1, dungeon_memory[player->z][i][j] );
+			}
 		}
 	}
 
@@ -39,8 +47,14 @@ int draw_main_screen( void )
 	while( k )
 	{
 		entity_t *e = (entity_t*)k->data;
-		bl_foreground( e->color[0], e->color[1], e->color[2] );
-		bl_addch( e->x, e->y+1, e->face );
+		if(	( player->z == e->z ) &&
+			( player->lightmap[player->z][e->x][e->y] > 0.0f ) )
+		{
+			bl_foreground( e->color[0], e->color[1], e->color[2] );
+			tile_t *t = dungeon[player->z]->terrain[e->x][e->y];
+			bl_background( t->bg[0], t->bg[1], t->bg[2] );
+			bl_addch( e->x, e->y+1, e->face );
+		}
 		k = k->next;
 	}
 
