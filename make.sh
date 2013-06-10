@@ -1,3 +1,3 @@
 #!/bin/sh
-gcc *.c -o etraom -lSDL -lSDL_ttf -lm -Wall -Wextra -g -g2
+gcc *.c -o etraom -lcurses -lm -Wall -Wextra -g -g2
 

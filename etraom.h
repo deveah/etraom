@@ -49,7 +49,7 @@ typedef struct
 typedef struct
 {
 	int face;
-	unsigned char fg[3], bg[3];
+	int fg, bg;
 	int flags;
 } tile_t;
 
@@ -77,7 +77,7 @@ typedef struct
 {
 	buf_t *name;
 	int face;
-	unsigned char color[3];
+	int color;
 
 	int ap;
 	int agility;
@@ -142,7 +142,7 @@ void new_game( unsigned int seed );
 int init_game( int argc, char** argv );
 int terminate_game( void );
 int game_loop( void );
-int handle_key( int key, int mod );
+int handle_key( int key );
 void alloc_dungeon_memory( void );
 void free_dungeon_memory( void );
 
@@ -150,7 +150,6 @@ void free_dungeon_memory( void );
 int init_ui( void );
 int terminate_ui( void );
 int draw_main_screen( void );
-void wait_key( int *key, int *mod, int *quit );
 
 /* log.c */
 int open_logfile( void );

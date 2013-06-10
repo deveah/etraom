@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "blesteme.h"
 #include "etraom.h"
 
 int running = 0;
@@ -128,20 +127,17 @@ int game_loop( void )
 		}
 
 		global_turns++;
-
-		bl_delay( 10 );
 	}
 	
 	return 1;
 }
 
 /* handle_key should return 1 if action is successful, otherwise 0 */
-int handle_key( int key, int mod )
+int handle_key( int key )
 {
 	entity_t *player = (entity_t*)(entity_list->head->data);
 	
-	log_add( "[handle_key] Received key 0x%08x(%c), mod 0x%08x\n", key, key,
-		mod );
+	log_add( "[handle_key] Received key 0x%08x(%c)\n", key, key );
 
 	if( key == 'q' )
 		running = 0;

@@ -1,4 +1,6 @@
 
+#include <curses.h>
+
 #include "etraom.h"
 
 list_t *entity_list = NULL;
@@ -11,7 +13,7 @@ entity_t *alloc_entity( buf_t *name )
 
 	e->name = bufcpy( name );
 	e->face = 'z';
-	e->color[0] = e->color[1] = e->color[2] = 255;
+	e->color = COLOR_PAIR( 1 );
 	e->flags = 0;
 
 	e->lightmap = (float***) malloc( sizeof(float**) * MAX_LEVELS );
@@ -75,7 +77,7 @@ void free_entities( void )
 
 void entity_act( entity_t *e )
 {
-	int key, mod, quit;
+	int key;
 
 	e->ap += e->agility;
 
@@ -89,11 +91,10 @@ void entity_act( entity_t *e )
 			do_fov( e, 10 );
 			draw_main_screen(); /* TODO the right place for this? */
 
-			wait_key( &key, &mod, &quit );
-			if( quit )
-				running = 0;
+			
+			key = getch();
 
-			if( handle_key( key, mod ) == 1 )
+			if( handle_key( key ) == 1 )
 				e->ap -= 10; /* TODO action point consumption */
 
 			if( !running )
