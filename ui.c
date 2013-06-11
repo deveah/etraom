@@ -85,10 +85,8 @@ int draw_main_screen( void )
 	}
 
 	attron( COLOR_PAIR( 7 ) );
-	mvprintw( 26, 0, "Nectarie the Gunslinger" );
-	mvprintw( 27, 0, "hp: 16/16 ac: 8 lv: 1" ); 
-
-	//refresh();
+	mvprintw( 23, 0, "Nectarie the Gunslinger" );
+	mvprintw( 24, 0, "hp: 16/16 ac: 8 lv: 1" ); 
 
 	return 1;
 }

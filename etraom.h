@@ -10,7 +10,7 @@
 #define MAX_LEVELS 10
 
 #define MAP_WIDTH 80
-#define MAP_HEIGHT 25
+#define MAP_HEIGHT 22
 
 #define TILEFLAG_SOLID				(1<<0)
 #define TILEFLAG_OPAQUE				(1<<1)
@@ -103,10 +103,14 @@ extern list_t *entity_list;
 extern entity_t *player; /* shortcut to player struct */
 extern int ***dungeon_memory;
 
+/* util.c */
+int distance( int x1, int y1, int x2, int y2 );
+
 /* sight.c */
+void reveal_map( int n );
 void clear_lightmap( entity_t *e, int n );
 void do_fov( entity_t *e, int radius );
-void cast_ray( entity_t *e, float x, float y, int radius );
+int do_ray( entity_t *e, int x2, int y2 );
 
 /* entity.c */
 entity_t *alloc_entity( buf_t *name );
@@ -172,5 +176,7 @@ int all_rooms_linked( room_t **r, int nrooms );
 int make_grid_map(	map_t *m, int cell_width, int cell_height,
 					float room_chance, float node_chance,
 					float door_chance, float loop_chance );
+void make_drunken_walk_cave( map_t *m, int n );
+int count_neighbours( map_t *m, int x, int y, tile_t *w );
 
 #endif

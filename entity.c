@@ -88,7 +88,7 @@ void entity_act( entity_t *e )
 
 		if( e->flags & ENTITYFLAG_PLAYERCONTROL )
 		{
-			do_fov( e, 10 );
+			do_fov( e, 5 );
 			draw_main_screen(); /* TODO the right place for this? */
 
 			

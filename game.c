@@ -30,8 +30,16 @@ void new_game( unsigned int seed )
 	for( i = 0; i < nlevels; i++ )
 	{
 		dungeon[i] = alloc_map( map_name, MAP_WIDTH, MAP_HEIGHT );
-		//make_dummy_map( dungeon[i], 80 );
-		make_grid_map( dungeon[i], 20, 12, 0.6, 0.8, 0.2, 0.3 );
+
+		/*int r;
+		
+		do
+		{
+			clear_map( dungeon[i] );
+			r = make_grid_map( dungeon[i], 10, 7, 0.6, 0.9, 0.2, 0.5 );
+		} while( r < 20 );*/
+
+		make_drunken_walk_cave( dungeon[i], MAP_WIDTH*MAP_HEIGHT );
 	}
 
 	bufdestroy( map_name );
@@ -141,7 +149,10 @@ int handle_key( int key )
 
 	if( key == 'q' )
 		running = 0;
-	
+
+	if( key == 'z' )
+		reveal_map( player->z );
+
 	if( key == 'h' )
 		return entity_move_rel( player, -1,  0 );
 	if( key == 'j' )
