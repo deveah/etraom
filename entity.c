@@ -90,7 +90,6 @@ void entity_act( entity_t *e )
 		{
 			do_fov( e, 5 );
 			draw_main_screen(); /* TODO the right place for this? */
-
 			
 			key = getch();
 
@@ -118,6 +117,8 @@ int entity_move_rel( entity_t *e, int dx, int dy )
 		if( ee )
 		{
 			ee->hp--;
+			log_add( "[entity_move_rel] Attacked entity now has %i hp.\n", ee->hp );
+
 			if( ee->hp <= 0 )
 				entity_die( ee );
 			
@@ -155,7 +156,7 @@ entity_t *entity_find_by_position( int x, int y, int z )
 	{
 		entity_t *ent = (entity_t*)e->data;
 		if( ( x == ent->x ) && ( y == ent->y ) && ( z == ent->z ) )
-			return e;
+			return ent;
 
 		e = e->next;
 	}

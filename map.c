@@ -12,13 +12,17 @@ map_t *alloc_map( buf_t *name, int width, int height )
 	m->height = height;
 
 	m->terrain = (tile_t***) malloc( sizeof(tile_t*) * width );
+	m->memory = (tile_t***) malloc( sizeof(tile_t*) * width );
 
 	for( i = 0; i < width; i++ )
 	{
 		m->terrain[i] = (tile_t**) malloc( sizeof(tile_t*) * height );
+		m->memory[i] = (tile_t**) malloc( sizeof(tile_t*) * height );
+
 		for( j = 0; j < height; j++ )
 		{
 			m->terrain[i][j] = NULL;
+			m->memory[i][j] = NULL;
 		}
 	}
 
@@ -46,6 +50,17 @@ void free_map( map_t *m )
 			}
 
 			free( m->terrain );
+		}
+
+		if( m->memory )
+		{
+			for( i = 0; i < m->width; i++ )
+			{
+				if( m->memory[i] )
+					free( m->memory[i] );
+			}
+
+			free( m->memory );
 		}
 
 		bufdestroy( m->name );

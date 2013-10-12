@@ -53,10 +53,10 @@ int draw_main_screen( void )
 				attron( t->fg );
 				mvaddch( j+1, i, t->face );
 			}
-			else if( dungeon_memory[player->z][i][j] == '#' )
+			else if( dungeon[player->z]->memory[i][j] )
 			{
 				attron( COLOR_PAIR( COLOR_BLUE ) );
-				mvaddch( j+1, i, dungeon_memory[player->z][i][j] );
+				mvaddch( j+1, i, dungeon[player->z]->memory[i][j]->face );
 			}
 			else
 			{

@@ -11,8 +11,6 @@ unsigned int nlevels = 0;
 map_t **dungeon = NULL;
 int main_seed = 0;
 
-int ***dungeon_memory = NULL;
-
 void new_game( unsigned int seed )
 {
 	unsigned int i;
@@ -89,8 +87,6 @@ int init_game( int argc, char** argv )
 	message_list = alloc_list();
 	entity_list = alloc_list();
 
-	alloc_dungeon_memory();
-
 	new_game( time( 0 ) );
 
 	running = 1;
@@ -115,8 +111,6 @@ int terminate_game( void )
 	free_list( entity_list );
 	free_messages();
 	free_list( message_list );
-
-	free_dungeon_memory();
 
 	log_add( "Done terminating game.\n" );
 
@@ -181,41 +175,6 @@ int handle_key( int key )
 	}
 
 	return 0;
-}
-
-void alloc_dungeon_memory( void )
-{
-	int i, j, k;
-	
-	dungeon_memory = (int***) malloc( sizeof(int**) * MAX_LEVELS );
-	for( k = 0; k < MAX_LEVELS; k++ )
-	{
-		dungeon_memory[k] = (int**) malloc( sizeof(int*) * MAP_WIDTH );
-		for( i = 0; i < MAP_WIDTH; i++ )
-		{
-			dungeon_memory[k][i] = (int*) malloc( sizeof(int) * MAP_WIDTH );
-			for(  j = 0; j < MAP_HEIGHT; j++ )
-			{
-				dungeon_memory[k][i][j] = 0;
-			}
-		}
-	}
-}
-
-void free_dungeon_memory( void )
-{
-	int i, j;
-
-	for( i = 0; i < MAX_LEVELS; i++ )
-	{
-		for( j = 0; j < MAP_WIDTH; j++ )
-		{
-			free( dungeon_memory[i][j] );
-		}
-		free( dungeon_memory[i] );
-	}
-
-	free( dungeon_memory );
 }
 
 void make_random_entities( int n )

@@ -64,6 +64,7 @@ typedef struct
 	int width, height;
 
 	tile_t ***terrain;
+	tile_t ***memory;
 
 	int flags;
 } map_t;

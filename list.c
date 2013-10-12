@@ -150,6 +150,7 @@ int list_find( list_t *l, void *item )
 			return i;
 
 		el = el->next;
+		i++;
 	}
 	
 	return -1;

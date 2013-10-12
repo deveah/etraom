@@ -22,7 +22,7 @@ II.		Mechanics
 	[ ] inventory
 	[ ] main loop w/time system
 	[x] field of view for each entity
-	[ ] dungeon memory (player-only)
+	[x] dungeon memory (player-only)
 		( store probably only as tile face -> int*** )
 
 III.	Map generators

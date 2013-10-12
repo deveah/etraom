@@ -11,7 +11,7 @@ void reveal_map( int n )
 	{
 		for( j = 0; j < MAP_HEIGHT; j++ )
 		{
-			dungeon_memory[n][i][j] = dungeon[n]->terrain[i][j]->face;
+			dungeon[n]->memory[i][j] = dungeon[n]->terrain[i][j];
 		}
 	}
 }
@@ -26,7 +26,8 @@ void clear_lightmap( entity_t *e, int n )
 		{
 			if(	( e == player ) &&
 				( e->lightmap[n][i][j] > 0.0f ) )
-				dungeon_memory[n][i][j] = dungeon[n]->terrain[i][j]->face;
+				dungeon[n]->memory[i][j] = dungeon[n]->terrain[i][j];
+
 			e->lightmap[n][i][j] = 0.0f;
 		}
 	}
