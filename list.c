@@ -138,3 +138,20 @@ void list_traverse( list_t *l, void (*func)(void*) )
 		func( temp->data );
 	}
 }
+
+int list_find( list_t *l, void *item )
+{
+	list_element *el = l->head;
+	int i = 0;
+
+	while( el )
+	{
+		if( el->data == item )
+			return i;
+
+		el = el->next;
+	}
+	
+	return -1;
+}
+

@@ -14,7 +14,10 @@ int init_ui( void )
 	curs_set( 0 );
 
 	start_color();
+
+#ifndef _WIN32
 	use_default_colors();
+#endif
 
 	int i;
 	for( i = 0; i < 9; i++ )
@@ -37,7 +40,7 @@ int draw_main_screen( void )
 	int i, j;
 	list_element *k;
 
-	clear();
+	log_add( "[draw_main_screen]\n" );
 
 	for( i = 0; i < dungeon[player->z]->width; i++ )
 	{
@@ -52,8 +55,12 @@ int draw_main_screen( void )
 			}
 			else if( dungeon_memory[player->z][i][j] == '#' )
 			{
-				attron( COLOR_PAIR( 7 ) );
+				attron( COLOR_PAIR( COLOR_BLUE ) );
 				mvaddch( j+1, i, dungeon_memory[player->z][i][j] );
+			}
+			else
+			{
+				mvaddch( j+1, i, ' ' );
 			}
 		}
 	}
@@ -84,7 +91,7 @@ int draw_main_screen( void )
 		k = k->next;
 	}
 
-	attron( COLOR_PAIR( 7 ) );
+	attron( COLOR_PAIR( COLOR_WHITE ) );
 	mvprintw( 23, 0, "Nectarie the Gunslinger" );
 	mvprintw( 24, 0, "hp: 16/16 ac: 8 lv: 1" ); 
 

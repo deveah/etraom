@@ -31,15 +31,15 @@ void new_game( unsigned int seed )
 	{
 		dungeon[i] = alloc_map( map_name, MAP_WIDTH, MAP_HEIGHT );
 
-		/*int r;
+		int r;
 		
 		do
 		{
 			clear_map( dungeon[i] );
 			r = make_grid_map( dungeon[i], 10, 7, 0.6, 0.9, 0.2, 0.5 );
-		} while( r < 20 );*/
+		} while( r < 20 );
 
-		make_drunken_walk_cave( dungeon[i], MAP_WIDTH*MAP_HEIGHT );
+		//make_drunken_walk_cave( dungeon[i], MAP_WIDTH*MAP_HEIGHT );
 	}
 
 	bufdestroy( map_name );
@@ -52,6 +52,9 @@ void new_game( unsigned int seed )
 	player->y = 0;
 	player->z = 0;
 
+	player->hp = 5;
+	player->max_hp = 5;
+
 	while( dungeon[player->z]->terrain[player->x][player->y] != &tile_floor )
 	{
 		player->x = rand() % MAP_WIDTH;
@@ -63,6 +66,8 @@ void new_game( unsigned int seed )
 	player->ap = 0;
 
 	list_add_head( entity_list, (void*)player );
+
+	make_random_entities( 10 );
 
 	log_add( "Done creating new game.\n" );
 }
@@ -169,6 +174,11 @@ int handle_key( int key )
 		return entity_move_rel( player, -1,  1 );
 	if( key == 'n' )
 		return entity_move_rel( player,  1,  1 );
+	
+	if( key == 'z' )
+	{
+		/* TODO melee attack */
+	}
 
 	return 0;
 }
@@ -206,4 +216,37 @@ void free_dungeon_memory( void )
 	}
 
 	free( dungeon_memory );
+}
+
+void make_random_entities( int n )
+{
+	int i;
+	buf_t *name;
+	entity_t *ent;
+
+	for( i = 0; i < n; i++ )
+	{
+		name = bufnew( "Entity" );
+		ent = alloc_entity( name );
+		bufdestroy( name );
+
+		ent->x = 0;
+		ent->y = 0;
+		ent->z = 0;
+
+		ent->hp = 2;
+		ent->max_hp = 2;
+
+		while( dungeon[ent->z]->terrain[ent->x][ent->y] != &tile_floor )
+		{
+			ent->x = rand() % MAP_WIDTH;
+			ent->y = rand() % MAP_HEIGHT;
+		}
+	
+		ent->flags = 0;
+		ent->agility = rand() % 5 + 10;
+		ent->ap = 0;
+
+		list_add_tail( entity_list, (void*)ent );
+	}
 }

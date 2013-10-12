@@ -82,6 +82,8 @@ typedef struct
 	int ap;
 	int agility;
 
+	int hp, max_hp;
+
 	int x, y, z;
 
 	float ***lightmap;
@@ -118,6 +120,8 @@ void free_entity( entity_t *e );
 void free_entities( void );
 void entity_act( entity_t *e );
 int entity_move_rel( entity_t *e, int dx, int dy );
+entity_t *entity_find_by_position( int x, int y, int z );
+void entity_die( entity_t *e );
 
 /* message.c */
 void push_message( buf_t *b );
@@ -140,6 +144,7 @@ void *list_get_index( list_t *l, int i );
 void list_remove_index( list_t *l, int i );
 void free_list( list_t *l );
 void list_traverse( list_t *l, void (*func)(void*) );
+int list_find( list_t *l, void* item );
 
 /* game.c */
 void new_game( unsigned int seed );
@@ -149,6 +154,7 @@ int game_loop( void );
 int handle_key( int key );
 void alloc_dungeon_memory( void );
 void free_dungeon_memory( void );
+void make_random_entities( int n );
 
 /* ui.c */
 int init_ui( void );
