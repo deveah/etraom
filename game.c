@@ -34,10 +34,10 @@ void new_game( unsigned int seed )
 		do
 		{
 			clear_map( dungeon[i] );
-			r = make_grid_map( dungeon[i], 10, 7, 0.6, 0.9, 0.2, 0.5 );
+			r = make_grid_map( dungeon[i], 10, 7, 0.6, 0.9, 0.5 );
 		} while( r < 20 );
 
-		//make_drunken_walk_cave( dungeon[i], MAP_WIDTH*MAP_HEIGHT );
+		post_process_map( dungeon[i] );
 	}
 
 	bufdestroy( map_name );
@@ -45,6 +45,8 @@ void new_game( unsigned int seed )
 	buf_t *player_name = bufnew( "Player" );
 	player = alloc_entity( player_name );
 	bufdestroy( player_name );
+
+	player->face = '@';
 
 	player->x = 0;
 	player->y = 0;

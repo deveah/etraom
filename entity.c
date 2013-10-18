@@ -102,7 +102,9 @@ void entity_act( entity_t *e )
 		else
 		{
 			/* TODO */
-			e->ap -= 10;
+			
+			if( entity_dumb_ai( e ) )
+				e->ap -= 10;
 		}
 	}
 }
@@ -170,5 +172,22 @@ void entity_die( entity_t *e )
 	int i = list_find( entity_list, (void*)e );
 	list_remove_index( entity_list, i );
 	free_entity( e );
+}
+
+int entity_dumb_ai( entity_t *e )
+{
+	int rx, ry;
+
+	while( 1 )
+	{
+		rx = rand()%3 - 1;
+		ry = rand()%3 - 1;
+	
+		if( ( rx*rx + ry*ry > 0 ) &&
+			( !entity_find_by_position( e->x+rx, e->y+ry, e->z ) ) )
+			break;
+	}
+
+	return entity_move_rel( e, rx, ry );
 }
 

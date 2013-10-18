@@ -88,6 +88,9 @@ void bufprintf( buf_t *b, char* format, ... )
 {
 	/* TODO */
 	/* malloc a temp string, snprintf on it, replace buf data with it, free it */
+
+	(void) b;
+	(void) format;
 }
 
 void bufdestroy( buf_t *b )

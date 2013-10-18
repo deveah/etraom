@@ -63,7 +63,7 @@ void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 )
 	{
 		if(	( is_legal( cx, cy ) ) &&
 			( m->terrain[cx][cy] == &tile_wall ) )
-				m->terrain[cx][cy] = &tile_floor;
+				m->terrain[cx][cy] = &tile_cooridor;
 		
 		cx += xo;
 	}
@@ -72,7 +72,7 @@ void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 )
 	{
 		if(	( is_legal( cx, cy ) ) &&
 			( m->terrain[cx][cy] == &tile_wall ) )
-			m->terrain[cx][cy] = &tile_floor;
+			m->terrain[cx][cy] = &tile_cooridor;
 
 		cy += yo;
 	}
@@ -116,7 +116,7 @@ int all_rooms_linked( room_t **r, int nrooms )
 
 int make_grid_map(	map_t *m, int cell_width, int cell_height,
 					float room_chance, float node_chance,
-					float door_chance, float loop_chance )
+					float loop_chance )
 {
 	int rx, ry, rw, rh;
 	int room_count = 0;
@@ -146,8 +146,8 @@ int make_grid_map(	map_t *m, int cell_width, int cell_height,
 			{
 				while( 1 )
 				{
-					rx = rand() % (cell_width-1) + 2;
-					ry = rand() % (cell_height-1) + 2;
+					rx = rand() % (cell_width-1) + 1;
+					ry = rand() % (cell_height-1) + 1;
 					rw = rand() % (cell_width-1) + 2;
 					rh = rand() % (cell_height-1) + 2;
 
@@ -196,8 +196,6 @@ int make_grid_map(	map_t *m, int cell_width, int cell_height,
 
 	return room_count;
 }
-
-/* TODO: door placement, opening/closing */
 
 void make_drunken_walk_cave( map_t *m, int n )
 {
@@ -270,4 +268,48 @@ int count_neighbours( map_t *m, int x, int y, tile_t *w )
 	}
 
 	return r;
+}
+
+void post_process_map( map_t *m )
+{
+	int i, j;
+
+	/* TODO: door placement, opening/closing */
+
+	/*for( i = 0; i < m->width; i++ )
+	{
+		for( j = 0; j < m->height; j++ )
+		{
+
+			if( ( m->terrain[i][j] == &tile_cooridor ) &&
+				( count_neighbours( m, i, j, &tile_floor ) > 1 ) &&
+				( count_neighbours( m, i, j, &tile_wall ) > 3 ) )
+			{
+				m->terrain[i][j] = &tile_door_closed;
+			}
+		}
+	}*/
+	
+	for( i = 0; i < m->width; i++ )
+	{
+		for( j = 0; j < m->height; j++ )
+		{
+			if( m->terrain[i][j] == &tile_cooridor )
+			{
+				m->terrain[i][j] = &tile_floor;
+			}
+		}
+	}
+
+	for( i = 0; i < m->width; i++ )
+	{
+		for( j = 0; j < m->height; j++ )
+		{
+			if( ( m->terrain[i][j] == &tile_wall ) &&
+				( count_neighbours( m, i, j, &tile_floor ) == 0 ) )
+			{
+				m->terrain[i][j] = &tile_void;
+			}
+		}
+	}
 }

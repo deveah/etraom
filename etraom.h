@@ -56,7 +56,10 @@ typedef struct
 extern tile_t 
 	tile_void,
 	tile_floor,
-	tile_wall;
+	tile_cooridor,
+	tile_wall,
+	tile_door_closed,
+	tile_door_open;
 
 typedef struct
 {
@@ -123,6 +126,7 @@ void entity_act( entity_t *e );
 int entity_move_rel( entity_t *e, int dx, int dy );
 entity_t *entity_find_by_position( int x, int y, int z );
 void entity_die( entity_t *e );
+int entity_dumb_ai( entity_t *e );
 
 /* message.c */
 void push_message( buf_t *b );
@@ -153,8 +157,6 @@ int init_game( int argc, char** argv );
 int terminate_game( void );
 int game_loop( void );
 int handle_key( int key );
-void alloc_dungeon_memory( void );
-void free_dungeon_memory( void );
 void make_random_entities( int n );
 
 /* ui.c */
@@ -182,8 +184,9 @@ int closest_room( room_t **r, int nrooms, int n, float loop_chance );
 int all_rooms_linked( room_t **r, int nrooms );
 int make_grid_map(	map_t *m, int cell_width, int cell_height,
 					float room_chance, float node_chance,
-					float door_chance, float loop_chance );
+					float loop_chance );
 void make_drunken_walk_cave( map_t *m, int n );
 int count_neighbours( map_t *m, int x, int y, tile_t *w );
+void post_process_map( map_t *m );
 
 #endif

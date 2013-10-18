@@ -22,7 +22,7 @@ int init_ui( void )
 	int i;
 	for( i = 0; i < 9; i++ )
 	{
-		init_pair( i, i, 0 );
+		init_pair( i, i, -1 );
 	}
 
 	return 1;

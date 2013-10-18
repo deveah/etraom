@@ -17,9 +17,31 @@ tile_t tile_floor = {
 	.flags = 0
 };
 
+tile_t tile_cooridor = {
+	.face = '.',
+	.fg = COLOR_PAIR( COLOR_WHITE ),
+	.bg = COLOR_PAIR( COLOR_BLACK ),
+	.flags = 0
+};
+
 tile_t tile_wall = {
 	.face = '#',
 	.fg = COLOR_PAIR( COLOR_CYAN ),
 	.bg = COLOR_PAIR( COLOR_BLACK ),
 	.flags = TILEFLAG_SOLID | TILEFLAG_OPAQUE
 };
+
+tile_t tile_door_closed = {
+	.face = '+',
+	.fg = COLOR_PAIR( COLOR_YELLOW ),
+	.bg = COLOR_PAIR( COLOR_BLACK ),
+	.flags = TILEFLAG_SOLID | TILEFLAG_OPAQUE
+};
+
+tile_t tile_door_open = {
+	.face = '\'',
+	.fg = COLOR_PAIR( COLOR_YELLOW ),
+	.bg = COLOR_PAIR( COLOR_BLACK ),
+	.flags = TILEFLAG_SOLID | TILEFLAG_OPAQUE
+};
+

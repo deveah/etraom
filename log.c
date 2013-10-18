@@ -15,7 +15,6 @@ int open_logfile( void )
 	if( !logfile )
 		return 0;
 	
-	//fprintf( logfile, "Log begins at %i.\n", time( 0 ) );
 	fprintf( logfile, "Etraom version %s.\n\n", ETRAOM_VERSION );
 
 	return 1;
@@ -25,7 +24,6 @@ int close_logfile( void )
 {
 	if( !logfile )
 		return 0;
-	//fprintf( logfile, "\nLog ends at %i.\n", time( 0 ) );
 	fclose( logfile );
 
 	return 0;
@@ -33,7 +31,6 @@ int close_logfile( void )
 
 void log_add( char *format, ... )
 {
-	char buf[MAX_STRING_LENGTH];
 	va_list args;
 
 	if( !format )
@@ -42,9 +39,7 @@ void log_add( char *format, ... )
 		return;
 	
 	va_start( args, format );
-	vsnprintf( buf, MAX_STRING_LENGTH, format, args );
-	fputs( buf, logfile );
-
+	vfprintf( logfile, format, args );
 	va_end( args );
 }
 
