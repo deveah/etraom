@@ -109,6 +109,9 @@ extern list_t *entity_list;
 extern entity_t *player; /* shortcut to player struct */
 extern int ***dungeon_memory;
 
+/* terminal width/height */
+int term_w, term_h;
+
 /* util.c */
 int distance( int x1, int y1, int x2, int y2 );
 
@@ -188,5 +191,8 @@ int make_grid_map(	map_t *m, int cell_width, int cell_height,
 void make_drunken_walk_cave( map_t *m, int n );
 int count_neighbours( map_t *m, int x, int y, tile_t *w );
 void post_process_map( map_t *m );
+
+/* combat.c */
+int melee_attack( entity_t *atk, entity_t *def );
 
 #endif

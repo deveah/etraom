@@ -5,13 +5,19 @@
 
 int init_ui( void )
 {
-	/* TODO handle terminal capabilities and error handling */
-
 	initscr();
 	keypad( stdscr, TRUE );
 	raw();
 	noecho();
 	curs_set( 0 );
+
+	getmaxyx( stdscr, term_h, term_w );
+
+	/* TODO: fail loudly? */
+	if( ( term_w < 80 ) || ( term_h < 25 ) )
+	{
+		return -1;
+	}
 
 	start_color();
 
@@ -22,7 +28,11 @@ int init_ui( void )
 	int i;
 	for( i = 0; i < 9; i++ )
 	{
+#ifndef _WIN32
 		init_pair( i, i, -1 );
+#else
+		init_pair( i, i, 0 );
+#endif
 	}
 
 	return 1;
@@ -41,6 +51,8 @@ int draw_main_screen( void )
 	list_element *k;
 
 	log_add( "[draw_main_screen]\n" );
+
+	move( 0, 0 ); clrtoeol();
 
 	for( i = 0; i < dungeon[player->z]->width; i++ )
 	{
@@ -78,6 +90,8 @@ int draw_main_screen( void )
 		k = k->next;
 	}
 
+	buf_t *msgline = bufnew( "" );
+
 	k = message_list->head;
 	while( k )
 	{
@@ -85,11 +99,15 @@ int draw_main_screen( void )
 		message_t *m = (message_t*)k->data;
 		if( m->flags & MESSAGEFLAG_UNREAD )
 		{
-			mvprintw( 0, 0, "%s", m->msg->data );
+			bufcat( msgline, m->msg );
+			bufcats( msgline, " " );
+
 			m->flags &= ~MESSAGEFLAG_UNREAD;
 		}
 		k = k->next;
 	}
+
+	mvprintw( 0, 0, "%s", msgline->data );
 
 	attron( COLOR_PAIR( COLOR_WHITE ) );
 	mvprintw( 23, 0, "Nectarie the Gunslinger" );

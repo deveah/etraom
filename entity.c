@@ -89,7 +89,7 @@ void entity_act( entity_t *e )
 		if( e->flags & ENTITYFLAG_PLAYERCONTROL )
 		{
 			do_fov( e, 5 );
-			draw_main_screen(); /* TODO the right place for this? */
+			draw_main_screen();
 			
 			key = getch();
 
@@ -101,8 +101,6 @@ void entity_act( entity_t *e )
 		}
 		else
 		{
-			/* TODO */
-			
 			if( entity_dumb_ai( e ) )
 				e->ap -= 10;
 		}
@@ -118,12 +116,8 @@ int entity_move_rel( entity_t *e, int dx, int dy )
 		entity_t *ee = entity_find_by_position( e->x+dx, e->y+dy, e->z );
 		if( ee )
 		{
-			ee->hp--;
-			log_add( "[entity_move_rel] Attacked entity now has %i hp.\n", ee->hp );
+			melee_attack( e, ee );
 
-			if( ee->hp <= 0 )
-				entity_die( ee );
-			
 			buf_t *msg = bufnew( "You hit the thing!" );
 			push_message( msg );
 			bufdestroy( msg );
@@ -168,7 +162,13 @@ entity_t *entity_find_by_position( int x, int y, int z )
 
 void entity_die( entity_t *e )
 {
-	log_add( "[entity_die] Entity 0x%08x (%s) has died.\n", e, e->name );
+	buf_t *msg = bufnew( "The " );
+	bufcat( msg, e->name );
+	bufcats( msg, " dies!" );
+	push_message( msg );
+	bufdestroy( msg );
+
+	log_add( "[entity_die] Entity 0x%08x (%s) has died.\n", e, e->name->data );
 	int i = list_find( entity_list, (void*)e );
 	list_remove_index( entity_list, i );
 	free_entity( e );

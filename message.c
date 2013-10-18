@@ -10,7 +10,9 @@ void push_message( buf_t *b )
 	m->msg = bufcpy( b );
 	m->flags = MESSAGEFLAG_UNREAD;
 
-	list_add_tail( message_list, (void*)m );
+	log_add( "[message] %s\n", b->data );
+
+	list_add_head( message_list, (void*)m );
 }
 
 void free_message( message_t *m )

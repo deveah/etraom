@@ -176,6 +176,16 @@ int handle_key( int key )
 		/* TODO melee attack */
 	}
 
+	if( key == 'p' )
+	{
+		buf_t *b = bufnew( "abcdefghijklmnopqrstuvwxyz" );
+		bufcats( b, "abcdefghijklmnopqrstuvwxyz" );
+		bufcats( b, "abcdefghijklmnopqrstuvwxyz" );
+		bufcats( b, "abcdefghijklmnopqrstuvwxyz" );
+		push_message( b );
+		bufdestroy( b );
+	}
+
 	return 0;
 }
 
