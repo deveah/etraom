@@ -136,3 +136,29 @@ int draw_main_screen( void )
 	return 1;
 }
 
+int draw_inventory_screen( entity_t *e )
+{
+	list_element *el = e->inventory->head;
+	int i = 0;
+
+	mvprintw( 0, 0, "-- Inventory --" );
+
+	while( el )
+	{
+		item_t *it = (item_t*)el->data;
+
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( i+1, 0, "[ ] %s (%i)", it->name->data, it->quantity );
+		attrset( it->color );
+		mvaddch( i+1, 1, it->face );
+
+		i++;
+
+		el = el->next;
+	}
+
+	getch();
+
+	return 1;
+}
+

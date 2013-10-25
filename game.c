@@ -181,6 +181,11 @@ int handle_key( int key )
 	if( key == '>' )
 		return entity_follow_stairs( player );
 
+	if( key == ',' )
+		return entity_pick_up( player );
+	if( key == 'i' )
+		return draw_inventory_screen( player );
+
 	if( key == 'z' )
 	{
 		/* TODO melee attack */

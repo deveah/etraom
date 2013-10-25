@@ -164,12 +164,17 @@ entity_t *entity_find_by_position( int x, int y, int z );
 void entity_die( entity_t *e );
 int entity_dumb_ai( entity_t *e );
 int entity_follow_stairs( entity_t *e );
+int entity_pick_up( entity_t *e );
+int entity_drop( entity_t *e, item_t *i );
 
 /* item.c */
 item_t *alloc_item( buf_t *name );
 void free_item( item_t *i );
 void free_items( void );
-item_t *item_find_by_position( int x, int y, int z );
+list_t *item_find_by_position( int x, int y, int z );
+
+/* inventory.c */
+int inventory_add_item( entity_t *e, item_t *i );
 
 /* message.c */
 void push_message( buf_t *b );
@@ -207,6 +212,7 @@ void make_random_objects( int n );
 int init_ui( void );
 int terminate_ui( void );
 int draw_main_screen( void );
+int draw_inventory_screen( entity_t *e );
 
 /* log.c */
 int open_logfile( void );

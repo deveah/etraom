@@ -38,20 +38,28 @@ void free_items( void )
 	}
 }
 
-item_t *item_find_by_position( int x, int y, int z )
+/* multiple items can be found, so return a list */
+list_t *item_find_by_position( int x, int y, int z )
 {
 	list_element *e = item_list->head;
+	list_t *li = alloc_list();
 
 	while( e )
 	{
 		item_t *it = (item_t*)e->data;
 		if( ( x == it->x ) && ( y == it->y ) && ( z == it->z ) &&
 			( it->place == ITEMPLACE_DUNGEON ) )
-			return it;
+			list_add_tail( li, it );
 
 		e = e->next;
 	}
 
-	return NULL;
+	if( li->length == 0 )
+	{
+		return NULL;
+		free_list( li );
+	}
+	else
+		return li;
 }
 

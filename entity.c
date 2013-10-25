@@ -17,7 +17,9 @@ entity_t *alloc_entity( buf_t *name )
 	e->flags = 0;
 
 	e->lightmap = (float***) malloc( sizeof(float**) * MAX_LEVELS );
-	
+
+	e->inventory = alloc_list();
+
 	for( i = 0; i < MAX_LEVELS; i++ )
 	{
 		e->lightmap[i] = (float**) malloc( sizeof(float*) * MAP_WIDTH );
@@ -57,6 +59,8 @@ void free_entity( entity_t *e )
 			}
 		}
 		free( e->lightmap );
+
+		free_list( e->inventory );
 
 		bufdestroy( e->name );
 		free( e );
@@ -238,5 +242,51 @@ int entity_follow_stairs( entity_t *e )
 
 		return 0;
 	}
+}
+
+int entity_pick_up( entity_t *e )
+{
+	list_t *li = item_find_by_position( e->x, e->y, e->z );
+
+	if( !li )
+	{
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "There's nothing to pick up." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+
+		return 0;
+	}
+
+	if( li->length == 1 )
+	{
+		item_t *i = li->head->data;
+		int j = list_find( item_list, i );
+		list_remove_index( item_list, j );
+
+		inventory_add_item( e, i );
+		return 1;
+	}
+	else
+	{
+		/* TODO: unimplemented */
+		/* should pop up a menu, asking what to pick up */
+		return 1;
+	}
+
+	/* else(?) fail */
+	return 0;
+}
+
+int entity_drop( entity_t *e, item_t *i )
+{
+	(void) e;
+	(void) i;
+
+	/* TODO: unimplemented */
+
+	return 0;
 }
 
