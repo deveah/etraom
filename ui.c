@@ -62,12 +62,12 @@ int draw_main_screen( void )
 
 			if( player->lightmap[player->z][i][j] > 0.0f )
 			{
-				attron( t->fg );
+				attrset( t->fg );
 				mvaddch( j+1, i, t->face );
 			}
 			else if( dungeon[player->z]->memory[i][j] )
 			{
-				attron( COLOR_PAIR( COLOR_BLUE ) );
+				attrset( COLOR_PAIR( COLOR_BLUE ) );
 				mvaddch( j+1, i, dungeon[player->z]->memory[i][j]->face );
 			}
 			else
@@ -77,6 +77,26 @@ int draw_main_screen( void )
 		}
 	}
 
+	k = item_list->head;
+	while( k )
+	{
+		item_t *it = (item_t*)k->data;
+		if( ( it->z == player->z ) && ( it->place == ITEMPLACE_DUNGEON ) &&
+			( player->lightmap[player->z][it->x][it->y] > 0.0f ) )
+		{
+			attrset( it->color );
+
+			/*	an item on the ground should not prevent the stairs from being
+				visible */
+			if( ( dungeon[it->z]->terrain[it->x][it->y] == &tile_stairs_down ) ||
+				( dungeon[it->z]->terrain[it->x][it->y] == &tile_stairs_up ) )
+				attron( A_REVERSE );
+
+			mvaddch( it->y+1, it->x, it->face );
+		}
+		k = k->next;
+	}
+
 	k = entity_list->head;
 	while( k )
 	{
@@ -84,7 +104,7 @@ int draw_main_screen( void )
 		if(	( player->z == e->z ) &&
 			( player->lightmap[player->z][e->x][e->y] > 0.0f ) )
 		{
-			attron( e->color );
+			attrset( e->color );
 			mvaddch( e->y+1, e->x, e->face );
 		}
 		k = k->next;

@@ -313,3 +313,69 @@ void post_process_map( map_t *m )
 		}
 	}
 }
+
+void link_dungeon_levels( void )
+{
+	int i;
+	int cx, cy;
+	int tries;
+
+	for( i = 0; i < MAX_LEVELS-1; i++ )
+	{
+		cx = 0;
+		cy = 0;
+		tries = 0;
+
+		while( 1 )
+		{
+			tries++;
+			cx = rand() % MAP_WIDTH;
+			cy = rand() % MAP_HEIGHT;
+	
+			/*	stairs that have the same position on both maps being linked
+				look nicer, but if that can't happen (tries>MAGIC_NUMBER),
+				fall back to a random placement */
+
+			if( ( dungeon[i  ]->terrain[cx][cy] == &tile_floor ) &&
+				( dungeon[i+1]->terrain[cx][cy] == &tile_floor ) )
+			{
+				dungeon[i  ]->terrain[cx][cy] = &tile_stairs_down;
+				dungeon[i+1]->terrain[cx][cy] = &tile_stairs_up;
+
+				dungeon[i  ]->exit_x = cx;
+				dungeon[i  ]->exit_y = cy;
+				dungeon[i+1]->entrance_x = cx;
+				dungeon[i+1]->entrance_y = cy;
+
+				break;
+			}
+
+			if( tries > MAGIC_NUMBER )
+			{
+				cx = 0;
+				cy = 0;
+
+				while( dungeon[i]->terrain[cx][cy] != &tile_floor )
+				{
+					cx = rand() % MAP_WIDTH;
+					cy = rand() % MAP_HEIGHT;
+				}
+
+				dungeon[i]->terrain[cx][cy] = &tile_stairs_down;
+				dungeon[i]->exit_x = cx;
+				dungeon[i]->exit_y = cy;
+
+				while( dungeon[i+1]->terrain[cx][cy] != &tile_floor )
+				{
+					cx = rand() % MAP_WIDTH;
+					cy = rand() % MAP_HEIGHT;
+				}
+
+				dungeon[i+1]->terrain[cx][cy] = &tile_stairs_up;
+				dungeon[i+1]->entrance_x = cx;
+				dungeon[i+1]->entrance_y = cy;
+			}
+		}
+	}
+
+}

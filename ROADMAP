@@ -9,7 +9,7 @@ I.		Infrastructure
 
 	[x] entity struct
 
-	[ ] item struct
+	[x] item struct
 
 	[ ] weapon struct
 	[ ] consumable struct
@@ -20,10 +20,11 @@ I.		Infrastructure
 II.		Mechanics
 
 	[ ] inventory
-	[ ] main loop w/time system
+	[x] main loop w/time system
 	[x] field of view for each entity
 	[x] dungeon memory (player-only)
 		( store probably only as tile face -> int*** )
+	[x] level descend/ascend
 
 III.	Map generators
 

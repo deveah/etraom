@@ -45,3 +45,17 @@ tile_t tile_door_open = {
 	.flags = TILEFLAG_SOLID | TILEFLAG_OPAQUE
 };
 
+tile_t tile_stairs_down = {
+	.face = '>',
+	.fg = COLOR_PAIR( COLOR_CYAN ),
+	.bg = COLOR_PAIR( COLOR_BLACK ),
+	.flags = 0
+};
+
+tile_t tile_stairs_up = {
+	.face = '<',
+	.fg = COLOR_PAIR( COLOR_CYAN ),
+	.bg = COLOR_PAIR( COLOR_BLACK ),
+	.flags = 0
+};
+

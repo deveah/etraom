@@ -191,3 +191,52 @@ int entity_dumb_ai( entity_t *e )
 	return entity_move_rel( e, rx, ry );
 }
 
+int entity_follow_stairs( entity_t *e )
+{
+	tile_t *t = dungeon[e->z]->terrain[e->x][e->y];
+
+	if( t == &tile_stairs_down )
+	{
+		e->z++;
+		e->x = dungeon[e->z]->entrance_x;
+		e->y = dungeon[e->z]->entrance_y;
+
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "You descend." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+		
+		return 1;
+	}
+
+	else if( t == &tile_stairs_up )
+	{
+		e->z--;
+		e->x = dungeon[e->z]->exit_x;
+		e->y = dungeon[e->z]->exit_y;
+
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "You ascend." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+
+		return 1;
+	}
+
+	else
+	{
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "There are no stairs there." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+
+		return 0;
+	}
+}
+

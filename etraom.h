@@ -12,6 +12,8 @@
 #define MAP_WIDTH 80
 #define MAP_HEIGHT 22
 
+#define MAGIC_NUMBER 1994
+
 #define TILEFLAG_SOLID				(1<<0)
 #define TILEFLAG_OPAQUE				(1<<1)
 #define TILEFLAG_SEEN				(1<<2)
@@ -19,6 +21,12 @@
 #define ENTITYFLAG_PLAYERCONTROL	(1<<0)
 
 #define MESSAGEFLAG_UNREAD			(1<<0)
+
+#define ITEMPLACE_VOID				(0)
+#define ITEMPLACE_DUNGEON			(1)
+#define ITEMPLACE_ENTITY			(2)
+
+#define ITEMFLAG_PICKABLE			(1<<0)
 
 typedef struct
 {
@@ -59,7 +67,9 @@ extern tile_t
 	tile_cooridor,
 	tile_wall,
 	tile_door_closed,
-	tile_door_open;
+	tile_door_open,
+	tile_stairs_down,
+	tile_stairs_up;
 
 typedef struct
 {
@@ -68,6 +78,9 @@ typedef struct
 
 	tile_t ***terrain;
 	tile_t ***memory;
+
+	int entrance_x, entrance_y;
+	int exit_x, exit_y;
 
 	int flags;
 } map_t;
@@ -80,8 +93,24 @@ typedef struct
 typedef struct
 {
 	buf_t *name;
-	int face;
-	int color;
+	int face, color;
+
+	int quantity;
+	float quality;
+
+	int type;
+	void *specific;
+
+	int place;
+	int x, y, z;
+
+	int flags;
+} item_t;
+
+typedef struct
+{
+	buf_t *name;
+	int face, color;
 
 	int ap;
 	int agility;
@@ -91,6 +120,9 @@ typedef struct
 	int x, y, z;
 
 	float ***lightmap;
+
+	list_t *inventory;
+	item_t *worn, *in_hand;
 
 	int flags;
 } entity_t;
@@ -106,6 +138,7 @@ extern int main_seed;
 
 extern list_t *message_list;
 extern list_t *entity_list;
+extern list_t *item_list;
 extern entity_t *player; /* shortcut to player struct */
 extern int ***dungeon_memory;
 
@@ -130,6 +163,13 @@ int entity_move_rel( entity_t *e, int dx, int dy );
 entity_t *entity_find_by_position( int x, int y, int z );
 void entity_die( entity_t *e );
 int entity_dumb_ai( entity_t *e );
+int entity_follow_stairs( entity_t *e );
+
+/* item.c */
+item_t *alloc_item( buf_t *name );
+void free_item( item_t *i );
+void free_items( void );
+item_t *item_find_by_position( int x, int y, int z );
 
 /* message.c */
 void push_message( buf_t *b );
@@ -161,6 +201,7 @@ int terminate_game( void );
 int game_loop( void );
 int handle_key( int key );
 void make_random_entities( int n );
+void make_random_objects( int n );
 
 /* ui.c */
 int init_ui( void );
@@ -191,6 +232,7 @@ int make_grid_map(	map_t *m, int cell_width, int cell_height,
 void make_drunken_walk_cave( map_t *m, int n );
 int count_neighbours( map_t *m, int x, int y, tile_t *w );
 void post_process_map( map_t *m );
+void link_dungeon_levels( void );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
