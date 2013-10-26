@@ -60,6 +60,14 @@ void free_entity( entity_t *e )
 		}
 		free( e->lightmap );
 
+		list_element *el = e->inventory->head;
+
+		while( el )
+		{
+			free_item( (item_t*)el->data );
+			el = el->next;
+		}
+
 		free_list( e->inventory );
 
 		bufdestroy( e->name );
@@ -262,17 +270,21 @@ int entity_pick_up( entity_t *e )
 
 	if( li->length == 1 )
 	{
-		item_t *i = li->head->data;
+		item_t *i = (item_t*)li->head->data;
 		int j = list_find( item_list, i );
 		list_remove_index( item_list, j );
 
 		inventory_add_item( e, i );
+		
+		free_list( li );
 		return 1;
 	}
 	else
 	{
 		/* TODO: unimplemented */
 		/* should pop up a menu, asking what to pick up */
+		
+		free_list( li );
 		return 1;
 	}
 

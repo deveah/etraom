@@ -129,6 +129,8 @@ int draw_main_screen( void )
 
 	mvprintw( 0, 0, "%s", msgline->data );
 
+	bufdestroy( msgline );
+
 	attron( COLOR_PAIR( COLOR_WHITE ) );
 	mvprintw( 23, 0, "Nectarie the Gunslinger" );
 	mvprintw( 24, 0, "hp: 16/16 ac: 8 lv: 1" ); 

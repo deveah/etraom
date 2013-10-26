@@ -24,7 +24,10 @@ item_t *alloc_item( buf_t *name )
 void free_item( item_t *i )
 {
 	if( i )
+	{
+		bufdestroy( i->name );
 		free( i );
+	}
 }
 
 void free_items( void )
