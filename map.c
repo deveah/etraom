@@ -74,8 +74,6 @@ void clear_map( map_t *m )
 {
 	int i, j;
 
-	m->name = NULL;
-
 	for( i = 0; i < m->width; i++ )
 	{
 		for( j = 0; j < m->height; j++ )

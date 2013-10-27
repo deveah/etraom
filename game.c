@@ -155,40 +155,64 @@ int handle_key( int key )
 	
 	log_add( "[handle_key] Received key 0x%08x(%c)\n", key, key );
 
-	if( key == 'q' )
+	switch( key )
+	{
+	case 'q':
 		running = 0;
-
-	if( key == 'z' )
+		break;
+	case 'm':
 		reveal_map( player->z );
+		break;
 
-	if( key == 'h' )
+	case '4':
+	case KEY_LEFT:
+	case 'h':
 		return entity_move_rel( player, -1,  0 );
-	if( key == 'j' )
+	case '2':
+	case KEY_DOWN:
+	case 'j':
 		return entity_move_rel( player,  0,  1 );
-	if( key == 'k' )
+	case '8':
+	case KEY_UP:
+	case 'k':
 		return entity_move_rel( player,  0, -1 );
-	if( key == 'l' )
+	case '6':
+	case KEY_RIGHT:
+	case 'l':
 		return entity_move_rel( player,  1,  0 );
-	if( key == 'y' )
+	case '7':
+	case 'y':
 		return entity_move_rel( player, -1, -1 );
-	if( key == 'u' )
+	case '9':
+	case 'u':
 		return entity_move_rel( player,  1, -1 );
-	if( key == 'b' )
+	case '1':
+	case 'b':
 		return entity_move_rel( player, -1,  1 );
-	if( key == 'n' )
+	case '3':
+	case 'n':
 		return entity_move_rel( player,  1,  1 );
 
-	if( key == '>' )
+	case '5':
+	case '.':
+		/* wait a turn */
+		return 1;
+
+	case '>':
 		return entity_follow_stairs( player );
 
-	if( key == ',' )
+	case ',':
 		return entity_pick_up( player );
-	if( key == 'i' )
+	case 'i':
 		return draw_inventory_screen( player );
 
-	if( key == 'z' )
-	{
+	case 'z':
 		/* TODO melee attack */
+		break;
+	
+	default:
+		/* TODO warn unknown keystroke */
+		break;
 	}
 
 	return 0;
@@ -230,14 +254,12 @@ void make_random_entities( int n )
 void make_random_objects( int n )
 {
 	int i;
-	buf_t *name;
+	buf_t *name = bufnew( "Item" );
 	item_t *it;
 
 	for( i = 0; i < n; i++ )
 	{
-		name = bufnew( "Item" );
 		it = alloc_item( name );
-		bufdestroy( name );
 
 		it->place = ITEMPLACE_DUNGEON;
 		it->x = 0;
@@ -260,5 +282,7 @@ void make_random_objects( int n )
 
 		list_add_tail( item_list, (void*)it );
 	}
+
+	bufdestroy( name );
 }
 

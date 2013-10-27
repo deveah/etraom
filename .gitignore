@@ -4,3 +4,5 @@ log
 etraom
 *.dll
 *.exe
+*.o
+
