@@ -417,7 +417,35 @@ int count_neighbours_sparse( map_t *m, int x, int y, tile_t *w )
 	return n;
 }
 
+void dig_room_with_doors( map_t *m, int x, int y, int w, int h )
+{
+	int i, j;
+
+	for( i = x; i < x+w; i++ )
+	{
+		for( j = y; j < y+h; j++ )
+		{
+			if( is_legal( i, j ) )
+			{
+				if( ( i == x ) || ( j == y ) ||
+					( i == x+w-1 ) || ( j == y+h-1 ) )
+				{
+					if( m->terrain[i][j] == &tile_cooridor )
+						m->terrain[i][j] = &tile_door_closed;
+					else
+						m->terrain[i][j] = &tile_wall;
+				}
+				else
+				{
+					m->terrain[i][j] = &tile_floor;
+				}
+			}
+		}
+	}
+}
+
 /* returns number of cells dug */
+/* TODO: add arguments such as number of rooms, number of tries etc. */
 int make_dla_dungeon( map_t *m )
 {
 	int i, j;
@@ -427,6 +455,7 @@ int make_dla_dungeon( map_t *m )
 	int builder_spawned = 0;
 	int tries = 0;
 	int r = 0;
+	int linked = 0;
 
 	for( i = 0; i < MAP_WIDTH; i++ )
 	{
@@ -444,7 +473,7 @@ int make_dla_dungeon( map_t *m )
 	if( ( ry % 2 ) == 0 )
 		ry++;
 
-	m->terrain[rx][ry] = &tile_floor;
+	m->terrain[rx][ry] = &tile_cooridor;
 
 	while( tries < 700 )
 	{
@@ -466,17 +495,23 @@ int make_dla_dungeon( map_t *m )
 			}
 			else
 			{
-				n = count_neighbours_sparse( m, rx, ry, &tile_floor );
+				n = count_neighbours_sparse( m, rx, ry, &tile_cooridor );
 
 				if( ( n > 0 ) && ( n < 3 ) )
 				{
+					linked = 0;
+
 					for( i = rx-2; i <= rx+2; i+=2 )
 					{
 						for( j = ry-2; j <= ry+2; j+=2 )
 						{
 							if( ( is_legal_strict( i, j ) &&
-								( m->terrain[i][j] == &tile_floor ) ) )
-								dig_cooridor( m, i, j, rx, ry, &tile_floor );
+								( m->terrain[i][j] == &tile_cooridor ) ) &&
+								( !linked || ( rand()%3 == 0 ) ) )
+							{
+								dig_cooridor( m, i, j, rx, ry, &tile_cooridor );
+								linked = 1;
+							}
 						}
 					}
 
@@ -504,6 +539,30 @@ int make_dla_dungeon( map_t *m )
 			builder_spawned = 1;
 		}
 
+	}
+
+	for( i = 0; i < 10; i++ )
+	{
+		do
+		{
+			rx = rand() % ( MAP_WIDTH-2 );
+			ry = rand() % ( MAP_HEIGHT-2 );
+			dx = rand() % 10 + 3;
+			dy = rand() % 8 + 3;
+		}
+		while( !is_legal_strict( rx+dx, ry+dy ) );
+
+		if( ( rx % 2 ) == 1 )
+			rx++;
+		if( ( ry % 2 ) == 1 )
+			ry++;
+
+		if( ( dx % 2 ) == 0 )
+			dx++;
+		if( ( dy % 2 ) == 0 )
+			dy++;
+
+		dig_room_with_doors( m, rx, ry, dx, dy );
 	}
 
 	return r;

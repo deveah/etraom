@@ -122,38 +122,55 @@ void entity_act( entity_t *e )
 /* entity_move_rel should return 1 if the action is successful, otherwise 0 */
 int entity_move_rel( entity_t *e, int dx, int dy )
 {
-	if( 	( is_legal( e->x+dx, e->y+dy ) ) &&
-			!( dungeon[e->z]->terrain[e->x+dx][e->y+dy]->flags & TILEFLAG_SOLID ) )
+	if( is_legal( e->x+dx, e->y+dy ) )
 	{
-		entity_t *ee = entity_find_by_position( e->x+dx, e->y+dy, e->z );
-		if( ee )
+		/* TODO: only the player can open doors for now */
+		if( ( dungeon[e->z]->terrain[e->x+dx][e->y+dy] == &tile_door_closed ) &&
+			( e == player ) )
 		{
-			melee_attack( e, ee );
+			dungeon[e->z]->terrain[e->x+dx][e->y+dy] = &tile_door_open;
 
-			buf_t *msg = bufnew( "You hit the thing!" );
+			buf_t *msg = bufnew( "You open the door." );
 			push_message( msg );
 			bufdestroy( msg );
+
 			return 1;
+		}
+		else if( dungeon[e->z]->terrain[e->x+dx][e->y+dy]->flags & TILEFLAG_SOLID )
+		{
+			if( e == player )
+			{
+				buf_t *msg = bufnew( "Yep, it's solid alright." );
+				push_message( msg );
+				bufdestroy( msg );
+			}
+
+			return 0;
 		}
 		else
 		{
-			e->x += dx;
-			e->y += dy;
+			entity_t *ee = entity_find_by_position( e->x+dx, e->y+dy, e->z );
+			if( ee )
+			{
+				melee_attack( e, ee );
 
-			return 1;
+				buf_t *msg = bufnew( "You hit the thing!" );
+				push_message( msg );
+				bufdestroy( msg );
+				return 1;
+			}
+			else
+			{
+				e->x += dx;
+				e->y += dy;
+
+				return 1;
+			}
 		}
 	}
-	else
-	{
-		if( e == player )
-		{
-			buf_t *msg = bufnew( "Yep, it's solid alright." );
-			push_message( msg );
-			bufdestroy( msg );
-		}
 
-		return 0;
-	}
+	/* TODO: reachable? */
+	return 0;
 }
 
 entity_t *entity_find_by_position( int x, int y, int z )

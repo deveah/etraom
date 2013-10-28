@@ -241,6 +241,7 @@ int count_neighbours( map_t *m, int x, int y, tile_t *w );
 void post_process_map( map_t *m );
 void link_dungeon_levels( void );
 int count_neighbours_sparse( map_t *m, int x, int y, tile_t *w );
+void dig_room_with_doors( map_t *m, int x, int y, int w, int h );
 int make_dla_dungeon( map_t *m );
 void cavernize( map_t *m, float chance );
 

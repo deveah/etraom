@@ -42,7 +42,7 @@ tile_t tile_door_open = {
 	.face = '\'',
 	.fg = COLOR_PAIR( COLOR_YELLOW ),
 	.bg = COLOR_PAIR( COLOR_BLACK ),
-	.flags = TILEFLAG_SOLID | TILEFLAG_OPAQUE
+	.flags = 0
 };
 
 tile_t tile_stairs_down = {
