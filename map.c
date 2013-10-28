@@ -108,3 +108,9 @@ int is_legal( int x, int y )
 	return(	( x >= 0 ) && ( y >= 0 ) &&
 			( x < MAP_WIDTH ) && ( y < MAP_HEIGHT ) );
 }
+
+int is_legal_strict( int x, int y )
+{
+	return( ( x > 0 ) && ( y > 0 ) &&
+			( x < MAP_WIDTH-1 ) && ( y < MAP_HEIGHT-1 ) );
+}

@@ -52,7 +52,7 @@ void dig_room( map_t *m, int x, int y, int w, int h )
 	}
 }
 
-void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 )
+void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2, tile_t *w )
 {
 	int cx = x1,
 		cy = y1,
@@ -63,7 +63,7 @@ void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 )
 	{
 		if(	( is_legal( cx, cy ) ) &&
 			( m->terrain[cx][cy] == &tile_wall ) )
-				m->terrain[cx][cy] = &tile_cooridor;
+				m->terrain[cx][cy] = w;
 		
 		cx += xo;
 	}
@@ -72,10 +72,13 @@ void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 )
 	{
 		if(	( is_legal( cx, cy ) ) &&
 			( m->terrain[cx][cy] == &tile_wall ) )
-			m->terrain[cx][cy] = &tile_cooridor;
+			m->terrain[cx][cy] = w;
 
 		cy += yo;
 	}
+
+	if( is_legal( cx, cy ) )
+		m->terrain[cx][cy] = w;
 }
 
 int closest_room( room_t **r, int nrooms, int n, float loop_chance )
@@ -183,7 +186,7 @@ int make_grid_map(	map_t *m, int cell_width, int cell_height,
 		rb = closest_room( rooms, room_count, ra, loop_chance );
 		if( rb != -1 )
 		{
-			dig_cooridor( m, rooms[ra]->x, rooms[ra]->y, rooms[rb]->x, rooms[rb]->y );
+			dig_cooridor( m, rooms[ra]->x, rooms[ra]->y, rooms[rb]->x, rooms[rb]->y, &tile_cooridor );
 			if( rooms[ra]->linked == 1 )
 				rooms[rb]->linked = 1;
 			ra = rb;
@@ -312,6 +315,22 @@ void post_process_map( map_t *m )
 			}
 		}
 	}
+
+	/* remove pillars */
+	for( i = 0; i < m->width; i++ )
+	{
+		for( j = 0; j < m->height; j++ )
+		{
+			if( ( m->terrain[i][j] == &tile_wall ) &&
+				( count_neighbours( m, i, j, &tile_floor ) == 8 ) )
+			{
+				m->terrain[i][j] = &tile_floor;
+			}
+		}
+	}
+
+	/*	TODO: cut loose ends;
+		find all loose ends, put them in a list and process them */
 }
 
 void link_dungeon_levels( void )
@@ -379,3 +398,130 @@ void link_dungeon_levels( void )
 	}
 
 }
+
+int count_neighbours_sparse( map_t *m, int x, int y, tile_t *w )
+{
+	int i, j;
+	int n = 0;
+
+	for( i = x-2; i <= x+2; i += 2 )
+	{
+		for( j = y-2; j <= y+2; j += 2 )
+		{
+			if( ( is_legal_strict( i, j ) ) &&
+				( m->terrain[i][j] == w ) )
+				n++;
+		}
+	}
+
+	return n;
+}
+
+/* returns number of cells dug */
+int make_dla_dungeon( map_t *m )
+{
+	int i, j;
+	int rx, ry;
+	int dx, dy;
+	int n;
+	int builder_spawned = 0;
+	int tries = 0;
+	int r = 0;
+
+	for( i = 0; i < MAP_WIDTH; i++ )
+	{
+		for( j = 0; j < MAP_HEIGHT; j++ )
+		{
+			m->terrain[i][j] = &tile_wall;
+		}
+	}
+
+	rx = rand() % ( MAP_WIDTH - 2 );
+	ry = rand() % ( MAP_HEIGHT - 2 );
+
+	if( ( rx % 2 ) == 0 )
+		rx++;
+	if( ( ry % 2 ) == 0 )
+		ry++;
+
+	m->terrain[rx][ry] = &tile_floor;
+
+	while( tries < 700 )
+	{
+		if( builder_spawned )
+		{
+			do
+			{
+				dx = ( rand() % 3 ) - 1;
+				dy = ( rand() % 3 ) - 1;
+			}
+			while( dx*dx + dy*dy != 1 );
+
+			rx += dx*2;
+			ry += dy*2;
+
+			if( !( is_legal_strict( rx, ry ) ) )
+			{
+				builder_spawned = 0;
+			}
+			else
+			{
+				n = count_neighbours_sparse( m, rx, ry, &tile_floor );
+
+				if( ( n > 0 ) && ( n < 3 ) )
+				{
+					for( i = rx-2; i <= rx+2; i+=2 )
+					{
+						for( j = ry-2; j <= ry+2; j+=2 )
+						{
+							if( ( is_legal_strict( i, j ) &&
+								( m->terrain[i][j] == &tile_floor ) ) )
+								dig_cooridor( m, i, j, rx, ry, &tile_floor );
+						}
+					}
+
+					r++;
+					builder_spawned = 0;
+				}
+			}
+		}
+		else
+		{
+			do
+			{
+				tries++;
+
+				rx = rand() % ( MAP_WIDTH - 1 );
+				ry = rand() % ( MAP_HEIGHT - 1 );
+
+				if( ( rx % 2 ) == 0 )
+					rx++;
+				if( ( ry % 2 ) == 0 )
+					ry++;
+			}
+			while( m->terrain[rx][ry] != &tile_wall );
+
+			builder_spawned = 1;
+		}
+
+	}
+
+	return r;
+}
+
+void cavernize( map_t *m, float chance )
+{
+	int i, j;
+
+	for( i = 0; i < m->width; i++ )
+	{
+		for( j = 0; j < m->height; j++ )
+		{
+			if( ( ( (float)(rand()%1000) / 1000.0f ) < chance ) &&
+				( m->terrain[i][j] == &tile_floor ) &&
+				( count_neighbours( m, i, j, &tile_floor ) > 6 ) )
+				m->terrain[i][j] = &tile_wall;
+		}
+	}
+}
+

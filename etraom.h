@@ -225,11 +225,12 @@ void free_map( map_t *m );
 void clear_map( map_t *m );
 void debug_dump_map( map_t *m );
 int is_legal( int x, int y );
+int is_legal_strict( int x, int y );
 
 /* mapgen.c */
 int make_dummy_map( map_t *m, int nwalls );
 void dig_room( map_t *m, int x, int y, int w, int h );
-void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2 );
+void dig_cooridor( map_t *m, int x1, int y1, int x2, int y2, tile_t *w );
 int closest_room( room_t **r, int nrooms, int n, float loop_chance );
 int all_rooms_linked( room_t **r, int nrooms );
 int make_grid_map(	map_t *m, int cell_width, int cell_height,
@@ -239,6 +240,9 @@ void make_drunken_walk_cave( map_t *m, int n );
 int count_neighbours( map_t *m, int x, int y, tile_t *w );
 void post_process_map( map_t *m );
 void link_dungeon_levels( void );
+int count_neighbours_sparse( map_t *m, int x, int y, tile_t *w );
+int make_dla_dungeon( map_t *m );
+void cavernize( map_t *m, float chance );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );

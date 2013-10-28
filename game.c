@@ -32,13 +32,23 @@ void new_game( unsigned int seed )
 
 		int r;
 		
-		do
+		/*do
 		{
 			clear_map( dungeon[i] );
 			r = make_grid_map( dungeon[i], 10, 7, 0.6, 0.9, 0.5 );
-		} while( r < 20 );
+		}
+		while( r < 20 ); */
 
+		do
+		{
+			clear_map( dungeon[i] );
+			r = make_dla_dungeon( dungeon[i] );
+		}
+		while( r < 150 );
+		
 		post_process_map( dungeon[i] );
+		
+		debug_dump_map( dungeon[i] );
 	}
 
 	link_dungeon_levels();
