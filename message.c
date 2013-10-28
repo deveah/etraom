@@ -12,7 +12,7 @@ void push_message( buf_t *b )
 
 	log_add( "[message] %s\n", b->data );
 
-	list_add_head( message_list, (void*)m );
+	list_add_tail( message_list, (void*)m );
 }
 
 void free_message( message_t *m )

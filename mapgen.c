@@ -550,7 +550,8 @@ int make_dla_dungeon( map_t *m )
 			dx = rand() % 10 + 3;
 			dy = rand() % 8 + 3;
 		}
-		while( !is_legal_strict( rx+dx, ry+dy ) );
+		while(	( !is_legal_strict( rx+dx, ry+dy ) ) ||
+				( m->terrain[rx][ry] == &tile_wall ) );
 
 		if( ( rx % 2 ) == 1 )
 			rx++;

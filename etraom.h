@@ -30,6 +30,11 @@
 
 typedef struct
 {
+	int x, y;
+} point_t;
+
+typedef struct
+{
 	char* data;
 	int length;
 } buf_t;
@@ -160,6 +165,8 @@ void free_entity( entity_t *e );
 void free_entities( void );
 void entity_act( entity_t *e );
 int entity_move_rel( entity_t *e, int dx, int dy );
+int open_door( entity_t *e, int x, int y );
+int close_door( entity_t *e, int x, int y );
 entity_t *entity_find_by_position( int x, int y, int z );
 void entity_die( entity_t *e );
 int entity_dumb_ai( entity_t *e );
@@ -213,6 +220,7 @@ int init_ui( void );
 int terminate_ui( void );
 int draw_main_screen( void );
 int draw_inventory_screen( entity_t *e );
+point_t input_direction( char *msg );
 
 /* log.c */
 int open_logfile( void );

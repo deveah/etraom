@@ -124,19 +124,7 @@ int entity_move_rel( entity_t *e, int dx, int dy )
 {
 	if( is_legal( e->x+dx, e->y+dy ) )
 	{
-		/* TODO: only the player can open doors for now */
-		if( ( dungeon[e->z]->terrain[e->x+dx][e->y+dy] == &tile_door_closed ) &&
-			( e == player ) )
-		{
-			dungeon[e->z]->terrain[e->x+dx][e->y+dy] = &tile_door_open;
-
-			buf_t *msg = bufnew( "You open the door." );
-			push_message( msg );
-			bufdestroy( msg );
-
-			return 1;
-		}
-		else if( dungeon[e->z]->terrain[e->x+dx][e->y+dy]->flags & TILEFLAG_SOLID )
+		if( dungeon[e->z]->terrain[e->x+dx][e->y+dy]->flags & TILEFLAG_SOLID )
 		{
 			if( e == player )
 			{
@@ -152,11 +140,14 @@ int entity_move_rel( entity_t *e, int dx, int dy )
 			entity_t *ee = entity_find_by_position( e->x+dx, e->y+dy, e->z );
 			if( ee )
 			{
-				melee_attack( e, ee );
-
-				buf_t *msg = bufnew( "You hit the thing!" );
+				buf_t *msg = bufnew( "You hit the " );
+				bufcat( msg, ee->name );
+				bufcats( msg, "!" );
 				push_message( msg );
 				bufdestroy( msg );
+
+				melee_attack( e, ee );
+
 				return 1;
 			}
 			else
@@ -171,6 +162,100 @@ int entity_move_rel( entity_t *e, int dx, int dy )
 
 	/* TODO: reachable? */
 	return 0;
+}
+
+int open_door( entity_t *e, int x, int y )
+{
+	if( !is_legal( x, y ) )
+		return 0;
+	
+	if( dungeon[e->z]->terrain[x][y] == &tile_door_closed )
+	{
+		dungeon[e->z]->terrain[x][y] = &tile_door_open;
+
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "You open the door." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+		else
+		{
+			/* different messages if the door being opened is seen or not */
+			if( player->lightmap[e->z][e->x][e->y] > 0.0f )
+			{
+				buf_t *msg = bufnew( "A door opens." );
+				push_message( msg );
+				bufdestroy( msg );
+			}
+			else
+			{
+				buf_t *msg = bufnew( "You hear a door open." );
+				push_message( msg );
+				bufdestroy( msg );
+			}
+		}
+
+		return 1;
+	}
+	else
+	{
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "There's no closed door there." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+
+		return 0;
+	}
+}
+
+int close_door( entity_t *e, int x, int y )
+{
+	if( !is_legal( x, y ) )
+		return 0;
+	
+	if( dungeon[e->z]->terrain[x][y] == &tile_door_open )
+	{
+		dungeon[e->z]->terrain[x][y] = &tile_door_closed;
+
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "You close the door." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+		else
+		{
+			/* different messages if the door being opened is seen or not */
+			if( player->lightmap[e->z][e->x][e->y] > 0.0f )
+			{
+				buf_t *msg = bufnew( "A door closes." );
+				push_message( msg );
+				bufdestroy( msg );
+			}
+			else
+			{
+				buf_t *msg = bufnew( "You hear a door close." );
+				push_message( msg );
+				bufdestroy( msg );
+			}
+		}
+
+		return 1;
+	}
+	else
+	{
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "There's no open door there." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+
+		return 0;
+	}
 }
 
 entity_t *entity_find_by_position( int x, int y, int z )
@@ -206,13 +291,21 @@ void entity_die( entity_t *e )
 int entity_dumb_ai( entity_t *e )
 {
 	int rx, ry;
+	int tries = 0;
 
 	while( 1 )
 	{
+		tries++;
+		/* skip a turn if there's no viable output */
+		if( tries > 100 )
+			return 1;
+
 		rx = rand()%3 - 1;
 		ry = rand()%3 - 1;
 	
 		if( ( rx*rx + ry*ry > 0 ) &&
+			( is_legal( e->x+rx, e->y+ry ) ) &&
+			!( dungeon[e->z]->terrain[e->x+rx][e->y+ry]->flags & TILEFLAG_SOLID ) &&
 			( !entity_find_by_position( e->x+rx, e->y+ry, e->z ) ) )
 			break;
 	}
@@ -292,6 +385,15 @@ int entity_pick_up( entity_t *e )
 		list_remove_index( item_list, j );
 
 		inventory_add_item( e, i );
+
+		if( e == player )
+		{
+			buf_t *msg = bufnew( "You pick up " );
+			bufcat( msg, i->name );
+			bufcats( msg, "." );
+			push_message( msg );
+			bufdestroy( msg );
+		}
 		
 		free_list( li );
 		return 1;

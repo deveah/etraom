@@ -161,6 +161,7 @@ int game_loop( void )
 /* handle_key should return 1 if action is successful, otherwise 0 */
 int handle_key( int key )
 {
+	point_t p;
 	entity_t *player = (entity_t*)(entity_list->head->data);
 	
 	log_add( "[handle_key] Received key 0x%08x(%c)\n", key, key );
@@ -216,9 +217,17 @@ int handle_key( int key )
 	case 'i':
 		return draw_inventory_screen( player );
 
-	case 'z':
-		/* TODO melee attack */
-		break;
+	case 'o':
+		p = input_direction( "Open where?" );
+		return open_door( player, player->x + p.x, player->y + p.y );
+	case 'c':
+		p = input_direction( "Close where?" );
+		return close_door( player, player->x + p.x, player->y + p.y );
+
+	/* TODO: should the melee attack require an extra keystroke? */
+	/*case 'z':
+		p = input_direction( "Attack where?" );
+		break;*/
 	
 	default:
 		/* TODO warn unknown keystroke */

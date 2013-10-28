@@ -164,3 +164,63 @@ int draw_inventory_screen( entity_t *e )
 	return 1;
 }
 
+point_t input_direction( char *msg )
+{
+	int k;
+	point_t p;
+
+	if( msg )
+	{
+		move( 0, 0 ); clrtoeol();
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( 0, 0, "%s", msg );
+		refresh();
+	}
+
+	k = getch();
+
+	switch( k )
+	{
+	case '4':
+	case KEY_LEFT:
+	case 'h':
+		p.x = -1; p.y =  0;
+		break;
+	case '2':
+	case KEY_DOWN:
+	case 'j':
+		p.x =  0; p.y =  1;
+		break;
+	case '8':
+	case KEY_UP:
+	case 'k':
+		p.x =  0; p.y = -1;
+		break;
+	case '6':
+	case KEY_RIGHT:
+	case 'l':
+		p.x =  1; p.y =  0;
+		break;
+	case '7':
+	case 'y':
+		p.x = -1; p.y = -1;
+		break;
+	case '9':
+	case 'u':
+		p.x =  1; p.y = -1;
+		break;
+	case '1':
+	case 'b':
+		p.x = -1; p.y =  1;
+		break;
+	case '3':
+	case 'n':
+		p.x =  1; p.y =  1;
+		break;
+	default:
+		p.x = 0; p.y = 0;
+	}
+
+	return p;
+}
+
