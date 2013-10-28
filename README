@@ -1,7 +1,11 @@
 
 	Etraom
-	a never-finished roguelike of sorts
+	a traditional roguelike
 	--
 
-	There is really nothing interesting here.
+	And by traditional, I mean it's text-based, powered by curses, its levels
+	are randomly generated, and it features permadeath. No graphics, no genre
+	blending. A traditional roguelike.
 
+	Contributions of any kind are appreciated, so fork away!
+	
