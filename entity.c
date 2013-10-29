@@ -384,8 +384,6 @@ int entity_pick_up( entity_t *e )
 		int j = list_find( item_list, i );
 		list_remove_index( item_list, j );
 
-		inventory_add_item( e, i );
-
 		if( e == player )
 		{
 			buf_t *msg = bufnew( "You pick up " );
@@ -394,6 +392,8 @@ int entity_pick_up( entity_t *e )
 			push_message( msg );
 			bufdestroy( msg );
 		}
+		
+		inventory_add_item( e, i );
 		
 		free_list( li );
 		return 1;

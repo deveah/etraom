@@ -432,8 +432,8 @@ void dig_room_with_doors( map_t *m, int x, int y, int w, int h )
 				{
 					if( m->terrain[i][j] == &tile_cooridor )
 						m->terrain[i][j] = &tile_door_closed;
-					else
-						m->terrain[i][j] = &tile_wall;
+					/*else
+						m->terrain[i][j] = &tile_wall;*/
 				}
 				else
 				{
@@ -475,7 +475,7 @@ int make_dla_dungeon( map_t *m )
 
 	m->terrain[rx][ry] = &tile_cooridor;
 
-	while( tries < 700 )
+	while( tries < 900 )
 	{
 		if( builder_spawned )
 		{
@@ -497,7 +497,7 @@ int make_dla_dungeon( map_t *m )
 			{
 				n = count_neighbours_sparse( m, rx, ry, &tile_cooridor );
 
-				if( ( n > 0 ) && ( n < 3 ) )
+				if( ( n > 0 ) && ( n < 7 ) )
 				{
 					linked = 0;
 
@@ -507,7 +507,7 @@ int make_dla_dungeon( map_t *m )
 						{
 							if( ( is_legal_strict( i, j ) &&
 								( m->terrain[i][j] == &tile_cooridor ) ) &&
-								( !linked || ( rand()%3 == 0 ) ) )
+								( !linked || ( rand()%5 == 0 ) ) )
 							{
 								dig_cooridor( m, i, j, rx, ry, &tile_cooridor );
 								linked = 1;
@@ -547,11 +547,11 @@ int make_dla_dungeon( map_t *m )
 		{
 			rx = rand() % ( MAP_WIDTH-2 );
 			ry = rand() % ( MAP_HEIGHT-2 );
-			dx = rand() % 10 + 3;
-			dy = rand() % 8 + 3;
+			dx = rand() % 7 + 3;
+			dy = rand() % 5 + 3;
 		}
 		while(	( !is_legal_strict( rx+dx, ry+dy ) ) ||
-				( m->terrain[rx][ry] == &tile_wall ) );
+				( m->terrain[rx][ry] != &tile_cooridor ) );
 
 		if( ( rx % 2 ) == 1 )
 			rx++;
