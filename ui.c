@@ -143,6 +143,8 @@ int draw_inventory_screen( entity_t *e )
 	list_element *el = e->inventory->head;
 	int i = 0;
 
+	move( 0, 0 ); clrtoeol();
+	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
 	mvprintw( 0, 0, "-- Inventory --" );
 
 	while( el )
@@ -150,9 +152,9 @@ int draw_inventory_screen( entity_t *e )
 		item_t *it = (item_t*)el->data;
 
 		attrset( COLOR_PAIR( COLOR_WHITE ) );
-		mvprintw( i+1, 0, "[ ] %s (%i)", it->name->data, it->quantity );
+		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
 		attrset( it->color );
-		mvaddch( i+1, 1, it->face );
+		mvaddch( i+1, 4, it->face );
 
 		i++;
 
@@ -161,6 +163,88 @@ int draw_inventory_screen( entity_t *e )
 
 	getch();
 
+	return 1;
+}
+
+int draw_pick_up_screen( entity_t *e )
+{
+	list_t *li = item_find_by_position( e->x, e->y, e->z );
+	list_element *el;
+	int i = 0;
+
+	if( !li )
+	{
+		buf_t *msg = bufnew( "There's nothing to pick up." );
+		push_message( msg );
+		bufdestroy( msg );
+
+		return 0;
+	}
+
+	move( 0, 0 ); clrtoeol();
+	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+	mvprintw( 0, 0, "-- Pick Up --" );
+
+	el = li->head;
+
+	while( el )
+	{
+		item_t *it = (item_t*)el->data;
+
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
+		attrset( it->color );
+		mvaddch( i+1, 4, it->face );
+
+		i++;
+
+		el = el->next;
+	}
+
+	int k = getch();
+	k -= 'a';
+
+	if( ( k < 0 ) || ( k >= i ) )
+	{
+		buf_t *msg = bufnew( "Okay, then." );
+		push_message( msg );
+		bufdestroy( msg );
+
+		free_list( li );
+		return 0;
+	}
+
+	item_t *it = (item_t*)list_get_index( li, k );
+	int q = 1;
+
+	if( it->quantity > 1 )
+	{
+		move( 0, 0 ); clrtoeol();
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( 0, 0, "How many? " );
+		echo();
+		scanw( "%i", &q );
+		noecho();
+
+		if( ( k <= 0 ) || ( k > it->quantity ) )
+		{
+			buf_t *msg = bufnew( "Okay, then." );
+			push_message( msg );
+			bufdestroy( msg );
+
+			free_list( li );
+			return 0;
+		}
+	}
+
+	buf_t *msg = bufnew( "You pick up " );
+	bufcat( msg, it->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
+
+	entity_pick_up( e, it, q );
+	free_list( li );
 	return 1;
 }
 

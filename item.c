@@ -59,8 +59,8 @@ list_t *item_find_by_position( int x, int y, int z )
 
 	if( li->length == 0 )
 	{
-		return NULL;
 		free_list( li );
+		return NULL;
 	}
 	else
 		return li;

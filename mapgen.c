@@ -304,6 +304,7 @@ void post_process_map( map_t *m )
 		}
 	}
 
+	/* remove walls that have no neighbouring floor tiles */
 	for( i = 0; i < m->width; i++ )
 	{
 		for( j = 0; j < m->height; j++ )
@@ -329,8 +330,6 @@ void post_process_map( map_t *m )
 		}
 	}
 
-	/*	TODO: cut loose ends;
-		find all loose ends, put them in a list and process them */
 }
 
 void link_dungeon_levels( void )
@@ -497,7 +496,7 @@ int make_dla_dungeon( map_t *m )
 			{
 				n = count_neighbours_sparse( m, rx, ry, &tile_cooridor );
 
-				if( ( n > 0 ) && ( n < 7 ) )
+				if( n > 0 )
 				{
 					linked = 0;
 
@@ -507,7 +506,7 @@ int make_dla_dungeon( map_t *m )
 						{
 							if( ( is_legal_strict( i, j ) &&
 								( m->terrain[i][j] == &tile_cooridor ) ) &&
-								( !linked || ( rand()%5 == 0 ) ) )
+								( !linked || ( rand()%7 == 0 ) ) )
 							{
 								dig_cooridor( m, i, j, rx, ry, &tile_cooridor );
 								linked = 1;

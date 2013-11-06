@@ -213,7 +213,8 @@ int handle_key( int key )
 		return entity_follow_stairs( player );
 
 	case ',':
-		return entity_pick_up( player );
+		/*return entity_pick_up( player );*/
+		return draw_pick_up_screen( player );
 	case 'i':
 		return draw_inventory_screen( player );
 

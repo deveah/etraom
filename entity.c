@@ -362,53 +362,35 @@ int entity_follow_stairs( entity_t *e )
 	}
 }
 
-int entity_pick_up( entity_t *e )
+int entity_pick_up( entity_t *e, item_t *i, int quantity )
 {
-	list_t *li = item_find_by_position( e->x, e->y, e->z );
-
-	if( !li )
+	if( i->quantity == quantity )
 	{
-		if( e == player )
-		{
-			buf_t *msg = bufnew( "There's nothing to pick up." );
-			push_message( msg );
-			bufdestroy( msg );
-		}
-
-		return 0;
-	}
-
-	if( li->length == 1 )
-	{
-		item_t *i = (item_t*)li->head->data;
-		int j = list_find( item_list, i );
-		list_remove_index( item_list, j );
-
-		if( e == player )
-		{
-			buf_t *msg = bufnew( "You pick up " );
-			bufcat( msg, i->name );
-			bufcats( msg, "." );
-			push_message( msg );
-			bufdestroy( msg );
-		}
-		
 		inventory_add_item( e, i );
 		
-		free_list( li );
-		return 1;
+		int j = list_find( item_list, (void*)i );
+		list_remove_index( item_list, j );
 	}
 	else
 	{
-		/* TODO: unimplemented */
-		/* should pop up a menu, asking what to pick up */
-		
-		free_list( li );
-		return 1;
+		item_t *ii = alloc_item( i->name );
+		ii->face = i->face;
+		ii->color = i->color;
+		ii->quantity = quantity;
+		ii->quality = i->quality;
+		ii->type = i->type;
+		/* TODO: should clone 'specific' ? */
+		ii->specific = i->specific;
+		ii->place = i->place;
+		ii->x = i->x;
+		ii->y = i->y;
+		ii->z = i->z;
+		ii->flags = i->flags;
+
+		inventory_add_item( e, ii );
 	}
 
-	/* else(?) fail */
-	return 0;
+	return 1;
 }
 
 int entity_drop( entity_t *e, item_t *i )
