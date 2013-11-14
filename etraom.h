@@ -172,7 +172,7 @@ void entity_die( entity_t *e );
 int entity_dumb_ai( entity_t *e );
 int entity_follow_stairs( entity_t *e );
 int entity_pick_up( entity_t *e, item_t *i, int quantity );
-int entity_drop( entity_t *e, item_t *i );
+int entity_drop( entity_t *e, item_t *i, int quantity );
 
 /* item.c */
 item_t *alloc_item( buf_t *name );
@@ -221,6 +221,7 @@ int terminate_ui( void );
 int draw_main_screen( void );
 int draw_inventory_screen( entity_t *e );
 int draw_pick_up_screen( entity_t *e );
+int draw_drop_screen( entity_t *e );
 point_t input_direction( char *msg );
 
 /* log.c */

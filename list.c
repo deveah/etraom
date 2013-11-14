@@ -63,7 +63,7 @@ void print_list( list_t *l )
 
 	while( el )
 	{
-		printf( "%i ", (int) el->data );
+		printf( "%08x ", (int) el->data );
 		el = el->next;
 	}
 
@@ -91,18 +91,30 @@ void list_remove_index( list_t *l, int i )
 {
 	list_element *el = l->head;
 	list_element *temp;
-	int j = 0;
+	int j = -1;
+
+	if( ( i == 0 ) && ( l->length == 1 ) )
+	{
+		free( l->head );
+		l->length = 0;
+		l->head = NULL;
+		l->tail = NULL;
+	}
 
 	while( el )
 	{
 		if( j+1 == i )
 		{
 			temp = el->next;
-			el->next = temp->next;
+
+			if( el->next )
+				el->next = temp->next;
 
 			free( temp );
 
 			l->length--;
+
+			return;
 		}
 
 		el = el->next;

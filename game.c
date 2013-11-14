@@ -217,6 +217,8 @@ int handle_key( int key )
 		return draw_pick_up_screen( player );
 	case 'i':
 		return draw_inventory_screen( player );
+	case 'd':
+		return draw_drop_screen( player );
 
 	case 'o':
 		p = input_direction( "Open where?" );

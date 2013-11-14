@@ -393,13 +393,42 @@ int entity_pick_up( entity_t *e, item_t *i, int quantity )
 	return 1;
 }
 
-int entity_drop( entity_t *e, item_t *i )
+int entity_drop( entity_t *e, item_t *i, int quantity )
 {
-	(void) e;
-	(void) i;
+	/*list_t *li = item_find_by_position( e->x, e->y, e->z );*/
 
-	/* TODO: unimplemented */
+	if( i->quantity == quantity )
+	{
+		list_add_tail( item_list, i );
 
-	return 0;
+		int j = list_find( e->inventory, (void*)i );
+		list_remove_index( e->inventory, j );
+
+		i->x = e->x;
+		i->y = e->y;
+		i->z = e->z;
+		i->place = ITEMPLACE_DUNGEON;
+	}
+	else
+	{
+		item_t *ii = alloc_item( i->name );
+		ii->face = i->face;
+		ii->color = i->color;
+		ii->quantity = quantity;
+		ii->quality = i->quality;
+		ii->type = i->type;
+		/* TODO: should clone 'specific' ? */
+		ii->specific = i->specific;
+		ii->place = i->place;
+		ii->x = i->x;
+		ii->y = i->y;
+		ii->z = i->z;
+		ii->flags = i->flags;
+
+		list_add_tail( item_list, ii );
+		i->quantity -= quantity;
+	}
+
+	return 1;
 }
 

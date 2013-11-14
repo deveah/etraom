@@ -7,7 +7,7 @@
 
 buf_t *bufnew( char* str )
 {
-	buf_t *b = malloc( sizeof(buf_t) );
+	buf_t *b = (buf_t*)malloc( sizeof(buf_t) );
 
 	if( str )
 	{
