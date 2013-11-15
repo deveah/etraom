@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include <curses.h>
 
 #include "etraom.h"
@@ -389,6 +390,8 @@ int entity_pick_up( entity_t *e, item_t *i, int quantity )
 		ii->z = i->z;
 		ii->flags = i->flags;
 
+		i->quantity -= quantity;
+
 		inventory_add_item( e, ii );
 	}
 
@@ -397,37 +400,73 @@ int entity_pick_up( entity_t *e, item_t *i, int quantity )
 
 int entity_drop( entity_t *e, item_t *i, int quantity )
 {
-	/*list_t *li = item_find_by_position( e->x, e->y, e->z );*/
+	list_t *li = item_find_by_position( e->x, e->y, e->z );
+	list_element *el = NULL;
+	item_t *found = NULL;
+
+	if( li )
+		el = li->head;
+	
+	while( el )
+	{
+		item_t *ij = (item_t*)el->data;
+
+		/* TODO: better comparison? */
+		if( ( strcmp( i->name->data, ij->name->data ) == 0 ) &&
+			( i->quality == ij->quality ) )
+		{
+			found = ij;
+			break;
+		}
+
+		el = el->next;
+	}
 
 	if( i->quantity == quantity )
 	{
-		list_add_head( item_list, i );
-
 		int j = list_find( e->inventory, (void*)i );
 		list_remove_index( e->inventory, j );
 
-		i->x = e->x;
-		i->y = e->y;
-		i->z = e->z;
-		i->place = ITEMPLACE_DUNGEON;
+		if( found )
+		{
+			found->quantity += quantity;
+			free_item( i );
+		}
+		else
+		{
+			list_add_head( item_list, i );
+
+			i->x = e->x;
+			i->y = e->y;
+			i->z = e->z;
+			i->place = ITEMPLACE_DUNGEON;
+		}
 	}
 	else
 	{
-		item_t *ii = alloc_item( i->name );
-		ii->face = i->face;
-		ii->color = i->color;
-		ii->quantity = quantity;
-		ii->quality = i->quality;
-		ii->type = i->type;
-		/* TODO: should clone 'specific' ? */
-		ii->specific = i->specific;
-		ii->x = e->x;
-		ii->y = e->y;
-		ii->z = e->z;
-		ii->place = ITEMPLACE_DUNGEON;
-		ii->flags = i->flags;
+		if( found )
+		{
+			found->quantity += quantity;
+		}
+		else
+		{
+			item_t *ii = alloc_item( i->name );
+			ii->face = i->face;
+			ii->color = i->color;
+			ii->quantity = quantity;
+			ii->quality = i->quality;
+			ii->type = i->type;
+			/* TODO: should clone 'specific' ? */
+			ii->specific = i->specific;
+			ii->x = e->x;
+			ii->y = e->y;
+			ii->z = e->z;
+			ii->place = ITEMPLACE_DUNGEON;
+			ii->flags = i->flags;
 
-		list_add_head( item_list, ii );
+			list_add_head( item_list, ii );
+		}
+
 		i->quantity -= quantity;
 	}
 

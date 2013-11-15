@@ -27,6 +27,7 @@ void list_add_head( list_t *l, void *e )
 	else
 	{
 		l->head = el;
+		l->tail = el;
 		el->next = NULL;
 	}
 
