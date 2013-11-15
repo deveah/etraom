@@ -234,7 +234,7 @@ int draw_pick_up_screen( entity_t *e )
 		scanw( "%i", &q );
 		noecho();
 
-		if( ( k <= 0 ) || ( k > it->quantity ) )
+		if( ( q <= 0 ) || ( q > it->quantity ) )
 		{
 			buf_t *msg = bufnew( "Okay, then." );
 			push_message( msg );
@@ -316,13 +316,12 @@ int draw_drop_screen( entity_t *e )
 		scanw( "%i", &q );
 		noecho();
 
-		if( ( k <= 0 ) || ( k > it->quantity ) )
+		if( ( q <= 0 ) || ( q > it->quantity ) )
 		{
 			buf_t *msg = bufnew( "Okay, then." );
 			push_message( msg );
 			bufdestroy( msg );
 
-			free_list( li );
 			return 0;
 		}
 	}
@@ -334,7 +333,6 @@ int draw_drop_screen( entity_t *e )
 	bufdestroy( msg );
 
 	entity_drop( e, it, q );
-	free_list( li );
 	return 1;
 }
 

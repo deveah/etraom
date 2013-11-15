@@ -152,6 +152,8 @@ int entity_move_rel( entity_t *e, int dx, int dy )
 			}
 			else
 			{
+				log_add( "[entity_move_rel] Entity 0x%08x('%s') has moved to "
+					"(%i, %i, %i)\n", e, e->name->data, e->x+dx, e->y+dy, e->z );
 				e->x += dx;
 				e->y += dy;
 
@@ -399,7 +401,7 @@ int entity_drop( entity_t *e, item_t *i, int quantity )
 
 	if( i->quantity == quantity )
 	{
-		list_add_tail( item_list, i );
+		list_add_head( item_list, i );
 
 		int j = list_find( e->inventory, (void*)i );
 		list_remove_index( e->inventory, j );
@@ -419,13 +421,13 @@ int entity_drop( entity_t *e, item_t *i, int quantity )
 		ii->type = i->type;
 		/* TODO: should clone 'specific' ? */
 		ii->specific = i->specific;
-		ii->place = i->place;
-		ii->x = i->x;
-		ii->y = i->y;
-		ii->z = i->z;
+		ii->x = e->x;
+		ii->y = e->y;
+		ii->z = e->z;
+		ii->place = ITEMPLACE_DUNGEON;
 		ii->flags = i->flags;
 
-		list_add_tail( item_list, ii );
+		list_add_head( item_list, ii );
 		i->quantity -= quantity;
 	}
 

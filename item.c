@@ -52,7 +52,7 @@ list_t *item_find_by_position( int x, int y, int z )
 		item_t *it = (item_t*)e->data;
 		if( ( x == it->x ) && ( y == it->y ) && ( z == it->z ) &&
 			( it->place == ITEMPLACE_DUNGEON ) )
-			list_add_tail( li, it );
+			list_add_head( li, it );
 
 		e = e->next;
 	}

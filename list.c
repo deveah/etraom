@@ -27,7 +27,6 @@ void list_add_head( list_t *l, void *e )
 	else
 	{
 		l->head = el;
-		l->tail = el;
 		el->next = NULL;
 	}
 
@@ -87,18 +86,26 @@ void *list_get_index( list_t *l, int i )
 	return NULL;
 }
 
+void list_remove_head( list_t *l )
+{
+	list_element *temp = l->head;
+
+	l->head = l->head->next;
+	free( temp );
+
+	l->length--;
+}
+
 void list_remove_index( list_t *l, int i )
 {
 	list_element *el = l->head;
 	list_element *temp;
-	int j = -1;
+	int j = 0;
 
-	if( ( i == 0 ) && ( l->length == 1 ) )
+	if( i == 0 )
 	{
-		free( l->head );
-		l->length = 0;
-		l->head = NULL;
-		l->tail = NULL;
+		list_remove_head( l );
+		return;
 	}
 
 	while( el )

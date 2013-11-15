@@ -31,7 +31,7 @@ int inventory_add_item( entity_t *e, item_t *i )
 	}
 	else
 	{
-		list_add_tail( e->inventory, i );
+		list_add_head( e->inventory, i );
 		i->place = ITEMPLACE_ENTITY;
 	}
 

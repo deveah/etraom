@@ -162,7 +162,6 @@ int game_loop( void )
 int handle_key( int key )
 {
 	point_t p;
-	entity_t *player = (entity_t*)(entity_list->head->data);
 	
 	log_add( "[handle_key] Received key 0x%08x(%c)\n", key, key );
 
@@ -269,7 +268,7 @@ void make_random_entities( int n )
 		ent->agility = rand() % 5 + 10;
 		ent->ap = 0;
 
-		list_add_tail( entity_list, (void*)ent );
+		list_add_head( entity_list, (void*)ent );
 	}
 }
 
@@ -302,7 +301,7 @@ void make_random_objects( int n )
 
 		it->flags = ITEMFLAG_PICKABLE;
 
-		list_add_tail( item_list, (void*)it );
+		list_add_head( item_list, (void*)it );
 	}
 
 	bufdestroy( name );

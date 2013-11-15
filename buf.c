@@ -9,6 +9,9 @@ buf_t *bufnew( char* str )
 {
 	buf_t *b = (buf_t*)malloc( sizeof(buf_t) );
 
+	if( !b )
+		fprintf( stderr, "malloc failed.\n" );
+
 	if( str )
 	{
 		b->data = malloc( sizeof(char) * ( strlen(str) + 1 ) );
