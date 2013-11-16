@@ -53,6 +53,7 @@ int draw_main_screen( void )
 	log_add( "[draw_main_screen]\n" );
 
 	move( 0, 0 ); clrtoeol();
+	attrset( COLOR_PAIR( COLOR_WHITE ) );
 
 	for( i = 0; i < dungeon[player->z]->width; i++ )
 	{
@@ -142,6 +143,7 @@ int draw_inventory_screen( entity_t *e )
 {
 	list_element *el = e->inventory->head;
 	int i = 0;
+	/*int k;*/
 
 	log_add( "[draw_inventory_screen] Displaying %08x('%s')'s inventory:\n",
 		e, e->name->data );
@@ -149,6 +151,35 @@ int draw_inventory_screen( entity_t *e )
 	move( 0, 0 ); clrtoeol();
 	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
 	mvprintw( 0, 0, "-- Inventory --" );
+
+	attrset( COLOR_PAIR( COLOR_WHITE ) );
+	if( e->in_hand )
+	{
+		mvprintw( 1, 0, "in hand: [ ] %s (unimplemented: ammo)", e->in_hand->name->data );
+		attrset( e->in_hand->color );
+		mvaddch( 1, 10, e->in_hand->face );
+	}
+	else
+	{
+		mvprintw( 1, 0, "in hand: - " );
+	}
+
+	attrset( COLOR_PAIR( COLOR_WHITE ) );
+	if( e->worn )
+	{
+		mvprintw( 2, 0, "   worn: [ ] %s (unimplemented: quality)", e->worn->name->data );
+		attrset( e->worn->color );
+		mvaddch( 2, 10, e->worn->color );
+	}
+	else
+	{
+		mvprintw( 2, 0, "   worn: -" );
+	}
+
+	if( e->inventory->length == 0 )
+	{
+		mvprintw( 4, 0, "(empty)" );
+	}
 
 	while( el )
 	{
@@ -158,14 +189,30 @@ int draw_inventory_screen( entity_t *e )
 			it->name->data, it->quantity );
 
 		attrset( COLOR_PAIR( COLOR_WHITE ) );
-		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
+		mvprintw( i+4, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
 		attrset( it->color );
-		mvaddch( i+1, 4, it->face );
+		mvaddch( i+4, 4, it->face );
 
 		i++;
 
 		el = el->next;
 	}
+
+	/*	TODO: one unified inventory screen, containing all actions, or
+		separate keys for separate actions, leading to separate screens? */
+	/*k = getch();
+	k -= 'a';
+
+	if( ( e->inventory->length == 0 ) )
+		return 1;
+
+	item_t *it = (item_t*)list_get_index( e->inventory, k );
+	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+	mvprintw( k+4, 0, "%c) [%c] %s (%i)", 'a' + k, it->face, it->name->data,
+		it->quantity );
+
+	attrset( COLOR_PAIR( COLOR_WHITE ) );
+	mvprintw( 0, 20, "drop wield" ); */
 
 	getch();
 
@@ -251,7 +298,7 @@ int draw_pick_up_screen( entity_t *e )
 	push_message( msg );
 	bufdestroy( msg );
 
-	entity_pick_up( e, it, q );
+	pick_up_item( e, it, q );
 	free_list( li );
 	return 1;
 }
@@ -332,8 +379,67 @@ int draw_drop_screen( entity_t *e )
 	push_message( msg );
 	bufdestroy( msg );
 
-	entity_drop( e, it, q );
+	drop_item( e, it, q );
 	return 1;
+}
+
+int draw_wield_screen( entity_t *e )
+{
+	list_t *li = e->inventory;
+	list_element *el;
+	int i = 0;
+
+	if( ( !li ) || ( li->length == 0 ) )
+	{
+		buf_t *msg = bufnew( "There's nothing to drop." );
+		push_message( msg );
+		bufdestroy( msg );
+
+		return 0;
+	}
+
+	move( 0, 0 ); clrtoeol();
+	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+	mvprintw( 0, 0, "-- Wield --" );
+
+	el = li->head;
+
+	while( el )
+	{
+		item_t *it = (item_t*)el->data;
+
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
+		attrset( it->color );
+		mvaddch( i+1, 4, it->face );
+
+		i++;
+
+		el = el->next;
+	}
+
+	int k = getch();
+	k -= 'a';
+
+	if( ( k < 0 ) || ( k >= i ) )
+	{
+		buf_t *msg = bufnew( "Okay, then." );
+		push_message( msg );
+		bufdestroy( msg );
+
+		free_list( li );
+		return 0;
+	}
+
+	item_t *it = (item_t*)list_get_index( li, k );
+
+	buf_t *msg = bufnew( "You now wield " );
+	bufcat( msg, it->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
+
+	return wield_item( e, it );
 }
 
 point_t input_direction( char *msg )

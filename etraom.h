@@ -164,15 +164,9 @@ entity_t *alloc_entity( buf_t *name );
 void free_entity( entity_t *e );
 void free_entities( void );
 void entity_act( entity_t *e );
-int entity_move_rel( entity_t *e, int dx, int dy );
-int open_door( entity_t *e, int x, int y );
-int close_door( entity_t *e, int x, int y );
 entity_t *entity_find_by_position( int x, int y, int z );
 void entity_die( entity_t *e );
 int entity_dumb_ai( entity_t *e );
-int entity_follow_stairs( entity_t *e );
-int entity_pick_up( entity_t *e, item_t *i, int quantity );
-int entity_drop( entity_t *e, item_t *i, int quantity );
 
 /* item.c */
 item_t *alloc_item( buf_t *name );
@@ -222,6 +216,7 @@ int draw_main_screen( void );
 int draw_inventory_screen( entity_t *e );
 int draw_pick_up_screen( entity_t *e );
 int draw_drop_screen( entity_t *e );
+int draw_wield_screen( entity_t *e );
 point_t input_direction( char *msg );
 
 /* log.c */
@@ -254,6 +249,15 @@ int count_neighbours_sparse( map_t *m, int x, int y, tile_t *w );
 void dig_room_with_doors( map_t *m, int x, int y, int w, int h );
 int make_dla_dungeon( map_t *m );
 void cavernize( map_t *m, float chance );
+
+/* action.c */
+int move_relative( entity_t *e, int dx, int dy );
+int open_door( entity_t *e, int x, int y );
+int close_door( entity_t *e, int x, int y );
+int follow_stairs( entity_t *e );
+int pick_up_item( entity_t *e, item_t *i, int quantity );
+int drop_item( entity_t *e, item_t *i, int quantity );
+int wield_item( entity_t *e, item_t *i );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );

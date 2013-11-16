@@ -68,6 +68,9 @@ void new_game( unsigned int seed )
 	player->hp = 5;
 	player->max_hp = 5;
 
+	player->in_hand = NULL;
+	player->worn = NULL;
+
 	while( dungeon[player->z]->terrain[player->x][player->y] != &tile_floor )
 	{
 		player->x = rand() % MAP_WIDTH;
@@ -177,31 +180,31 @@ int handle_key( int key )
 	case '4':
 	case KEY_LEFT:
 	case 'h':
-		return entity_move_rel( player, -1,  0 );
+		return move_relative( player, -1,  0 );
 	case '2':
 	case KEY_DOWN:
 	case 'j':
-		return entity_move_rel( player,  0,  1 );
+		return move_relative( player,  0,  1 );
 	case '8':
 	case KEY_UP:
 	case 'k':
-		return entity_move_rel( player,  0, -1 );
+		return move_relative( player,  0, -1 );
 	case '6':
 	case KEY_RIGHT:
 	case 'l':
-		return entity_move_rel( player,  1,  0 );
+		return move_relative( player,  1,  0 );
 	case '7':
 	case 'y':
-		return entity_move_rel( player, -1, -1 );
+		return move_relative( player, -1, -1 );
 	case '9':
 	case 'u':
-		return entity_move_rel( player,  1, -1 );
+		return move_relative( player,  1, -1 );
 	case '1':
 	case 'b':
-		return entity_move_rel( player, -1,  1 );
+		return move_relative( player, -1,  1 );
 	case '3':
 	case 'n':
-		return entity_move_rel( player,  1,  1 );
+		return move_relative( player,  1,  1 );
 
 	case '5':
 	case '.':
@@ -209,7 +212,7 @@ int handle_key( int key )
 		return 1;
 
 	case '>':
-		return entity_follow_stairs( player );
+		return follow_stairs( player );
 
 	case ',':
 		/*return entity_pick_up( player );*/
@@ -218,6 +221,9 @@ int handle_key( int key )
 		return draw_inventory_screen( player );
 	case 'd':
 		return draw_drop_screen( player );
+
+	case 'w':
+		return draw_wield_screen( player );
 
 	case 'o':
 		p = input_direction( "Open where?" );
