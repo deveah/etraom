@@ -27,6 +27,7 @@
 #define ITEMPLACE_ENTITY			(2)
 
 #define ITEMFLAG_PICKABLE			(1<<0)
+#define ITEMFLAG_STACKABLE			(1<<1)
 
 typedef struct
 {
@@ -173,6 +174,7 @@ item_t *alloc_item( buf_t *name );
 void free_item( item_t *i );
 void free_items( void );
 list_t *item_find_by_position( int x, int y, int z );
+int items_alike( item_t *a, item_t *b );
 
 /* inventory.c */
 int inventory_add_item( entity_t *e, item_t *i );

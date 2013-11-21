@@ -133,8 +133,17 @@ int draw_main_screen( void )
 	bufdestroy( msgline );
 
 	attron( COLOR_PAIR( COLOR_WHITE ) );
-	mvprintw( 23, 0, "Nectarie the Gunslinger" );
-	mvprintw( 24, 0, "hp: 16/16 ac: 8 lv: 1" ); 
+	mvprintw( 23, 0, "%s (%i/%i)", player->name->data, player->hp, player->max_hp );
+
+	if( player->in_hand )
+		mvprintw( 23, 40, "w: %s (unimplemented: ammo)", player->in_hand->name->data );
+	else
+		mvprintw( 23, 40, "w: -" );
+	
+	if( player->worn )
+		mvprintw( 24, 40, "a: %s (unimplmmented: armor class)", player->worn->name->data );
+	else
+		mvprintw( 24, 40, "a: -" );
 
 	return 1;
 }

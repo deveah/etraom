@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include <curses.h>
 
 #include "etraom.h"
@@ -64,5 +65,16 @@ list_t *item_find_by_position( int x, int y, int z )
 	}
 	else
 		return li;
+}
+
+int items_alike( item_t *a, item_t *b )
+{
+	if( !a )
+		return 0;
+	if( !b )
+		return 0;
+	
+	return( ( strcmp( a->name->data, b->name->data ) == 0 ) &&
+			( a->quality == b->quality ) );
 }
 

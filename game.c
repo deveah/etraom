@@ -305,7 +305,7 @@ void make_random_objects( int n )
 			it->y = rand() % MAP_HEIGHT;
 		}
 
-		it->flags = ITEMFLAG_PICKABLE;
+		it->flags = ITEMFLAG_PICKABLE | ITEMFLAG_STACKABLE;
 
 		list_add_head( item_list, (void*)it );
 	}

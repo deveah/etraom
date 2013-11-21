@@ -4,38 +4,35 @@
 
 I.		Infrastructure
 
-	[x] tile struct
-	[x] map struct
-
-	[x] entity struct
-
-	[x] item struct
-
 	[ ] weapon struct
 	[ ] consumable struct
 	[ ] armor struct
-
-	[x] transition char* -> buf_t*
+	[ ] link struct (?)
+		* should allow more than one entrance/exit per level
+		* useful in dungeon branches
 
 II.		Mechanics
 
-	[ ] inventory
-	[x] main loop w/time system
-	[x] field of view for each entity
-	[x] dungeon memory (player-only)
-		( store probably only as tile face -> int*** )
-	[x] level descend/ascend
+	[x] inventory
+		[x] wield
+		[ ] wear
+	[ ] combat
+		[ ] melee
+		[ ] ranged
+	[ ] attributes
+	[ ] skills
 
 III.	Map generators
 
-	[x] dummy
 	[ ] dfa
-	[ ] dfa-dungeon
-	[ ] grid-based
 	[ ] cooridor diffusion
 
-IV.		Combat
+IV.		UI
 
-	[ ] melee
-	[ ] ranged
+	[ ] message log
+	[ ] single inventory menu for all actions
+	[ ] look command
+	[ ] change screen layout (?)
+		* three-line message area, removing the need of using --MORE--
+		* map size would be reduced to 80x20
 

@@ -234,20 +234,21 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 
 	if( li )
 		el = li->head;
-	
-	while( el )
+
+	if( i->flags & ITEMFLAG_STACKABLE )
 	{
-		item_t *ij = (item_t*)el->data;
-
-		/* TODO: better comparison? */
-		if( ( strcmp( i->name->data, ij->name->data ) == 0 ) &&
-			( i->quality == ij->quality ) )
+		while( el )
 		{
-			found = ij;
-			break;
-		}
+			item_t *ij = (item_t*)el->data;
+		
+			if( items_alike( ij, i ) )
+			{
+				found = ij;
+				break;
+			}
 
-		el = el->next;
+			el = el->next;
+		}
 	}
 
 	if( i->quantity == quantity )

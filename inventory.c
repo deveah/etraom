@@ -8,26 +8,36 @@ int inventory_add_item( entity_t *e, item_t *i )
 	list_element *el = e->inventory->head;
 	item_t *found = NULL;
 
-	while( el )
+	if( i->flags & ITEMFLAG_STACKABLE )
 	{
-		item_t *ii = (item_t*)el->data;
+		if( items_alike( e->in_hand, i ) )
+			found = e->in_hand;
+		if( items_alike( e->worn, i ) )
+			found = e->worn;
 
-		/* TODO: better comparison? */
-		if(	( strcmp( i->name->data, ii->name->data ) == 0 ) &&
-			/* can't stack items of different quality */
-			( i->quality == ii->quality ) )
+		while( el )
 		{
-			found = ii;
-			break;
+			item_t *ii = (item_t*)el->data;
+
+			if( items_alike( i, ii ) )
+			{
+				found = ii;
+				break;
+			}
+
+			el = el->next;
 		}
 
-		el = el->next;
-	}
-
-	if( found )
-	{
-		found->quantity += i->quantity;
-		free_item( i );
+		if( found )
+		{
+			found->quantity += i->quantity;
+			free_item( i );
+		}
+		else
+		{
+			list_add_head( e->inventory, i );
+			i->place = ITEMPLACE_ENTITY;
+		}
 	}
 	else
 	{
