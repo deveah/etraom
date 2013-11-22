@@ -302,14 +302,43 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 	return 1;
 }
 
+int put_down_weapon( entity_t *e )
+{
+	if( e->in_hand )
+	{
+		item_t *i = e->in_hand;
+		e->in_hand = NULL;
+		inventory_add_item( e, i );
+
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int take_off_armor( entity_t *e )
+{
+	if( e->worn )
+	{
+		item_t *i = e->worn;
+		e->worn = NULL;
+		inventory_add_item( e, i );
+
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 int wield_item( entity_t *e, item_t *i )
 {
 	int j;
 
-	if( e->in_hand )
-	{
-		inventory_add_item( e, e->in_hand );	
-	}
+	put_down_weapon( e );
 
 	j = list_find( e->inventory, (void*)i );
 	list_remove_index( e->inventory, j );
@@ -317,6 +346,20 @@ int wield_item( entity_t *e, item_t *i )
 	e->in_hand = i;
 
 	/* TODO: can this fail? */
+	return 1;
+}
+
+int wear_item( entity_t *e, item_t *i )
+{
+	int j;
+
+	take_off_armor( e );
+
+	j = list_find( e->inventory, (void*)i );
+	list_remove_index( e->inventory, j );
+
+	e->worn = i;
+	
 	return 1;
 }
 

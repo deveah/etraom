@@ -84,7 +84,7 @@ void new_game( unsigned int seed )
 	list_add_head( entity_list, (void*)player );
 
 	make_random_entities( 10 );
-	make_random_objects( 20 );
+	make_random_objects( 160 );
 
 	log_add( "Done creating new game.\n" );
 }
@@ -94,9 +94,9 @@ int init_game( int argc, char** argv )
 	(void) argc;
 	(void) argv;
 
-	if( init_ui() == -1 )
+	if( !init_ui() )
 	{
-		printf( "etraom: unable to initialize display via blesteme.\n" );
+		printf( "Your terminal needs to be at least 80x25.\n" );
 		exit( 0 );
 	}
 
@@ -219,11 +219,6 @@ int handle_key( int key )
 		return draw_pick_up_screen( player );
 	case 'i':
 		return draw_inventory_screen( player );
-	case 'd':
-		return draw_drop_screen( player );
-
-	case 'w':
-		return draw_wield_screen( player );
 
 	case 'o':
 		p = input_direction( "Open where?" );
@@ -281,12 +276,22 @@ void make_random_entities( int n )
 void make_random_objects( int n )
 {
 	int i;
-	buf_t *name = bufnew( "Item" );
+	buf_t *name_a = bufnew( "Red Item" );
+	buf_t *name_b = bufnew( "Green Item" );
+	buf_t *name_c = bufnew( "Blue Item" );
 	item_t *it;
+	int r = 0;
 
 	for( i = 0; i < n; i++ )
 	{
-		it = alloc_item( name );
+		r = rand() % 3;
+
+		if( r == 0 )
+			it = alloc_item( name_a );
+		else if( r == 1 )
+			it = alloc_item( name_b );
+		else
+			it = alloc_item( name_c );
 
 		it->place = ITEMPLACE_DUNGEON;
 		it->x = 0;
@@ -294,7 +299,13 @@ void make_random_objects( int n )
 		it->z = 0;
 
 		it->face = '*';
-		it->color = COLOR_PAIR( COLOR_MAGENTA );
+
+		if( r == 0 )
+			it->color = COLOR_PAIR( COLOR_RED );
+		else if( r == 1 )
+			it->color = COLOR_PAIR( COLOR_GREEN );
+		else
+			it->color = COLOR_PAIR( COLOR_BLUE );
 
 		it->quantity = 1;
 		it->quality = 1.0f;
@@ -310,6 +321,8 @@ void make_random_objects( int n )
 		list_add_head( item_list, (void*)it );
 	}
 
-	bufdestroy( name );
+	bufdestroy( name_a );
+	bufdestroy( name_b );
+	bufdestroy( name_c );
 }
 

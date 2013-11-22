@@ -217,8 +217,6 @@ int terminate_ui( void );
 int draw_main_screen( void );
 int draw_inventory_screen( entity_t *e );
 int draw_pick_up_screen( entity_t *e );
-int draw_drop_screen( entity_t *e );
-int draw_wield_screen( entity_t *e );
 point_t input_direction( char *msg );
 
 /* log.c */
@@ -259,7 +257,10 @@ int close_door( entity_t *e, int x, int y );
 int follow_stairs( entity_t *e );
 int pick_up_item( entity_t *e, item_t *i, int quantity );
 int drop_item( entity_t *e, item_t *i, int quantity );
+int put_down_weapon( entity_t *e );
+int take_off_armor( entity_t *e );
 int wield_item( entity_t *e, item_t *i );
+int wear_item( entity_t *e, item_t *i );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );

@@ -141,7 +141,7 @@ int draw_main_screen( void )
 		mvprintw( 23, 40, "w: -" );
 	
 	if( player->worn )
-		mvprintw( 24, 40, "a: %s (unimplmmented: armor class)", player->worn->name->data );
+		mvprintw( 24, 40, "a: %s (unimplemented: armor class)", player->worn->name->data );
 	else
 		mvprintw( 24, 40, "a: -" );
 
@@ -150,83 +150,205 @@ int draw_main_screen( void )
 
 int draw_inventory_screen( entity_t *e )
 {
-	list_element *el = e->inventory->head;
+	list_t *li = e->inventory;
+	list_element *el = li->head;
+
 	int i = 0;
-	/*int k;*/
+	int start = 0;
+	int pos = 0;
 
-	log_add( "[draw_inventory_screen] Displaying %08x('%s')'s inventory:\n",
-		e, e->name->data );
+	int k = 0;
 
-	move( 0, 0 ); clrtoeol();
-	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
-	mvprintw( 0, 0, "-- Inventory --" );
-
-	attrset( COLOR_PAIR( COLOR_WHITE ) );
-	if( e->in_hand )
+	while( 1 )
 	{
-		mvprintw( 1, 0, "in hand: [ ] %s (unimplemented: ammo)", e->in_hand->name->data );
-		attrset( e->in_hand->color );
-		mvaddch( 1, 10, e->in_hand->face );
-	}
-	else
-	{
-		mvprintw( 1, 0, "in hand: - " );
-	}
+		clear();
 
-	attrset( COLOR_PAIR( COLOR_WHITE ) );
-	if( e->worn )
-	{
-		mvprintw( 2, 0, "   worn: [ ] %s (unimplemented: quality)", e->worn->name->data );
-		attrset( e->worn->color );
-		mvaddch( 2, 10, e->worn->color );
-	}
-	else
-	{
-		mvprintw( 2, 0, "   worn: -" );
-	}
+		i = 0;
+		el = li->head;
 
-	if( e->inventory->length == 0 )
-	{
-		mvprintw( 4, 0, "(empty)" );
-	}
+		attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+		mvprintw( 0, 0, "-- Inventory -- " );
 
-	while( el )
-	{
-		item_t *it = (item_t*)el->data;
-
-		log_add( "[draw_inventory_screen] %c) [%c] %s (%i)\n", 'a'+i, it->face,
-			it->name->data, it->quantity );
+		if( li->length == 0 )
+		{
+			attrset( COLOR_PAIR( COLOR_WHITE ) );
+			mvprintw( 4, 0, "Your inventory is empty." );
+		}
 
 		attrset( COLOR_PAIR( COLOR_WHITE ) );
-		mvprintw( i+4, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
-		attrset( it->color );
-		mvaddch( i+4, 4, it->face );
+		mvprintw( 1, 0, "in hand:" );
 
-		i++;
+		if( e->in_hand )
+		{
+			mvprintw( 1, 9, "[ ] %s (unimplemented: ammo)", e->in_hand->name->data );
+			attrset( e->in_hand->color );
+			mvaddch( 1, 10, e->in_hand->face );
+		}
+		else
+		{
+			mvprintw( 1, 9, "(nothing)" );
+		}
 
-		el = el->next;
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( 2, 3, "worn:" );
+
+		if( e->worn )
+		{
+			mvprintw( 2, 9, "[ ] %s (unimplemented: AC)", e->worn->name->data );
+			attrset( e->worn->color );
+			mvaddch( 2, 10, e->worn->face );
+		}
+		else
+		{
+			mvprintw( 2, 9, "(nothing)" );
+		}
+
+		while( el )
+		{
+			item_t *ii = (item_t*)el->data;
+
+			if( ( i >= start ) && ( i < start + term_h - 6 ) )
+			{
+				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				if( pos == i )
+					mvprintw( i - start + 4, 0, ">" );
+
+				if( ii->flags & ITEMFLAG_STACKABLE )
+					mvprintw( i - start + 4, 2, "[ ] %s (%i)", ii->name->data, ii->quantity );
+				else
+					mvprintw( i - start + 4, 2, "[ ] %s", ii->name->data );
+
+				attrset( ii->color );
+				mvaddch( i - start + 4, 3, ii->face );
+			}
+			
+			i++;
+			el = el->next;
+		}
+
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		mvprintw( term_h - 1, 0, "drop | wield | Wear | put down | take off | use" );
+		
+		attrset( COLOR_PAIR( COLOR_CYAN ) );
+		mvaddch( term_h - 1, 0, 'd' );
+		mvaddch( term_h - 1, 7, 'w' );
+		mvaddch( term_h - 1, 15, 'W' );
+		mvaddch( term_h - 1, 22, 'p' );
+		mvaddch( term_h - 1, 33, 't' );
+
+		k = getch();
+
+		switch( k )
+		{
+		case 'j':
+		case KEY_DOWN:
+		case '2':
+		{
+			if( pos < li->length-1 )
+				pos++;
+			if( pos - start > term_h - 7 )
+				start++;
+			break;
+		}
+		case 'k':
+		case KEY_UP:
+		case '8':
+		{
+			if( pos > 0 )
+				pos--;
+			if( pos - start < 0 )
+				start--;
+			break;
+		}
+		case 'd':
+		{
+			if( li->length == 0 )
+			{
+				buf_t *msg = bufnew( "There's nothing to drop." );
+				push_message( msg );
+				bufdestroy( msg );
+			}
+			
+			item_t *it = (item_t*)list_get_index( li, pos );
+			int q = 1;
+
+			if( it->quantity > 1 )
+			{
+				move( 0, 0 ); clrtoeol();
+				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				mvprintw( 0, 0, "How many? " );
+				echo();
+				scanw( "%i", &q );
+				noecho();
+
+				if( ( q <= 0 ) || ( q > it->quantity ) )
+				{
+					buf_t *msg = bufnew( "Okay, then." );
+					push_message( msg );
+					bufdestroy( msg );
+
+					return 0;
+				}
+			}
+
+			buf_t *msg = bufnew( "You drop " );
+			bufcat( msg, it->name );
+			bufcats( msg, "." );
+			push_message( msg );
+			bufdestroy( msg );
+
+			clear();
+			return drop_item( e, it, q );
+		}
+		case 'w':
+		{
+			item_t *it = (item_t*)list_get_index( li, pos );
+
+			buf_t *msg = bufnew( "You now wield " );
+			bufcat( msg, it->name );
+			bufcats( msg, "." );
+			push_message( msg );
+			bufdestroy( msg );
+
+			clear();
+			return wield_item( e, it );
+		}
+		case 'W':
+		{
+			item_t *it = (item_t*)list_get_index( li, pos );
+			clear();
+
+			buf_t *msg = bufnew( "You now wear " );
+			bufcat( msg, it->name );
+			bufcats( msg, "." );
+			push_message( msg );
+			bufdestroy( msg );
+
+			return wear_item( e, it );
+		}
+		case 'p':
+		{
+			buf_t *msg = bufnew( "You put down your weapon." );
+			push_message( msg );
+			bufdestroy( msg );
+			
+			return put_down_weapon( e );
+		}
+		case 't':
+		{
+			buf_t *msg = bufnew( "You take off your armor." );
+			push_message( msg );
+			bufdestroy( msg );
+
+			return take_off_armor( e );
+		}
+		default:
+			goto hell;
+		}
 	}
 
-	/*	TODO: one unified inventory screen, containing all actions, or
-		separate keys for separate actions, leading to separate screens? */
-	/*k = getch();
-	k -= 'a';
-
-	if( ( e->inventory->length == 0 ) )
-		return 1;
-
-	item_t *it = (item_t*)list_get_index( e->inventory, k );
-	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
-	mvprintw( k+4, 0, "%c) [%c] %s (%i)", 'a' + k, it->face, it->name->data,
-		it->quantity );
-
-	attrset( COLOR_PAIR( COLOR_WHITE ) );
-	mvprintw( 0, 20, "drop wield" ); */
-
-	getch();
-
-	log_add( "[draw_inventory_screen] Done displaying inventory.\n" );
-
+	hell:
+	clear();
 	return 1;
 }
 
@@ -310,145 +432,6 @@ int draw_pick_up_screen( entity_t *e )
 	pick_up_item( e, it, q );
 	free_list( li );
 	return 1;
-}
-
-int draw_drop_screen( entity_t *e )
-{
-	list_t *li = e->inventory;
-	list_element *el;
-	int i = 0;
-
-	if( ( !li ) || ( li->length == 0 ) )
-	{
-		buf_t *msg = bufnew( "There's nothing to drop." );
-		push_message( msg );
-		bufdestroy( msg );
-
-		return 0;
-	}
-
-	move( 0, 0 ); clrtoeol();
-	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
-	mvprintw( 0, 0, "-- Drop --" );
-
-	el = li->head;
-
-	while( el )
-	{
-		item_t *it = (item_t*)el->data;
-
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
-		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
-		attrset( it->color );
-		mvaddch( i+1, 4, it->face );
-
-		i++;
-
-		el = el->next;
-	}
-
-	int k = getch();
-	k -= 'a';
-
-	if( ( k < 0 ) || ( k >= i ) )
-	{
-		buf_t *msg = bufnew( "Okay, then." );
-		push_message( msg );
-		bufdestroy( msg );
-
-		free_list( li );
-		return 0;
-	}
-
-	item_t *it = (item_t*)list_get_index( li, k );
-	int q = 1;
-
-	if( it->quantity > 1 )
-	{
-		move( 0, 0 ); clrtoeol();
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
-		mvprintw( 0, 0, "How many? " );
-		echo();
-		scanw( "%i", &q );
-		noecho();
-
-		if( ( q <= 0 ) || ( q > it->quantity ) )
-		{
-			buf_t *msg = bufnew( "Okay, then." );
-			push_message( msg );
-			bufdestroy( msg );
-
-			return 0;
-		}
-	}
-
-	buf_t *msg = bufnew( "You drop " );
-	bufcat( msg, it->name );
-	bufcats( msg, "." );
-	push_message( msg );
-	bufdestroy( msg );
-
-	drop_item( e, it, q );
-	return 1;
-}
-
-int draw_wield_screen( entity_t *e )
-{
-	list_t *li = e->inventory;
-	list_element *el;
-	int i = 0;
-
-	if( ( !li ) || ( li->length == 0 ) )
-	{
-		buf_t *msg = bufnew( "There's nothing to drop." );
-		push_message( msg );
-		bufdestroy( msg );
-
-		return 0;
-	}
-
-	move( 0, 0 ); clrtoeol();
-	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
-	mvprintw( 0, 0, "-- Wield --" );
-
-	el = li->head;
-
-	while( el )
-	{
-		item_t *it = (item_t*)el->data;
-
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
-		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
-		attrset( it->color );
-		mvaddch( i+1, 4, it->face );
-
-		i++;
-
-		el = el->next;
-	}
-
-	int k = getch();
-	k -= 'a';
-
-	if( ( k < 0 ) || ( k >= i ) )
-	{
-		buf_t *msg = bufnew( "Okay, then." );
-		push_message( msg );
-		bufdestroy( msg );
-
-		free_list( li );
-		return 0;
-	}
-
-	item_t *it = (item_t*)list_get_index( li, k );
-
-	buf_t *msg = bufnew( "You now wield " );
-	bufcat( msg, it->name );
-	bufcats( msg, "." );
-	push_message( msg );
-	bufdestroy( msg );
-
-	return wield_item( e, it );
 }
 
 point_t input_direction( char *msg )
