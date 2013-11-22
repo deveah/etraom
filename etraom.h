@@ -10,7 +10,7 @@
 #define MAX_LEVELS 10
 
 #define MAP_WIDTH 80
-#define MAP_HEIGHT 22
+#define MAP_HEIGHT 21
 
 #define MAGIC_NUMBER 1994
 
@@ -58,6 +58,7 @@ typedef struct
 {
 	buf_t *msg;
 	int flags;
+	int turn;
 } message_t;
 
 typedef struct
@@ -137,6 +138,7 @@ extern FILE *logfile;
 
 extern int running;
 extern int global_turns;
+extern int player_turns;
 
 extern unsigned int nlevels;
 extern map_t **dungeon;
@@ -218,6 +220,7 @@ int draw_main_screen( void );
 int draw_inventory_screen( entity_t *e );
 int draw_pick_up_screen( entity_t *e );
 point_t input_direction( char *msg );
+int draw_message_buffer( void );
 
 /* log.c */
 int open_logfile( void );

@@ -9,6 +9,7 @@ void push_message( buf_t *b )
 
 	m->msg = bufcpy( b );
 	m->flags = MESSAGEFLAG_UNREAD;
+	m->turn = player_turns;
 
 	log_add( "[message] %s\n", b->data );
 

@@ -51,7 +51,10 @@ int draw_main_screen( void )
 
 	log_add( "[draw_main_screen]\n" );
 
+	/* clear message lines */
 	move( 0, 0 ); clrtoeol();
+	move( 1, 0 ); clrtoeol();
+
 	attrset( COLOR_PAIR( COLOR_WHITE ) );
 
 	for( i = 0; i < dungeon[player->z]->width; i++ )
@@ -63,16 +66,16 @@ int draw_main_screen( void )
 			if( player->lightmap[player->z][i][j] > 0.0f )
 			{
 				attrset( t->fg );
-				mvaddch( j+1, i, t->face );
+				mvaddch( j+2, i, t->face );
 			}
 			else if( dungeon[player->z]->memory[i][j] )
 			{
-				attrset( COLOR_PAIR( COLOR_BLUE ) );
-				mvaddch( j+1, i, dungeon[player->z]->memory[i][j]->face );
+				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				mvaddch( j+2, i, dungeon[player->z]->memory[i][j]->face );
 			}
 			else
 			{
-				mvaddch( j+1, i, ' ' );
+				mvaddch( j+2, i, ' ' );
 			}
 		}
 	}
@@ -92,7 +95,7 @@ int draw_main_screen( void )
 				( dungeon[it->z]->terrain[it->x][it->y] == &tile_stairs_up ) )
 				attron( A_REVERSE );
 
-			mvaddch( it->y+1, it->x, it->face );
+			mvaddch( it->y+2, it->x, it->face );
 		}
 		k = k->next;
 	}
@@ -105,7 +108,7 @@ int draw_main_screen( void )
 			( player->lightmap[player->z][e->x][e->y] > 0.0f ) )
 		{
 			attrset( e->color );
-			mvaddch( e->y+1, e->x, e->face );
+			mvaddch( e->y+2, e->x, e->face );
 		}
 		k = k->next;
 	}
@@ -115,7 +118,6 @@ int draw_main_screen( void )
 	k = message_list->head;
 	while( k )
 	{
-		/* TODO support for more than one message via --MORE-- */
 		message_t *m = (message_t*)k->data;
 		if( m->flags & MESSAGEFLAG_UNREAD )
 		{
@@ -127,6 +129,7 @@ int draw_main_screen( void )
 		k = k->next;
 	}
 
+	/* two lines should be enough for everybody */
 	mvprintw( 0, 0, "%s", msgline->data );
 
 	bufdestroy( msgline );
@@ -327,19 +330,37 @@ int draw_inventory_screen( entity_t *e )
 		}
 		case 'p':
 		{
-			buf_t *msg = bufnew( "You put down your weapon." );
-			push_message( msg );
-			bufdestroy( msg );
-			
-			return put_down_weapon( e );
+			if( put_down_weapon( e ) )
+			{
+				buf_t *msg = bufnew( "You put down your weapon." );
+				push_message( msg );
+				bufdestroy( msg );
+				return 1;
+			}
+			else
+			{
+				buf_t *msg = bufnew( "You aren't wielding anything." );
+				push_message( msg );
+				bufdestroy( msg );
+				return 0;
+			}
 		}
 		case 't':
 		{
-			buf_t *msg = bufnew( "You take off your armor." );
-			push_message( msg );
-			bufdestroy( msg );
-
-			return take_off_armor( e );
+			if( take_off_armor( e ) )
+			{
+				buf_t *msg = bufnew( "You take off your armor." );
+				push_message( msg );
+				bufdestroy( msg );
+				return 1;
+			}
+			else
+			{
+				buf_t *msg = bufnew( "You aren't wearing anything." );
+				push_message( msg );
+				bufdestroy( msg );
+				return 0;
+			}
 		}
 		default:
 			goto hell;
@@ -491,5 +512,50 @@ point_t input_direction( char *msg )
 	}
 
 	return p;
+}
+
+/* TODO: move up/down around buffer */
+int draw_message_buffer( void )
+{
+	list_t *li = message_list;
+	list_element *el = li->head;
+	int i = 0;
+	int pos = 0;
+
+	clear();
+
+	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+	mvprintw( 0, 0, "-- Message Buffer --" );
+
+	attrset( COLOR_PAIR( COLOR_WHITE ) );
+
+	if( li->length == 0 )
+	{
+		mvprintw( 1, 0, "(empty)" );
+		
+		getch();
+		clear();
+		return 1;
+	}
+
+	while( el )
+	{
+		message_t *m = (message_t*)el->data;
+
+		if( i > li->length - term_h + 1 )
+		{
+			/* TODO: dynamic turn number padding */
+			mvprintw( pos + 1, 0, "%4i: %s", m->turn, m->msg->data );
+			pos++;
+		}
+
+		el = el->next;
+		i++;
+	}
+
+	getch();
+	clear();
+
+	return 1;
 }
 

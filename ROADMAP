@@ -15,7 +15,7 @@ II.		Mechanics
 
 	[x] inventory
 		[x] wield
-		[ ] wear
+		[x] wear
 	[ ] combat
 		[ ] melee
 		[ ] ranged
@@ -29,10 +29,12 @@ III.	Map generators
 
 IV.		UI
 
-	[ ] message log
-	[ ] single inventory menu for all actions
+	[x] message log
+	[x] single inventory menu for all actions
 	[ ] look command
 	[ ] change screen layout (?)
-		* three-line message area, removing the need of using --MORE--
-		* map size would be reduced to 80x20
+		* two-line message area, removing the need of using --MORE--
+		* map size would be reduced to 80x21
+		* if messages still are lengthier than the provided space, send the
+		  player into the message buffer
 

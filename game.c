@@ -7,6 +7,7 @@
 
 int running = 0;
 int global_turns = 0;
+int player_turns = 0;
 
 unsigned int nlevels = 0;
 map_t **dungeon = NULL;
@@ -226,6 +227,11 @@ int handle_key( int key )
 	case 'c':
 		p = input_direction( "Close where?" );
 		return close_door( player, player->x + p.x, player->y + p.y );
+
+	case 'M':
+		/* this shouldn't cost at all */
+		draw_message_buffer();
+		return 0;
 
 	/* TODO: should the melee attack require an extra keystroke? */
 	/*case 'z':

@@ -107,7 +107,10 @@ void entity_act( entity_t *e )
 			key = getch();
 
 			if( handle_key( key ) == 1 )
+			{
 				e->ap -= 10; /* TODO action point consumption */
+				player_turns++;
+			}
 
 			if( !running )
 				return;
