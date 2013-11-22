@@ -7,5 +7,10 @@
 	are randomly generated, and it features permadeath. No graphics, no genre
 	blending. A traditional roguelike.
 
+	Building requires curses. To build Etraom, just run the Makefile provided.
+
+	Etraom is released under the Simplified BSD License. See LICENSE for
+	details.
+
 	Contributions of any kind are appreciated, so fork away!
-	
+

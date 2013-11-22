@@ -13,10 +13,9 @@ int init_ui( void )
 
 	getmaxyx( stdscr, term_h, term_w );
 
-	/* TODO: fail loudly? */
 	if( ( term_w < 80 ) || ( term_h < 25 ) )
 	{
-		return -1;
+		return 0;
 	}
 
 	start_color();
