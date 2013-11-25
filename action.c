@@ -146,49 +146,39 @@ int close_door( entity_t *e, int x, int y )
 
 int follow_stairs( entity_t *e )
 {
-	tile_t *t = dungeon[e->z]->terrain[e->x][e->y];
+	link_t *l = link_find_by_position( e->x, e->y, e->z );
 
-	if( t == &tile_stairs_down )
+	if( l )
 	{
-		e->z++;
-		e->x = dungeon[e->z]->entrance_x;
-		e->y = dungeon[e->z]->entrance_y;
+		player->x = l->dest_x;
+		player->y = l->dest_y;
+		player->z = l->dest_z;
+		l->flags &= LINKFLAG_USED;
 
-		if( e == player )
+		buf_t *b;
+		if( l->face == '>' )
 		{
-			buf_t *msg = bufnew( "You descend." );
-			push_message( msg );
-			bufdestroy( msg );
+			b = bufnew( "You descend." );
 		}
-		
-		return 1;
-	}
-
-	else if( t == &tile_stairs_up )
-	{
-		e->z--;
-		e->x = dungeon[e->z]->exit_x;
-		e->y = dungeon[e->z]->exit_y;
-
-		if( e == player )
+		else if( l->face == '<' )
 		{
-			buf_t *msg = bufnew( "You ascend." );
-			push_message( msg );
-			bufdestroy( msg );
+			b = bufnew( "You ascend." );
+		}
+		else
+		{
+			b = bufnew( "Bug." );
 		}
 
-		return 1;
-	}
+		push_message( b );
+		bufdestroy( b );
 
+		return 0;
+	}
 	else
 	{
-		if( e == player )
-		{
-			buf_t *msg = bufnew( "There are no stairs there." );
-			push_message( msg );
-			bufdestroy( msg );
-		}
-
+		buf_t *b = bufnew( "There are no stairs here." );
+		push_message( b );
+		bufdestroy( b );
 		return 0;
 	}
 }

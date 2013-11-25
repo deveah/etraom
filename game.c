@@ -107,6 +107,7 @@ int init_game( int argc, char** argv )
 	message_list = alloc_list();
 	entity_list = alloc_list();
 	item_list = alloc_list();
+	link_list = alloc_list();
 
 	new_game( time( 0 ) );
 
@@ -134,6 +135,8 @@ int terminate_game( void )
 	free_list( message_list );
 	free_items();
 	free_list( item_list );
+	free_links();
+	free_list( link_list );
 
 	log_add( "Done terminating game.\n" );
 

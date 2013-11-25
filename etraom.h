@@ -29,6 +29,8 @@
 #define ITEMFLAG_PICKABLE			(1<<0)
 #define ITEMFLAG_STACKABLE			(1<<1)
 
+#define LINKFLAG_USED				(1<<0)
+
 typedef struct
 {
 	int x, y;
@@ -74,9 +76,7 @@ extern tile_t
 	tile_cooridor,
 	tile_wall,
 	tile_door_closed,
-	tile_door_open,
-	tile_stairs_down,
-	tile_stairs_up;
+	tile_door_open;
 
 typedef struct
 {
@@ -85,9 +85,6 @@ typedef struct
 
 	tile_t ***terrain;
 	tile_t ***memory;
-
-	int entrance_x, entrance_y;
-	int exit_x, exit_y;
 
 	int flags;
 } map_t;
@@ -134,6 +131,15 @@ typedef struct
 	int flags;
 } entity_t;
 
+typedef struct
+{
+	int src_x, src_y, src_z;
+	int dest_x, dest_y, dest_z;
+
+	int face, color;
+	int flags;
+} link_t;
+
 extern FILE *logfile;
 
 extern int running;
@@ -147,8 +153,8 @@ extern int main_seed;
 extern list_t *message_list;
 extern list_t *entity_list;
 extern list_t *item_list;
+extern list_t *link_list;
 extern entity_t *player; /* shortcut to player struct */
-extern int ***dungeon_memory;
 
 /* terminal width/height */
 int term_w, term_h;
@@ -267,5 +273,11 @@ int wear_item( entity_t *e, item_t *i );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
+
+/* link.c */
+link_t *alloc_link( void );
+void free_link( link_t *l );
+void free_links( void );
+link_t *link_find_by_position( int x, int y, int z );
 
 #endif

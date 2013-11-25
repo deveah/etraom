@@ -1,6 +1,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <curses.h>
 
 #include "etraom.h"
 
@@ -277,22 +278,7 @@ void post_process_map( map_t *m )
 {
 	int i, j;
 
-	/* TODO: door placement, opening/closing */
-
-	/*for( i = 0; i < m->width; i++ )
-	{
-		for( j = 0; j < m->height; j++ )
-		{
-
-			if( ( m->terrain[i][j] == &tile_cooridor ) &&
-				( count_neighbours( m, i, j, &tile_floor ) > 1 ) &&
-				( count_neighbours( m, i, j, &tile_wall ) > 3 ) )
-			{
-				m->terrain[i][j] = &tile_door_closed;
-			}
-		}
-	}*/
-	
+	/* cooridor tiles are only usable by the map generator */
 	for( i = 0; i < m->width; i++ )
 	{
 		for( j = 0; j < m->height; j++ )
@@ -336,6 +322,7 @@ void link_dungeon_levels( void )
 {
 	int i;
 	int cx, cy;
+	int dx, dy;
 	int tries;
 
 	for( i = 0; i < MAX_LEVELS-1; i++ )
@@ -357,6 +344,29 @@ void link_dungeon_levels( void )
 			if( ( dungeon[i  ]->terrain[cx][cy] == &tile_floor ) &&
 				( dungeon[i+1]->terrain[cx][cy] == &tile_floor ) )
 			{
+				link_t *la = alloc_link();
+				la->face = '>';
+				la->color = COLOR_PAIR( COLOR_WHITE );
+				la->src_x = cx;
+				la->src_y = cy;
+				la->src_z = i;
+				la->dest_x = cx;
+				la->dest_y = cy;
+				la->dest_z = i+1;
+				list_add_tail( link_list, (void*)la );
+
+				link_t *lb = alloc_link();
+				lb->face = '<';
+				lb->color = COLOR_PAIR( COLOR_WHITE );
+				lb->src_x = cx;
+				lb->src_y = cy;
+				lb->src_z = i+1;
+				lb->dest_x = cx;
+				lb->dest_y = cy;
+				lb->dest_z = i;
+				list_add_tail( link_list, (void*)lb );
+
+				/*
 				dungeon[i  ]->terrain[cx][cy] = &tile_stairs_down;
 				dungeon[i+1]->terrain[cx][cy] = &tile_stairs_up;
 
@@ -364,7 +374,7 @@ void link_dungeon_levels( void )
 				dungeon[i  ]->exit_y = cy;
 				dungeon[i+1]->entrance_x = cx;
 				dungeon[i+1]->entrance_y = cy;
-
+				*/
 				break;
 			}
 
@@ -372,26 +382,56 @@ void link_dungeon_levels( void )
 			{
 				cx = 0;
 				cy = 0;
+				
+				dx = 0;
+				dy = 0;
 
-				while( dungeon[i]->terrain[cx][cy] != &tile_floor )
+				do
 				{
 					cx = rand() % MAP_WIDTH;
 					cy = rand() % MAP_HEIGHT;
 				}
-
+				while( dungeon[i]->terrain[cx][cy] != &tile_floor );
+				
+				/*
 				dungeon[i]->terrain[cx][cy] = &tile_stairs_down;
 				dungeon[i]->exit_x = cx;
 				dungeon[i]->exit_y = cy;
+				*/
 
-				while( dungeon[i+1]->terrain[cx][cy] != &tile_floor )
+				do
 				{
-					cx = rand() % MAP_WIDTH;
-					cy = rand() % MAP_HEIGHT;
+					dx = rand() % MAP_WIDTH;
+					dy = rand() % MAP_HEIGHT;
 				}
+				while( dungeon[i+1]->terrain[dx][dy] != &tile_floor );
+				
+				link_t *la = alloc_link();
+				la->face = '>';
+				la->color = COLOR_PAIR( COLOR_WHITE );
+				la->src_x = cx;
+				la->src_y = cy;
+				la->src_z = i;
+				la->dest_x = dx;
+				la->dest_y = dy;
+				la->dest_z = i+1;
+				list_add_tail( link_list, (void*)la );
 
+				link_t *lb = alloc_link();
+				lb->face = '<';
+				lb->color = COLOR_PAIR( COLOR_WHITE );
+				lb->src_x = dx;
+				lb->src_y = dy;
+				lb->src_z = i+1;
+				lb->dest_x = cx;
+				lb->dest_y = cy;
+				lb->dest_z = i;
+				list_add_tail( link_list, (void*)lb );
+				/*
 				dungeon[i+1]->terrain[cx][cy] = &tile_stairs_up;
 				dungeon[i+1]->entrance_x = cx;
 				dungeon[i+1]->entrance_y = cy;
+				*/
 			}
 		}
 	}

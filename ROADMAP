@@ -7,7 +7,7 @@ I.		Infrastructure
 	[ ] weapon struct
 	[ ] consumable struct
 	[ ] armor struct
-	[ ] link struct (?)
+	[x] link struct
 		* should allow more than one entrance/exit per level
 		* useful in dungeon branches
 

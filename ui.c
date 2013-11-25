@@ -89,13 +89,27 @@ int draw_main_screen( void )
 		{
 			attrset( it->color );
 
-			/*	an item on the ground should not prevent the stairs from being
-				visible */
-			if( ( dungeon[it->z]->terrain[it->x][it->y] == &tile_stairs_down ) ||
-				( dungeon[it->z]->terrain[it->x][it->y] == &tile_stairs_up ) )
-				attron( A_REVERSE );
-
 			mvaddch( it->y+2, it->x, it->face );
+		}
+		k = k->next;
+	}
+
+	k = link_list->head;
+	while( k )
+	{
+		link_t *l = (link_t*)k->data;
+		if( l->src_z == player->z )
+		{
+			if( player->lightmap[player->z][l->src_x][l->src_y] > 0.0f )
+			{
+				attrset( l->color );
+				mvaddch( l->src_y+2, l->src_x, l->face );
+			}
+			else if( dungeon[player->z]->memory[l->src_x][l->src_y] )
+			{
+				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				mvaddch( l->src_y+2, l->src_x, l->face );
+			}
 		}
 		k = k->next;
 	}
