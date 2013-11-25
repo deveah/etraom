@@ -10,6 +10,8 @@ I.		Infrastructure
 	[x] link struct
 		* should allow more than one entrance/exit per level
 		* useful in dungeon branches
+	[ ] links can obscure items on the ground
+		* disallow placement of items on ground
 
 II.		Mechanics
 
@@ -31,7 +33,7 @@ IV.		UI
 
 	[x] message log
 	[x] single inventory menu for all actions
-	[ ] look command
+	[x] look command
 	[ ] change screen layout (?)
 		* two-line message area, removing the need of using --MORE--
 		* map size would be reduced to 80x21

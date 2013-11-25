@@ -573,3 +573,114 @@ int draw_message_buffer( void )
 	return 1;
 }
 
+int look_at( void )
+{
+	int k = 0;
+	int cx = player->x, cy = player->y;
+
+	buf_t *info;
+
+	while( 1 )
+	{
+		draw_main_screen();
+		attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+		mvaddch( cy+2, cx, mvinch( cy+2, cx ) & 0xFF );
+
+		move( 0, 0 ); clrtoeol();
+		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		if( player->lightmap[player->z][cx][cy] > 0.0f )
+		{
+			info = bufnew( "Look: " );
+
+			entity_t *e = entity_find_by_position( cx, cy, player->z );
+			if( e )
+			{
+				bufcat( info, e->name );
+				bufcats( info, "; " );
+			}
+
+			list_t *li = item_find_by_position( cx, cy, player->z );
+			if( li )
+			{
+				if( li->length == 1 )
+				{
+					item_t *it = (item_t*)li->head->data;
+					bufcat( info, it->name );
+					bufcats( info, "; " );
+				}
+				else
+				{
+					bufcats( info, "Several items; " );
+				}
+			}
+
+			link_t *l = link_find_by_position( cx, cy, player->z );
+			if( l )
+			{
+				if( l->face == '>' )
+				{
+					bufcats( info, "Stairs down." );
+				}
+				if( l->face == '<' )
+				{
+					bufcats( info, "Stairs up." );
+				}
+			}
+			else
+			{
+				bufcats( info, dungeon[player->z]->terrain[cx][cy]->name );
+				bufcats( info, "." );
+			}
+
+			mvprintw( 0, 0, info->data );
+			bufdestroy( info );
+		}
+		else
+		{
+			if( dungeon[player->z]->memory[cx][cy] )
+			{
+				mvprintw( 0, 0, "Look: (You remember) %s.",
+					dungeon[player->z]->terrain[cx][cy]->name );
+			}
+			else
+			{
+				mvprintw( 0, 0, "Look: You haven't been there yet." );
+			}
+		}
+
+		k = getch();
+
+		switch( k )
+		{
+		case 'h':
+		case '4':
+		case KEY_LEFT:
+			if( cx > 0 )
+				cx--;
+			break;
+		case 'j':
+		case '2':
+		case KEY_DOWN:
+			if( cy < MAP_HEIGHT-1 )
+				cy++;
+			break;
+		case 'k':
+		case '8':
+		case KEY_UP:
+			if( cy > 0 )
+				cy--;
+			break;
+		case 'l':
+		case '6':
+		case KEY_RIGHT:
+			if( cx < MAP_WIDTH-1 )
+				cx++;
+			break;
+		case 'q':
+			return 1;
+		}
+	}
+
+	return 1;
+}
+

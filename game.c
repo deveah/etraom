@@ -231,6 +231,10 @@ int handle_key( int key )
 		p = input_direction( "Close where?" );
 		return close_door( player, player->x + p.x, player->y + p.y );
 
+	case 'x':
+		look_at();
+		return 0; /* looking doesn't cost */
+
 	case 'M':
 		/* this shouldn't cost at all */
 		draw_message_buffer();

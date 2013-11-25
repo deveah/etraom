@@ -65,6 +65,7 @@ typedef struct
 
 typedef struct
 {
+	char *name;
 	int face;
 	int fg, bg;
 	int flags;
@@ -270,6 +271,7 @@ int put_down_weapon( entity_t *e );
 int take_off_armor( entity_t *e );
 int wield_item( entity_t *e, item_t *i );
 int wear_item( entity_t *e, item_t *i );
+int look_at( void );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
