@@ -21,6 +21,9 @@ entity_t *alloc_entity( buf_t *name )
 
 	e->inventory = alloc_list();
 
+	e->in_hand = NULL;
+	e->worn = NULL;
+
 	for( i = 0; i < MAX_LEVELS; i++ )
 	{
 		e->lightmap[i] = (float**) malloc( sizeof(float*) * MAP_WIDTH );
@@ -70,6 +73,11 @@ void free_entity( entity_t *e )
 		}
 
 		free_list( e->inventory );
+
+		if( e->in_hand )
+			free_item( e->in_hand );
+		if( e->worn )
+			free_item( e->worn );
 
 		bufdestroy( e->name );
 		free( e );

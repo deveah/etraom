@@ -283,6 +283,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "There's nothing to drop." );
 				push_message( msg );
 				bufdestroy( msg );
+				return 0;
 			}
 			
 			item_t *it = (item_t*)list_get_index( li, pos );
@@ -318,6 +319,14 @@ int draw_inventory_screen( entity_t *e )
 		}
 		case 'w':
 		{
+			if( li->length == 0 )
+			{
+				buf_t *msg = bufnew( "There's nothing to wield." );
+				push_message( msg );
+				bufdestroy( msg );
+				return 0;
+			}
+
 			item_t *it = (item_t*)list_get_index( li, pos );
 
 			buf_t *msg = bufnew( "You now wield " );
@@ -331,6 +340,14 @@ int draw_inventory_screen( entity_t *e )
 		}
 		case 'W':
 		{
+			if( li->length == 0 )
+			{
+				buf_t *msg = bufnew( "There's nothing to wear." );
+				push_message( msg );
+				bufdestroy( msg );
+				return 0;
+			}
+
 			item_t *it = (item_t*)list_get_index( li, pos );
 			clear();
 
@@ -613,6 +630,9 @@ int look_at( void )
 					bufcats( info, "Several items; " );
 				}
 			}
+
+			if( li )
+				free_list( li );
 
 			link_t *l = link_find_by_position( cx, cy, player->z );
 			if( l )
