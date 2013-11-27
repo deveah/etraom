@@ -4,14 +4,24 @@
 
 I.		Infrastructure
 
-	[ ] weapon struct
+	[x] weapon struct
+		[x] damage
+		[ ] accuracy
 	[ ] consumable struct
-	[ ] armor struct
+	[x] armor struct
 	[x] link struct
 		* should allow more than one entrance/exit per level
 		* useful in dungeon branches
 	[ ] links can obscure items on the ground
 		* disallow placement of items on ground
+	[ ] effects
+		* entity_t should have an array of (stackable) effects:
+			int effect[MAX_EFFECTS];
+		* weapons should also have effects
+		* individual effects should be accesible via
+			effect[EFFECT_BURNING] etc.
+	[ ] showing messages should be moved in the function responsible for the
+		action in cause, if possible
 
 II.		Mechanics
 
@@ -19,8 +29,12 @@ II.		Mechanics
 		[x] wield
 		[x] wear
 	[ ] combat
-		[ ] melee
+		[x] melee
 		[ ] ranged
+		[ ] distribution between physical and armor damage
+		* damage should be either melee-dealt or bullet-dealt
+		* weapons can also have a chance to trigger a certain effect
+		* ex.: Flaming Club of Doom (damage: 2-4, chance to light on fire: 20%)
 	[ ] attributes
 	[ ] skills
 

@@ -14,6 +14,7 @@ item_t *alloc_item( buf_t *name )
 	i->face = '?';
 	i->color = COLOR_PAIR( COLOR_RED );
 	i->flags = 0;
+	i->type = ITEMTYPE_NONE;
 
 	i->place = ITEMPLACE_VOID;
 
@@ -27,6 +28,10 @@ void free_item( item_t *i )
 	if( i )
 	{
 		bufdestroy( i->name );
+
+		if( i->specific )
+			free( i->specific );
+
 		free( i );
 	}
 }
@@ -75,6 +80,7 @@ int items_alike( item_t *a, item_t *b )
 		return 0;
 	
 	return( ( strcmp( a->name->data, b->name->data ) == 0 ) &&
+			( a->type == b->type ) &&
 			( a->quality == b->quality ) );
 }
 

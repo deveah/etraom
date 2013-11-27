@@ -69,8 +69,35 @@ void new_game( unsigned int seed )
 	player->hp = 5;
 	player->max_hp = 5;
 
-	player->in_hand = NULL;
-	player->worn = NULL;
+	buf_t *weapon_name = bufnew( "Sword" );
+	player->in_hand = alloc_item( weapon_name );
+	bufdestroy( weapon_name );
+
+	player->in_hand->face = ')';
+	player->in_hand->color = COLOR_PAIR( COLOR_YELLOW ) | A_BOLD;
+	player->in_hand->quantity = 1;
+	player->in_hand->quality = 1.0f;
+	player->in_hand->place = ITEMPLACE_ENTITY;
+	player->in_hand->type = ITEMTYPE_WEAPON;
+	weapon_t *weapon = malloc( sizeof(weapon_t) );
+	player->in_hand->specific = (void*)weapon;
+	weapon->min_damage = 1;
+	weapon->max_damage = 4;
+	weapon->type = WEAPONTYPE_MELEE;
+
+	buf_t *armor_name = bufnew( "Leather jacket" );
+	player->worn = alloc_item( armor_name );
+	bufdestroy( armor_name );
+
+	player->worn->face = '[';
+	player->worn->color = COLOR_PAIR( COLOR_YELLOW );
+	player->worn->quantity = 1;
+	player->worn->quality = 1.0f;
+	player->worn->place = ITEMPLACE_ENTITY;
+	player->worn->type = ITEMTYPE_ARMOR;
+	armor_t *armor = malloc( sizeof(armor_t) );
+	player->worn->specific = (void*)armor;
+	armor->ac = 5;
 
 	while( dungeon[player->z]->terrain[player->x][player->y] != &tile_floor )
 	{
@@ -269,14 +296,15 @@ void make_random_entities( int n )
 		ent->y = 0;
 		ent->z = 0;
 
-		ent->hp = 2;
-		ent->max_hp = 2;
+		ent->hp = 5;
+		ent->max_hp = 5;
 
-		while( dungeon[ent->z]->terrain[ent->x][ent->y] != &tile_floor )
+		do
 		{
 			ent->x = rand() % MAP_WIDTH;
 			ent->y = rand() % MAP_HEIGHT;
 		}
+		while( dungeon[ent->z]->terrain[ent->x][ent->y] != &tile_floor );
 	
 		ent->flags = 0;
 		ent->agility = rand() % 5 + 10;
@@ -323,11 +351,14 @@ void make_random_objects( int n )
 		it->quantity = 1;
 		it->quality = 1.0f;
 
-		while( dungeon[it->z]->terrain[it->x][it->y] != &tile_floor )
+		do
 		{
 			it->x = rand() % MAP_WIDTH;
 			it->y = rand() % MAP_HEIGHT;
 		}
+		while( dungeon[it->z]->terrain[it->x][it->y] != &tile_floor );
+
+		it->type = ITEMTYPE_NONE;
 
 		it->flags = ITEMFLAG_PICKABLE | ITEMFLAG_STACKABLE;
 

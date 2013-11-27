@@ -157,7 +157,10 @@ int draw_main_screen( void )
 		mvprintw( 23, 40, "w: -" );
 	
 	if( player->worn )
-		mvprintw( 24, 40, "a: %s (unimplemented: armor class)", player->worn->name->data );
+	{
+		mvprintw( 24, 40, "a: %s (AC:%i)", player->worn->name->data,
+			get_item_ac( player->worn ) );
+	}
 	else
 		mvprintw( 24, 40, "a: -" );
 
@@ -283,6 +286,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "There's nothing to drop." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 0;
 			}
 			
@@ -304,6 +308,7 @@ int draw_inventory_screen( entity_t *e )
 					push_message( msg );
 					bufdestroy( msg );
 
+					clear();
 					return 0;
 				}
 			}
@@ -324,6 +329,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "There's nothing to wield." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 0;
 			}
 
@@ -345,11 +351,11 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "There's nothing to wear." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 0;
 			}
 
 			item_t *it = (item_t*)list_get_index( li, pos );
-			clear();
 
 			buf_t *msg = bufnew( "You now wear " );
 			bufcat( msg, it->name );
@@ -357,6 +363,7 @@ int draw_inventory_screen( entity_t *e )
 			push_message( msg );
 			bufdestroy( msg );
 
+			clear();
 			return wear_item( e, it );
 		}
 		case 'p':
@@ -366,6 +373,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "You put down your weapon." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 1;
 			}
 			else
@@ -373,6 +381,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "You aren't wielding anything." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 0;
 			}
 		}
@@ -383,6 +392,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "You take off your armor." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 1;
 			}
 			else
@@ -390,6 +400,7 @@ int draw_inventory_screen( entity_t *e )
 				buf_t *msg = bufnew( "You aren't wearing anything." );
 				push_message( msg );
 				bufdestroy( msg );
+				clear();
 				return 0;
 			}
 		}

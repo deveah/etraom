@@ -24,12 +24,6 @@ int move_relative( entity_t *e, int dx, int dy )
 			entity_t *ee = entity_find_by_position( e->x+dx, e->y+dy, e->z );
 			if( ee )
 			{
-				buf_t *msg = bufnew( "You hit the " );
-				bufcat( msg, ee->name );
-				bufcats( msg, "!" );
-				push_message( msg );
-				bufdestroy( msg );
-
 				melee_attack( e, ee );
 
 				return 1;
@@ -200,13 +194,18 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 		ii->quantity = quantity;
 		ii->quality = i->quality;
 		ii->type = i->type;
-		/* TODO: should clone 'specific' ? */
-		ii->specific = i->specific;
 		ii->place = i->place;
 		ii->x = i->x;
 		ii->y = i->y;
 		ii->z = i->z;
 		ii->flags = i->flags;
+
+		if( i->type == ITEMTYPE_WEAPON )
+		{
+			ii->specific = malloc( sizeof(weapon_t) );
+			memcpy( ii->specific, i->specific, sizeof(weapon_t) );
+		}
+		/* TODO handle other item types */
 
 		i->quantity -= quantity;
 
@@ -275,13 +274,18 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 			ii->quantity = quantity;
 			ii->quality = i->quality;
 			ii->type = i->type;
-			/* TODO: should clone 'specific' ? */
-			ii->specific = i->specific;
 			ii->x = e->x;
 			ii->y = e->y;
 			ii->z = e->z;
 			ii->place = ITEMPLACE_DUNGEON;
 			ii->flags = i->flags;
+
+			if( i->type == ITEMTYPE_WEAPON )
+			{
+				ii->specific = malloc( sizeof(weapon_t) );
+				memcpy( ii->specific, i->specific, sizeof(weapon_t) );
+			}
+			/* TODO handle other item types */
 
 			list_add_head( item_list, ii );
 		}

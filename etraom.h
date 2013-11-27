@@ -22,14 +22,32 @@
 
 #define MESSAGEFLAG_UNREAD			(1<<0)
 
-#define ITEMPLACE_VOID				(0)
-#define ITEMPLACE_DUNGEON			(1)
-#define ITEMPLACE_ENTITY			(2)
-
 #define ITEMFLAG_PICKABLE			(1<<0)
 #define ITEMFLAG_STACKABLE			(1<<1)
 
 #define LINKFLAG_USED				(1<<0)
+
+enum item_type
+{
+	ITEMTYPE_NONE,
+	ITEMTYPE_WEAPON,
+	ITEMTYPE_ARMOR,
+	ITEMTYPE_MAX
+};
+
+enum item_place
+{
+	ITEMPLACE_VOID,
+	ITEMPLACE_ENTITY,
+	ITEMPLACE_DUNGEON
+};
+
+enum weapon_type
+{
+	WEAPONTYPE_MELEE,
+	WEAPONTYPE_HANDGUN,
+	WEAPONTYPE_MAX
+};
 
 typedef struct
 {
@@ -140,6 +158,22 @@ typedef struct
 	int face, color;
 	int flags;
 } link_t;
+
+typedef struct
+{
+	int type;
+	/*int accuracy;*/
+	int min_damage, max_damage;
+	
+	/*int neffects;
+	int effect[EFFECT_MAX];*/
+} weapon_t;
+
+typedef struct
+{
+	/* TODO different responses to different damage types? */
+	int ac;
+} armor_t;
 
 extern FILE *logfile;
 
@@ -275,6 +309,8 @@ int look_at( void );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
+int get_item_damage( item_t *i );
+int get_item_ac( item_t *i );
 
 /* link.c */
 link_t *alloc_link( void );
