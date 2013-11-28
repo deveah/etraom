@@ -146,7 +146,6 @@ int parse_entities( char *fn )
 		e->agility = agility;
 		e->face = (int)face;
 		e->color = parse_color( color );
-		log_add( "[parse_entities] Color: %i\n", e->color );
 
 		list_add_tail( entity_type_list, (void*)e );
 
@@ -155,6 +154,8 @@ int parse_entities( char *fn )
 	while( !feof( f ) );
 
 	nentities--;
+
+	log_add( "[parse_entities] Done parsing entities.\n" );
 
 	free( name );
 	return nentities;

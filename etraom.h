@@ -203,7 +203,7 @@ int term_w, term_h;
 
 /* parser.c */
 int parse_color( int c );
-int parse_entites( char *fn );
+int parse_entities( char *fn );
 void free_entity_types( void );
 
 /* util.c */
