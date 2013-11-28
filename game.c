@@ -136,6 +136,12 @@ int init_game( int argc, char** argv )
 	item_list = alloc_list();
 	link_list = alloc_list();
 
+	if( parse_entities( ENTITIES_FILE ) == -1 )
+	{
+		log_add( "FATAL: Couldn't open entity data file.\n" );
+		exit( 0 );
+	}
+
 	new_game( time( 0 ) );
 
 	running = 1;
@@ -164,6 +170,8 @@ int terminate_game( void )
 	free_list( item_list );
 	free_links();
 	free_list( link_list );
+
+	free_entity_types();
 
 	log_add( "Done terminating game.\n" );
 
@@ -283,34 +291,25 @@ int handle_key( int key )
 void make_random_entities( int n )
 {
 	int i;
-	buf_t *name;
-	entity_t *ent;
+	int r;
+	entity_t *e;
 
 	for( i = 0; i < n; i++ )
 	{
-		name = bufnew( "Entity" );
-		ent = alloc_entity( name );
-		bufdestroy( name );
+		r = rand() % ( entity_type_list->length );
+		e = clone_entity( (entity_t*)( list_get_index( entity_type_list, r ) ) );
 
-		ent->x = 0;
-		ent->y = 0;
-		ent->z = 0;
-
-		ent->hp = 5;
-		ent->max_hp = 5;
+		/* TODO: place entities on not only the first floor */
+		e->z = 0;
 
 		do
 		{
-			ent->x = rand() % MAP_WIDTH;
-			ent->y = rand() % MAP_HEIGHT;
+			e->x = rand() % MAP_WIDTH;
+			e->y = rand() % MAP_HEIGHT;
 		}
-		while( dungeon[ent->z]->terrain[ent->x][ent->y] != &tile_floor );
-	
-		ent->flags = 0;
-		ent->agility = rand() % 5 + 10;
-		ent->ap = 0;
+		while( dungeon[e->z]->terrain[e->x][e->y] != &tile_floor );
 
-		list_add_head( entity_list, (void*)ent );
+		list_add_head( entity_list, (void*)e );
 	}
 }
 

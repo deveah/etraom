@@ -49,30 +49,36 @@ void free_entity( entity_t *e )
 
 	if( e )
 	{
-		for( i = 0; i < MAX_LEVELS; i++ )
+		if( e->lightmap )
 		{
-			if( e->lightmap[i] )
+			for( i = 0; i < MAX_LEVELS; i++ )
 			{
-				for( j = 0; j < MAP_WIDTH; j++ )
+				if( e->lightmap[i] )
 				{
-					if( e->lightmap[i][j] )
-						free( e->lightmap[i][j] );
+					for( j = 0; j < MAP_WIDTH; j++ )
+					{
+						if( e->lightmap[i][j] )
+							free( e->lightmap[i][j] );
+					}
+	
+					free( e->lightmap[i] );
 				}
-
-				free( e->lightmap[i] );
 			}
+			free( e->lightmap );
 		}
-		free( e->lightmap );
 
-		list_element *el = e->inventory->head;
-
-		while( el )
+		if( e->inventory )
 		{
-			free_item( (item_t*)el->data );
-			el = el->next;
-		}
+			list_element *el = e->inventory->head;
 
-		free_list( e->inventory );
+			while( el )
+			{
+				free_item( (item_t*)el->data );
+				el = el->next;
+			}
+
+			free_list( e->inventory );
+		}
 
 		if( e->in_hand )
 			free_item( e->in_hand );
@@ -83,6 +89,36 @@ void free_entity( entity_t *e )
 		free( e );
 		log_add( "[free_entity] Freed entity 0x%08x.\n", e );
 	}
+}
+
+entity_t *clone_entity( entity_t *e )
+{
+	if( !e )
+		return NULL;
+	
+	entity_t *ce = alloc_entity( e->name );
+	ce->face = e->face;
+	ce->color = e->color;
+	ce->ap = e->ap;
+	ce->agility = e->agility;
+	ce->hp = e->hp;
+	ce->max_hp = e->max_hp;
+	ce->x = e->x;
+	ce->y = e->y;
+	ce->z = e->z;
+
+	/* TODO: should clone lightmap? */
+	ce->lightmap = NULL;
+
+	/* TODO: should clone inventory? */
+	ce->inventory = NULL;
+
+	ce->worn = clone_item( e->worn );
+	ce->in_hand = clone_item( e->in_hand );
+
+	ce->flags = e->flags;
+
+	return ce;
 }
 
 void free_entities( void )

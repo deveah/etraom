@@ -5,14 +5,19 @@
 #ifndef _ETRAOM_H_
 #define _ETRAOM_H_
 
-#define ETRAOM_VERSION "0.01"
-#define MAX_STRING_LENGTH 256
-#define MAX_LEVELS 10
+#define ETRAOM_VERSION				"0.01"
+#define MAX_STRING_LENGTH			256
+#define MAX_LEVELS					10
 
-#define MAP_WIDTH 80
-#define MAP_HEIGHT 21
+#define ENTITIES_FILE				"data/entities"
+#define ITEMS_FILE					"data/items"
+#define WEAPONS_FILE				"data/weapons"
+#define ARMORS_FILE					"data/armors"
 
-#define MAGIC_NUMBER 1994
+#define MAP_WIDTH					80
+#define MAP_HEIGHT					21
+
+#define MAGIC_NUMBER				1994
 
 #define TILEFLAG_SOLID				(1<<0)
 #define TILEFLAG_OPAQUE				(1<<1)
@@ -185,6 +190,8 @@ extern unsigned int nlevels;
 extern map_t **dungeon;
 extern int main_seed;
 
+extern list_t *entity_type_list;
+
 extern list_t *message_list;
 extern list_t *entity_list;
 extern list_t *item_list;
@@ -193,6 +200,11 @@ extern entity_t *player; /* shortcut to player struct */
 
 /* terminal width/height */
 int term_w, term_h;
+
+/* parser.c */
+int parse_color( int c );
+int parse_entites( char *fn );
+void free_entity_types( void );
 
 /* util.c */
 int distance( int x1, int y1, int x2, int y2 );
@@ -206,6 +218,7 @@ int do_ray( entity_t *e, int x2, int y2 );
 /* entity.c */
 entity_t *alloc_entity( buf_t *name );
 void free_entity( entity_t *e );
+entity_t *clone_entity( entity_t *e );
 void free_entities( void );
 void entity_act( entity_t *e );
 entity_t *entity_find_by_position( int x, int y, int z );
@@ -215,6 +228,7 @@ int entity_dumb_ai( entity_t *e );
 /* item.c */
 item_t *alloc_item( buf_t *name );
 void free_item( item_t *i );
+item_t *clone_item( item_t *i );
 void free_items( void );
 list_t *item_find_by_position( int x, int y, int z );
 int items_alike( item_t *a, item_t *b );
