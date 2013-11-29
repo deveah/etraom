@@ -191,6 +191,7 @@ int count_ammo( list_t *li, int ammo_type )
 void consume_ammo( list_t *li, int ammo_type, int q )
 {
 	list_element *el = li->head;
+	int j = 0;
 
 	while( el )
 	{
@@ -201,10 +202,20 @@ void consume_ammo( list_t *li, int ammo_type, int q )
 			if( a->type == ammo_type )
 			{
 				i->quantity -= q;
+
+				/* theoretically, it shouldn't reach negative values */
+				if( i->quantity == 0 )
+				{
+					free_item( i );
+					list_remove_index( li, j );
+				}
+
+				return;
 			}
 		}
 
 		el = el->next;
+		j++;
 	}
 }
 

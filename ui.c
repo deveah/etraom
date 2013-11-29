@@ -127,6 +127,28 @@ int draw_main_screen( void )
 		k = k->next;
 	}
 
+	list_t *li = item_find_by_position( player->x, player->y, player->z );
+	if( li )
+	{
+		if( li->length == 1 )
+		{
+			item_t *ii = (item_t*)li->head->data;
+			buf_t *b = bufnew( "You stand on " );
+			bufcats( b, ii->name->data );
+			bufcats( b, "." );
+			push_message( b );
+			bufdestroy( b );
+		}
+		else if( li->length > 1 )
+		{
+			buf_t *b = bufnew( "You stand on several items." );
+			push_message( b );
+			bufdestroy( b );
+		}
+		
+		free_list( li );
+	}
+
 	buf_t *msgline = bufnew( "" );
 
 	k = message_list->head;
@@ -313,12 +335,6 @@ int draw_inventory_screen( entity_t *e )
 				}
 			}
 
-			buf_t *msg = bufnew( "You drop " );
-			bufcat( msg, it->name );
-			bufcats( msg, "." );
-			push_message( msg );
-			bufdestroy( msg );
-
 			clear();
 			return drop_item( e, it, q );
 		}
@@ -334,12 +350,6 @@ int draw_inventory_screen( entity_t *e )
 			}
 
 			item_t *it = (item_t*)list_get_index( li, pos );
-
-			buf_t *msg = bufnew( "You now wield " );
-			bufcat( msg, it->name );
-			bufcats( msg, "." );
-			push_message( msg );
-			bufdestroy( msg );
 
 			clear();
 			return wield_item( e, it );
@@ -357,52 +367,16 @@ int draw_inventory_screen( entity_t *e )
 
 			item_t *it = (item_t*)list_get_index( li, pos );
 
-			buf_t *msg = bufnew( "You now wear " );
-			bufcat( msg, it->name );
-			bufcats( msg, "." );
-			push_message( msg );
-			bufdestroy( msg );
-
 			clear();
 			return wear_item( e, it );
 		}
 		case 'p':
 		{
-			if( put_down_weapon( e ) )
-			{
-				buf_t *msg = bufnew( "You put down your weapon." );
-				push_message( msg );
-				bufdestroy( msg );
-				clear();
-				return 1;
-			}
-			else
-			{
-				buf_t *msg = bufnew( "You aren't wielding anything." );
-				push_message( msg );
-				bufdestroy( msg );
-				clear();
-				return 0;
-			}
+			return put_down_weapon( e );
 		}
 		case 't':
 		{
-			if( take_off_armor( e ) )
-			{
-				buf_t *msg = bufnew( "You take off your armor." );
-				push_message( msg );
-				bufdestroy( msg );
-				clear();
-				return 1;
-			}
-			else
-			{
-				buf_t *msg = bufnew( "You aren't wearing anything." );
-				push_message( msg );
-				bufdestroy( msg );
-				clear();
-				return 0;
-			}
+			return take_off_armor( e );
 		}
 		default:
 			goto hell;
@@ -484,12 +458,6 @@ int draw_pick_up_screen( entity_t *e )
 			return 0;
 		}
 	}
-
-	buf_t *msg = bufnew( "You pick up " );
-	bufcat( msg, it->name );
-	bufcats( msg, "." );
-	push_message( msg );
-	bufdestroy( msg );
 
 	pick_up_item( e, it, q );
 	free_list( li );

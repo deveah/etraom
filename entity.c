@@ -185,11 +185,38 @@ entity_t *entity_find_by_position( int x, int y, int z )
 
 void entity_die( entity_t *e )
 {
+	if( e == player )
+	{
+		clear();
+		mvprintw( 0, 0, "You die. Press any key to exit." );
+		running = 0;
+		getch();
+
+		return;
+	}
+
 	buf_t *msg = bufnew( "The " );
 	bufcat( msg, e->name );
 	bufcats( msg, " dies!" );
 	push_message( msg );
 	bufdestroy( msg );
+
+	/* place corpse */
+	buf_t *b = bufnew( e->name->data );
+	bufcats( b, " corpse" );
+	item_t *c = alloc_item( b );
+	bufdestroy( b );
+	c->face = '%';
+	c->color = e->color;
+	c->quantity = 1;
+	c->quality = 1.0f;
+	c->type = ITEMTYPE_JUNK;
+	c->place = ITEMPLACE_DUNGEON;
+	c->x = e->x;
+	c->y = e->y;
+	c->z = e->z;
+	c->flags = ITEMFLAG_STACKABLE | ITEMFLAG_PICKABLE;
+	list_add_tail( item_list, (void*)c );
 
 	log_add( "[entity_die] Entity 0x%08x (%s) has died.\n", e, e->name->data );
 	int i = list_find( entity_list, (void*)e );

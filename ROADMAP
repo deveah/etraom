@@ -19,15 +19,18 @@ I.		Infrastructure
 		* weapons should also have effects
 		* individual effects should be accesible via
 			effect[EFFECT_BURNING] etc.
-	[ ] showing messages should be moved in the function responsible for the
+	[x] showing messages should be moved in the function responsible for the
 		action in cause, if possible
-	[ ] corpses?
+	[x] corpses
+	[x] player death
+	[ ] make item stacks on the floor stand out, maybe A_REVERSE
 
 II.		Mechanics
 
 	[ ] combat
 		[x] melee
 		[x] ranged
+			[ ] allow the player to commit suicide?
 			[ ] ammo consumption
 			[ ] clip distribution
 		[ ] distribution between physical and armor damage

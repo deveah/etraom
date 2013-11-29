@@ -179,6 +179,14 @@ int follow_stairs( entity_t *e )
 
 int pick_up_item( entity_t *e, item_t *i, int quantity )
 {
+	if( !( i->flags & ITEMFLAG_PICKABLE ) )
+	{
+		buf_t *b = bufnew( "You can't pick that up." );
+		push_message( b );
+		bufdestroy( b );
+		return 0;
+	}
+
 	if( i->quantity == quantity )
 	{
 		inventory_add_item( e, i );
@@ -200,6 +208,7 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 		ii->z = i->z;
 		ii->flags = i->flags;
 
+		/* TODO: weapons aren't stackable, so this shouldn't happen */
 		if( i->type == ITEMTYPE_WEAPON )
 		{
 			ii->specific = malloc( sizeof(weapon_t) );
@@ -211,6 +220,12 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 
 		inventory_add_item( e, ii );
 	}
+	
+	buf_t *msg = bufnew( "You pick up " );
+	bufcat( msg, i->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
 
 	return 1;
 }
@@ -293,6 +308,12 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 		i->quantity -= quantity;
 	}
 
+	buf_t *msg = bufnew( "You drop " );
+	bufcat( msg, i->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
+
 	return 1;
 }
 
@@ -304,10 +325,18 @@ int put_down_weapon( entity_t *e )
 		e->in_hand = NULL;
 		inventory_add_item( e, i );
 
+		buf_t *msg = bufnew( "You put down your weapon." );
+		push_message( msg );
+		bufdestroy( msg );
+		
 		return 1;
 	}
 	else
 	{
+		buf_t *msg = bufnew( "You aren't wielding anything." );
+		push_message( msg );
+		bufdestroy( msg );
+		
 		return 0;
 	}
 }
@@ -320,10 +349,18 @@ int take_off_armor( entity_t *e )
 		e->worn = NULL;
 		inventory_add_item( e, i );
 
+		buf_t *msg = bufnew( "You take off your armor." );
+		push_message( msg );
+		bufdestroy( msg );
+		
 		return 1;
 	}
 	else
 	{
+		buf_t *msg = bufnew( "You aren't wearing anything." );
+		push_message( msg );
+		bufdestroy( msg );
+		
 		return 0;
 	}
 }
@@ -338,6 +375,12 @@ int wield_item( entity_t *e, item_t *i )
 	list_remove_index( e->inventory, j );
 	
 	e->in_hand = i;
+
+	buf_t *msg = bufnew( "You now wield " );
+	bufcat( msg, i->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
 
 	/* TODO: can this fail? */
 	return 1;
@@ -354,6 +397,13 @@ int wear_item( entity_t *e, item_t *i )
 
 	e->worn = i;
 	
+	buf_t *msg = bufnew( "You now wear " );
+	bufcat( msg, i->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
+
+	/* TODO: can this fail? */
 	return 1;
 }
 

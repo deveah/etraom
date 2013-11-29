@@ -79,6 +79,7 @@ void new_game( unsigned int seed )
 	melee->quality = 1.0f;
 	melee->place = ITEMPLACE_ENTITY;
 	melee->type = ITEMTYPE_WEAPON;
+	melee->flags = ITEMFLAG_PICKABLE;
 	weapon_t *mweapon = malloc( sizeof(weapon_t) );
 	melee->specific = (void*)mweapon;
 	mweapon->min_damage = 1;
@@ -97,6 +98,7 @@ void new_game( unsigned int seed )
 	player->in_hand->quality = 1.0f;
 	player->in_hand->place = ITEMPLACE_ENTITY;
 	player->in_hand->type = ITEMTYPE_WEAPON;
+	player->in_hand->flags = ITEMFLAG_PICKABLE;
 	weapon_t *weapon = malloc( sizeof(weapon_t) );
 	player->in_hand->specific = (void*)weapon;
 	weapon->min_damage = 2;
@@ -113,6 +115,7 @@ void new_game( unsigned int seed )
 	player->worn->quality = 1.0f;
 	player->worn->place = ITEMPLACE_ENTITY;
 	player->worn->type = ITEMTYPE_ARMOR;
+	player->worn->flags = ITEMFLAG_PICKABLE;
 	armor_t *armor = malloc( sizeof(armor_t) );
 	player->worn->specific = (void*)armor;
 	armor->ac = 5;
@@ -127,7 +130,7 @@ void new_game( unsigned int seed )
 	bullet->quality = 1.0f;
 	bullet->place = ITEMPLACE_ENTITY;
 	bullet->type = ITEMTYPE_AMMO;
-	bullet->flags = ITEMFLAG_STACKABLE;
+	bullet->flags = ITEMFLAG_STACKABLE | ITEMFLAG_PICKABLE;
 	ammo_t *ammo = malloc( sizeof(ammo_t) );
 	ammo->type = AMMOTYPE_BULLET;
 	bullet->specific = (void*)ammo;
