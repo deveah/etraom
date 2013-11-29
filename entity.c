@@ -21,6 +21,9 @@ entity_t *alloc_entity( buf_t *name )
 
 	e->inventory = alloc_list();
 
+	e->agility = 0;
+	e->ap = 0;
+
 	e->in_hand = NULL;
 	e->worn = NULL;
 
@@ -108,10 +111,8 @@ entity_t *clone_entity( entity_t *e )
 	ce->z = e->z;
 
 	/* TODO: should clone lightmap? */
-	ce->lightmap = NULL;
 
 	/* TODO: should clone inventory? */
-	ce->inventory = NULL;
 
 	ce->worn = clone_item( e->worn );
 	ce->in_hand = clone_item( e->in_hand );

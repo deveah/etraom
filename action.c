@@ -214,6 +214,16 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 			ii->specific = malloc( sizeof(weapon_t) );
 			memcpy( ii->specific, i->specific, sizeof(weapon_t) );
 		}
+		if( i->type == ITEMTYPE_ARMOR )
+		{
+			ii->specific = malloc( sizeof(armor_t) );
+			memcpy( ii->specific, i->specific, sizeof(armor_t) );
+		}
+		if( i->type == ITEMTYPE_AMMO )
+		{
+			ii->specific = malloc( sizeof(ammo_t) );
+			memcpy( ii->specific, i->specific, sizeof(ammo_t) );
+		}
 		/* TODO handle other item types */
 
 		i->quantity -= quantity;
@@ -299,6 +309,16 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 			{
 				ii->specific = malloc( sizeof(weapon_t) );
 				memcpy( ii->specific, i->specific, sizeof(weapon_t) );
+			}
+			if( i->type == ITEMTYPE_ARMOR )
+			{
+				ii->specific = malloc( sizeof(armor_t) );
+				memcpy( ii->specific, i->specific, sizeof(armor_t) );
+			}
+			if( i->type == ITEMTYPE_AMMO )
+			{
+				ii->specific = malloc( sizeof(ammo_t) );
+				memcpy( ii->specific, i->specific, sizeof(ammo_t) );
 			}
 			/* TODO handle other item types */
 

@@ -58,6 +58,7 @@ enum weapon_type
 
 enum ammo_type
 {
+	AMMOTYPE_NONE,
 	AMMOTYPE_BULLET,
 	AMMOTYPE_MAX
 };

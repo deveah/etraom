@@ -84,6 +84,7 @@ void new_game( unsigned int seed )
 	melee->specific = (void*)mweapon;
 	mweapon->min_damage = 1;
 	mweapon->max_damage = 4;
+	mweapon->ammo_type = AMMOTYPE_NONE;
 	mweapon->type = WEAPONTYPE_MELEE;
 
 	list_add_head( player->inventory, melee );
@@ -103,6 +104,7 @@ void new_game( unsigned int seed )
 	player->in_hand->specific = (void*)weapon;
 	weapon->min_damage = 2;
 	weapon->max_damage = 6;
+	weapon->ammo_type = AMMOTYPE_BULLET;
 	weapon->type = WEAPONTYPE_HANDGUN;
 
 	buf_t *armor_name = bufnew( "Leather jacket" );
