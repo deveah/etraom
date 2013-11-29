@@ -9,9 +9,8 @@ I.		Infrastructure
 		[ ] accuracy
 	[ ] consumable struct
 	[x] armor struct
-	[x] link struct
-		* should allow more than one entrance/exit per level
-		* useful in dungeon branches
+	[x] ammo struct
+		* more fields?
 	[ ] links can obscure items on the ground
 		* disallow placement of items on ground
 	[ ] effects
@@ -22,15 +21,15 @@ I.		Infrastructure
 			effect[EFFECT_BURNING] etc.
 	[ ] showing messages should be moved in the function responsible for the
 		action in cause, if possible
+	[ ] corpses?
 
 II.		Mechanics
 
-	[x] inventory
-		[x] wield
-		[x] wear
 	[ ] combat
 		[x] melee
-		[ ] ranged
+		[x] ranged
+			[ ] ammo consumption
+			[ ] clip distribution
 		[ ] distribution between physical and armor damage
 		* damage should be either melee-dealt or bullet-dealt
 		* weapons can also have a chance to trigger a certain effect
@@ -40,7 +39,7 @@ II.		Mechanics
 
 III.	Map generators
 
-	[ ] dfa
+	[ ] dla
 	[ ] cooridor diffusion
 
 IV.		UI

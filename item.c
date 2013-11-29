@@ -118,3 +118,23 @@ int items_alike( item_t *a, item_t *b )
 			( a->quality == b->quality ) );
 }
 
+int count_items( list_t *li, item_t *i )
+{
+	list_element *el = li->head;
+	int c = 0;
+
+	while( el )
+	{
+		item_t *j = (item_t*)el->data;
+		
+		if( items_alike( i, j ) )
+		{
+			c += j->quantity;
+		}
+
+		el = el->next;
+	}
+
+	return c;
+}
+

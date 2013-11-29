@@ -37,6 +37,7 @@ enum item_type
 	ITEMTYPE_NONE,
 	ITEMTYPE_WEAPON,
 	ITEMTYPE_ARMOR,
+	ITEMTYPE_AMMO,
 	ITEMTYPE_MAX
 };
 
@@ -52,6 +53,12 @@ enum weapon_type
 	WEAPONTYPE_MELEE,
 	WEAPONTYPE_HANDGUN,
 	WEAPONTYPE_MAX
+};
+
+enum ammo_type
+{
+	AMMOTYPE_BULLET,
+	AMMOTYPE_MAX
 };
 
 typedef struct
@@ -167,8 +174,10 @@ typedef struct
 typedef struct
 {
 	int type;
-	/*int accuracy;*/
+	int accuracy;
 	int min_damage, max_damage;
+
+	int ammo_type;
 	
 	/*int neffects;
 	int effect[EFFECT_MAX];*/
@@ -179,6 +188,12 @@ typedef struct
 	/* TODO different responses to different damage types? */
 	int ac;
 } armor_t;
+
+typedef struct
+{
+	/* TODO extra properties? */
+	int type;
+} ammo_t;
 
 extern FILE *logfile;
 
@@ -232,6 +247,7 @@ item_t *clone_item( item_t *i );
 void free_items( void );
 list_t *item_find_by_position( int x, int y, int z );
 int items_alike( item_t *a, item_t *b );
+int count_items( list_t *li, item_t *i );
 
 /* inventory.c */
 int inventory_add_item( entity_t *e, item_t *i );
@@ -276,6 +292,7 @@ int draw_inventory_screen( entity_t *e );
 int draw_pick_up_screen( entity_t *e );
 point_t input_direction( char *msg );
 int draw_message_buffer( void );
+int fire_at( void );
 
 /* log.c */
 int open_logfile( void );
@@ -323,8 +340,10 @@ int look_at( void );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
-int get_item_damage( item_t *i );
+int ranged_attack( entity_t *atk, entity_t *def );
 int get_item_ac( item_t *i );
+int count_ammo( list_t *li, int ammo_type );
+void consume_ammo( list_t *li, int ammo_type, int q );
 
 /* link.c */
 link_t *alloc_link( void );
