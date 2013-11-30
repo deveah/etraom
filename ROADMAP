@@ -7,12 +7,13 @@ I.		Infrastructure
 	[x] weapon struct
 		[x] damage
 		[ ] accuracy
+		[ ] range
 	[ ] consumable struct
 	[x] armor struct
 	[x] ammo struct
 		* more fields?
 	[ ] links can obscure items on the ground
-		* disallow placement of items on ground
+		* disallow placement of items on links
 	[ ] effects
 		* entity_t should have an array of (stackable) effects:
 			int effect[MAX_EFFECTS];
@@ -32,13 +33,21 @@ II.		Mechanics
 		[x] ranged
 			[ ] allow the player to commit suicide?
 			[ ] ammo consumption
+			[ ] ammo types - fixed?
 			[ ] clip distribution
+			[ ] bullets should follow a line atk->def
 		[ ] distribution between physical and armor damage
 		* damage should be either melee-dealt or bullet-dealt
 		* weapons can also have a chance to trigger a certain effect
 		* ex.: Flaming Club of Doom (damage: 2-4, chance to light on fire: 20%)
 	[ ] attributes
 	[ ] skills
+	[ ] levelling
+	[ ] weapon generator
+		[ ] melee
+		[ ] ranged
+		* cost - useful for levelling items
+		* special weapons have lesser chances of spawning
 
 III.	Map generators
 
