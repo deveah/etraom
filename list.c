@@ -114,12 +114,14 @@ void list_remove_index( list_t *l, int i )
 		if( j+1 == i )
 		{
 			temp = el->next;
+			
+			if( el->next == l->tail )
+			{
+				l->tail = el;
+			}
 
-			if( el->next )
-				el->next = temp->next;
-
+			el->next = temp->next;
 			free( temp );
-
 			l->length--;
 
 			return;

@@ -187,6 +187,12 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 		return 0;
 	}
 
+	buf_t *msg = bufnew( "You pick up " );
+	bufcat( msg, i->name );
+	bufcats( msg, "." );
+	push_message( msg );
+	bufdestroy( msg );
+
 	if( i->quantity == quantity )
 	{
 		inventory_add_item( e, i );
@@ -231,12 +237,6 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 		inventory_add_item( e, ii );
 	}
 	
-	buf_t *msg = bufnew( "You pick up " );
-	bufcat( msg, i->name );
-	bufcats( msg, "." );
-	push_message( msg );
-	bufdestroy( msg );
-
 	return 1;
 }
 
