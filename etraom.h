@@ -99,7 +99,7 @@ typedef struct
 {
 	char *name;
 	int face;
-	int fg, bg;
+	int fg;
 	int flags;
 } tile_t;
 
@@ -109,7 +109,8 @@ extern tile_t
 	tile_cooridor,
 	tile_wall,
 	tile_door_closed,
-	tile_door_open;
+	tile_door_open,
+	tile_pillar;
 
 typedef struct
 {
@@ -320,6 +321,7 @@ int make_grid_map(	map_t *m, int cell_width, int cell_height,
 					float loop_chance );
 void make_drunken_walk_cave( map_t *m, int n );
 int count_neighbours( map_t *m, int x, int y, tile_t *w );
+int count_neighbours_q( map_t *m, int x, int y, tile_t *w );
 void post_process_map( map_t *m );
 void link_dungeon_levels( void );
 int count_neighbours_sparse( map_t *m, int x, int y, tile_t *w );

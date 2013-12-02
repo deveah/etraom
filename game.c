@@ -152,7 +152,7 @@ void new_game( unsigned int seed )
 	list_add_head( entity_list, (void*)player );
 
 	make_random_entities( 10 );
-	make_random_objects( 160 );
+	make_random_objects( 20 );
 
 	log_add( "Done creating new game.\n" );
 }

@@ -274,6 +274,17 @@ int count_neighbours( map_t *m, int x, int y, tile_t *w )
 	return r;
 }
 
+int count_neighbours_q( map_t *m, int x, int y, tile_t *w )
+{
+	int n = 0;
+	if( is_legal( x-1, y ) && ( m->terrain[x-1][y] == w ) ) n++;
+	if( is_legal( x+1, y ) && ( m->terrain[x+1][y] == w ) ) n++;
+	if( is_legal( x, y-1 ) && ( m->terrain[x][y-1] == w ) ) n++;
+	if( is_legal( x, y+1 ) && ( m->terrain[x][y+1] == w ) ) n++;
+
+	return n;
+}
+
 void post_process_map( map_t *m )
 {
 	int i, j;
@@ -290,6 +301,28 @@ void post_process_map( map_t *m )
 		}
 	}
 
+	/* cut off dead ends */
+	int n = 0;
+	do
+	{
+		n = 0;
+		for( i = 0; i < m->width; i++ )
+		{
+			for( j = 0; j < m->height; j++ )
+			{
+				if( ( ( m->terrain[i][j] == &tile_floor ) ||
+					  ( m->terrain[i][j] == &tile_door_closed ) ) &&
+					( count_neighbours_q( m, i, j, &tile_floor ) +
+						count_neighbours_q( m, i, j, &tile_door_closed ) < 2 ) )
+				{
+					m->terrain[i][j] = &tile_wall;
+					n++;
+				}
+			}
+		}
+	}
+	while( n > 0 );
+
 	/* remove walls that have no neighbouring floor tiles */
 	for( i = 0; i < m->width; i++ )
 	{
@@ -303,7 +336,7 @@ void post_process_map( map_t *m )
 		}
 	}
 
-	/* remove pillars */
+	/* remove (some) pillars */
 	for( i = 0; i < m->width; i++ )
 	{
 		for( j = 0; j < m->height; j++ )
@@ -311,11 +344,18 @@ void post_process_map( map_t *m )
 			if( ( m->terrain[i][j] == &tile_wall ) &&
 				( count_neighbours( m, i, j, &tile_floor ) == 8 ) )
 			{
-				m->terrain[i][j] = &tile_floor;
+				/* TODO move this chance into a #define */
+				if( rand()%10 == 0 )
+				{
+					m->terrain[i][j] = &tile_pillar;
+				}
+				else
+				{
+					m->terrain[i][j] = &tile_floor;
+				}
 			}
 		}
 	}
-
 }
 
 void link_dungeon_levels( void )
