@@ -77,22 +77,21 @@ int ranged_attack( entity_t *atk, entity_t *def )
 		{
 			weapon_t *w = (weapon_t*)atk->in_hand->specific;
 			
-			if( count_ammo( atk->inventory, w->ammo_type ) > 0 )
-			{
-				/* TODO: different ammo consumption? */
-				consume_ammo( atk->inventory, w->ammo_type, 1 );
-			}
-			else
-			{
-				buf_t *msg = bufnew( "You don't have enough ammo!" );
-				push_message( msg );
-				bufdestroy( msg );
-				return 0;
-			}
-
 			/* should include all non-melee weapon types */
 			if( w->type == WEAPONTYPE_HANDGUN )
 			{
+				if( count_ammo( atk->inventory, w->ammo_type ) > 0 )
+				{
+					/* TODO: different ammo consumption? */
+					consume_ammo( atk->inventory, w->ammo_type, 1 );
+				}
+				else
+				{
+					buf_t *msg = bufnew( "You don't have enough ammo!" );
+					push_message( msg );
+					bufdestroy( msg );
+					return 0;
+				}
 				int r = rand() % ( w->max_damage - w->min_damage ) + w->min_damage;
 				damage = r;
 			}
@@ -104,7 +103,7 @@ int ranged_attack( entity_t *atk, entity_t *def )
 		else
 		{
 			/* TODO: special cases? */
-			damage = 0;
+			damage = -1;
 		}
 	}
 	else
@@ -139,7 +138,8 @@ int ranged_attack( entity_t *atk, entity_t *def )
 		}
 	}
 
-	def->hp -= damage;
+	if( damage > 0 )
+		def->hp -= damage;
 
 	if( def->hp <= 0 )
 		entity_die( def );
