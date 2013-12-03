@@ -12,7 +12,7 @@ item_t *alloc_item( buf_t *name )
 
 	i->name = bufcpy( name );
 	i->face = '?';
-	i->color = COLOR_PAIR( COLOR_RED );
+	i->color = COLOR_PAIR( C_RED );
 	i->flags = 0;
 	i->type = ITEMTYPE_NONE;
 

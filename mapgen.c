@@ -386,7 +386,7 @@ void link_dungeon_levels( void )
 			{
 				link_t *la = alloc_link();
 				la->face = '>';
-				la->color = COLOR_PAIR( COLOR_WHITE );
+				la->color = COLOR_PAIR( C_WHITE );
 				la->src_x = cx;
 				la->src_y = cy;
 				la->src_z = i;
@@ -397,7 +397,7 @@ void link_dungeon_levels( void )
 
 				link_t *lb = alloc_link();
 				lb->face = '<';
-				lb->color = COLOR_PAIR( COLOR_WHITE );
+				lb->color = COLOR_PAIR( C_WHITE );
 				lb->src_x = cx;
 				lb->src_y = cy;
 				lb->src_z = i+1;
@@ -406,15 +406,6 @@ void link_dungeon_levels( void )
 				lb->dest_z = i;
 				list_add_tail( link_list, (void*)lb );
 
-				/*
-				dungeon[i  ]->terrain[cx][cy] = &tile_stairs_down;
-				dungeon[i+1]->terrain[cx][cy] = &tile_stairs_up;
-
-				dungeon[i  ]->exit_x = cx;
-				dungeon[i  ]->exit_y = cy;
-				dungeon[i+1]->entrance_x = cx;
-				dungeon[i+1]->entrance_y = cy;
-				*/
 				break;
 			}
 
@@ -433,12 +424,6 @@ void link_dungeon_levels( void )
 				}
 				while( dungeon[i]->terrain[cx][cy] != &tile_floor );
 				
-				/*
-				dungeon[i]->terrain[cx][cy] = &tile_stairs_down;
-				dungeon[i]->exit_x = cx;
-				dungeon[i]->exit_y = cy;
-				*/
-
 				do
 				{
 					dx = rand() % MAP_WIDTH;
@@ -448,7 +433,7 @@ void link_dungeon_levels( void )
 				
 				link_t *la = alloc_link();
 				la->face = '>';
-				la->color = COLOR_PAIR( COLOR_WHITE );
+				la->color = COLOR_PAIR( C_WHITE );
 				la->src_x = cx;
 				la->src_y = cy;
 				la->src_z = i;
@@ -459,7 +444,7 @@ void link_dungeon_levels( void )
 
 				link_t *lb = alloc_link();
 				lb->face = '<';
-				lb->color = COLOR_PAIR( COLOR_WHITE );
+				lb->color = COLOR_PAIR( C_WHITE );
 				lb->src_x = dx;
 				lb->src_y = dy;
 				lb->src_z = i+1;
@@ -467,11 +452,6 @@ void link_dungeon_levels( void )
 				lb->dest_y = cy;
 				lb->dest_z = i;
 				list_add_tail( link_list, (void*)lb );
-				/*
-				dungeon[i+1]->terrain[cx][cy] = &tile_stairs_up;
-				dungeon[i+1]->entrance_x = cx;
-				dungeon[i+1]->entrance_y = cy;
-				*/
 			}
 		}
 	}
@@ -626,8 +606,8 @@ int make_dla_dungeon( map_t *m )
 		{
 			rx = rand() % ( MAP_WIDTH-2 );
 			ry = rand() % ( MAP_HEIGHT-2 );
-			dx = rand() % 7 + 3;
-			dy = rand() % 5 + 3;
+			dx = rand() % 7 + 4;
+			dy = rand() % 5 + 4;
 		}
 		while(	( !is_legal_strict( rx+dx, ry+dy ) ) ||
 				( m->terrain[rx][ry] != &tile_cooridor ) );

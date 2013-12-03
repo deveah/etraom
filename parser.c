@@ -10,14 +10,14 @@ list_t *entity_type_list = NULL;
 
 /*	color code parser (assures portability)
 	color can be:
-		0 = black
-		1 = red
-		2 = green
-		3 = yellow
-		4 = blue
-		5 = magenta
-		6 = cyan
-		7 = white
+		1 = black
+		2 = red
+		3 = green
+		4 = yellow
+		5 = blue
+		6 = magenta
+		7 = cyan
+		8 = white
 
 	adding 10 to these values makes them bold
 */
@@ -33,29 +33,29 @@ int parse_color( int c )
 
 	switch( c )
 	{
-	case 0:
-		r |= COLOR_PAIR( COLOR_BLACK );
-		break;
 	case 1:
-		r |= COLOR_PAIR( COLOR_RED );
+		r |= COLOR_PAIR( C_BLACK );
 		break;
 	case 2:
-		r |= COLOR_PAIR( COLOR_GREEN );
+		r |= COLOR_PAIR( C_RED );
 		break;
 	case 3:
-		r |= COLOR_PAIR( COLOR_YELLOW );
+		r |= COLOR_PAIR( C_GREEN );
 		break;
 	case 4:
-		r |= COLOR_PAIR( COLOR_BLUE );
+		r |= COLOR_PAIR( C_YELLOW );
 		break;
 	case 5:
-		r |= COLOR_PAIR( COLOR_MAGENTA );
+		r |= COLOR_PAIR( C_BLUE );
 		break;
 	case 6:
-		r |= COLOR_PAIR( COLOR_CYAN );
+		r |= COLOR_PAIR( C_MAGENTA );
 		break;
 	case 7:
-		r |= COLOR_PAIR( COLOR_WHITE );
+		r |= COLOR_PAIR( C_CYAN );
+		break;
+	case 8:
+		r |= COLOR_PAIR( C_WHITE );
 		break;
 	default:
 		/* invalid color */

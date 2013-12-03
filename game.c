@@ -74,7 +74,7 @@ void new_game( unsigned int seed )
 	bufdestroy( melee_name );
 
 	melee->face = ')';
-	melee->color = COLOR_PAIR( COLOR_YELLOW ) | A_BOLD;
+	melee->color = COLOR_PAIR( C_YELLOW ) | A_BOLD;
 	melee->quantity = 1;
 	melee->quality = 1.0f;
 	melee->place = ITEMPLACE_ENTITY;
@@ -94,7 +94,7 @@ void new_game( unsigned int seed )
 	bufdestroy( weapon_name );
 
 	player->in_hand->face = ')';
-	player->in_hand->color = COLOR_PAIR( COLOR_BLUE ) | A_BOLD;
+	player->in_hand->color = COLOR_PAIR( C_BLUE ) | A_BOLD;
 	player->in_hand->quantity = 1;
 	player->in_hand->quality = 1.0f;
 	player->in_hand->place = ITEMPLACE_ENTITY;
@@ -112,7 +112,7 @@ void new_game( unsigned int seed )
 	bufdestroy( armor_name );
 
 	player->worn->face = '[';
-	player->worn->color = COLOR_PAIR( COLOR_YELLOW );
+	player->worn->color = COLOR_PAIR( C_YELLOW );
 	player->worn->quantity = 1;
 	player->worn->quality = 1.0f;
 	player->worn->place = ITEMPLACE_ENTITY;
@@ -127,7 +127,7 @@ void new_game( unsigned int seed )
 	bufdestroy( ammo_name );
 
 	bullet->face = '.';
-	bullet->color = COLOR_PAIR( COLOR_WHITE );
+	bullet->color = COLOR_PAIR( C_WHITE );
 	bullet->quantity = 10;
 	bullet->quality = 1.0f;
 	bullet->place = ITEMPLACE_ENTITY;
@@ -384,11 +384,11 @@ void make_random_objects( int n )
 		it->face = '*';
 
 		if( r == 0 )
-			it->color = COLOR_PAIR( COLOR_RED );
+			it->color = COLOR_PAIR( C_RED );
 		else if( r == 1 )
-			it->color = COLOR_PAIR( COLOR_GREEN );
+			it->color = COLOR_PAIR( C_GREEN );
 		else
-			it->color = COLOR_PAIR( COLOR_BLUE );
+			it->color = COLOR_PAIR( C_BLUE );
 
 		it->quantity = 1;
 		it->quality = 1.0f;

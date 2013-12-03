@@ -24,15 +24,25 @@ int init_ui( void )
 	use_default_colors();
 #endif
 
-	int i;
-	for( i = 0; i < 9; i++ )
-	{
 #ifndef _WIN32
-		init_pair( i, i, -1 );
+	init_pair( C_BLACK, COLOR_BLACK, -1 );
+	init_pair( C_RED, COLOR_RED, -1 );
+	init_pair( C_GREEN, COLOR_GREEN, -1 );
+	init_pair( C_YELLOW, COLOR_YELLOW, -1 );
+	init_pair( C_BLUE, COLOR_BLUE, -1 );
+	init_pair( C_MAGENTA, COLOR_MAGENTA, -1 );
+	init_pair( C_CYAN, COLOR_CYAN, -1 );
+	init_pair( C_WHITE, COLOR_WHITE, -1 );
 #else
-		init_pair( i, i, 0 );
+	init_pair( C_BLACK, COLOR_BLACK, 0 );
+	init_pair( C_RED, COLOR_RED, 0 );
+	init_pair( C_GREEN, COLOR_GREEN, 0 );
+	init_pair( C_YELLOW, COLOR_YELLOW, 0 );
+	init_pair( C_BLUE, COLOR_BLUE, 0 );
+	init_pair( C_MAGENTA, COLOR_MAGENTA, 0 );
+	init_pair( C_CYAN, COLOR_CYAN, 0 );
+	init_pair( C_WHITE, COLOR_WHITE, 0 );
 #endif
-	}
 
 	return 1;
 }
@@ -55,7 +65,7 @@ int draw_main_screen( void )
 	move( 0, 0 ); clrtoeol();
 	move( 1, 0 ); clrtoeol();
 
-	attrset( COLOR_PAIR( COLOR_WHITE ) );
+	attrset( COLOR_PAIR( C_WHITE ) );
 
 	for( i = 0; i < dungeon[player->z]->width; i++ )
 	{
@@ -70,7 +80,7 @@ int draw_main_screen( void )
 			}
 			else if( dungeon[player->z]->memory[i][j] )
 			{
-				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				attrset( COLOR_PAIR( C_BLACK ) | A_BOLD );
 				mvaddch( j+2, i, dungeon[player->z]->memory[i][j]->face );
 			}
 			else
@@ -107,7 +117,7 @@ int draw_main_screen( void )
 			}
 			else if( dungeon[player->z]->memory[l->src_x][l->src_y] )
 			{
-				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				attrset( COLOR_PAIR( C_WHITE ) );
 				mvaddch( l->src_y+2, l->src_x, l->face );
 			}
 		}
@@ -170,7 +180,7 @@ int draw_main_screen( void )
 
 	bufdestroy( msgline );
 
-	attron( COLOR_PAIR( COLOR_WHITE ) );
+	attron( COLOR_PAIR( C_WHITE ) );
 	mvprintw( 23, 0, "%s (%i/%i)", player->name->data, player->hp, player->max_hp );
 
 	if( player->in_hand )
@@ -207,16 +217,16 @@ int draw_inventory_screen( entity_t *e )
 		i = 0;
 		el = li->head;
 
-		attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+		attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
 		mvprintw( 0, 0, "-- Inventory -- " );
 
 		if( li->length == 0 )
 		{
-			attrset( COLOR_PAIR( COLOR_WHITE ) );
+			attrset( COLOR_PAIR( C_WHITE ) );
 			mvprintw( 4, 0, "Your inventory is empty." );
 		}
 
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		mvprintw( 1, 0, "in hand:" );
 
 		if( e->in_hand )
@@ -230,7 +240,7 @@ int draw_inventory_screen( entity_t *e )
 			mvprintw( 1, 9, "(nothing)" );
 		}
 
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		mvprintw( 2, 3, "worn:" );
 
 		if( e->worn )
@@ -250,7 +260,7 @@ int draw_inventory_screen( entity_t *e )
 
 			if( ( i >= start ) && ( i < start + term_h - 6 ) )
 			{
-				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				attrset( COLOR_PAIR( C_WHITE ) );
 				if( pos == i )
 					mvprintw( i - start + 4, 0, ">" );
 
@@ -267,10 +277,10 @@ int draw_inventory_screen( entity_t *e )
 			el = el->next;
 		}
 
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		mvprintw( term_h - 1, 0, "drop | wield | Wear | put down | take off | use" );
 		
-		attrset( COLOR_PAIR( COLOR_CYAN ) );
+		attrset( COLOR_PAIR( C_CYAN ) );
 		mvaddch( term_h - 1, 0, 'd' );
 		mvaddch( term_h - 1, 7, 'w' );
 		mvaddch( term_h - 1, 15, 'W' );
@@ -318,7 +328,7 @@ int draw_inventory_screen( entity_t *e )
 			if( it->quantity > 1 )
 			{
 				move( 0, 0 ); clrtoeol();
-				attrset( COLOR_PAIR( COLOR_WHITE ) );
+				attrset( COLOR_PAIR( C_WHITE ) );
 				mvprintw( 0, 0, "How many? " );
 				echo();
 				scanw( "%i", &q );
@@ -404,7 +414,7 @@ int draw_pick_up_screen( entity_t *e )
 	}
 
 	move( 0, 0 ); clrtoeol();
-	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+	attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
 	mvprintw( 0, 0, "-- Pick Up --" );
 
 	el = li->head;
@@ -413,7 +423,7 @@ int draw_pick_up_screen( entity_t *e )
 	{
 		item_t *it = (item_t*)el->data;
 
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		mvprintw( i+1, 0, "%c) [ ] %s (%i)", 'a' + i, it->name->data, it->quantity );
 		attrset( it->color );
 		mvaddch( i+1, 4, it->face );
@@ -442,7 +452,7 @@ int draw_pick_up_screen( entity_t *e )
 	if( it->quantity > 1 )
 	{
 		move( 0, 0 ); clrtoeol();
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		mvprintw( 0, 0, "How many? " );
 		echo();
 		scanw( "%i", &q );
@@ -472,7 +482,7 @@ point_t input_direction( char *msg )
 	if( msg )
 	{
 		move( 0, 0 ); clrtoeol();
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		mvprintw( 0, 0, "%s", msg );
 		refresh();
 	}
@@ -534,10 +544,10 @@ int draw_message_buffer( void )
 
 	clear();
 
-	attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+	attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
 	mvprintw( 0, 0, "-- Message Buffer --" );
 
-	attrset( COLOR_PAIR( COLOR_WHITE ) );
+	attrset( COLOR_PAIR( C_WHITE ) );
 
 	if( li->length == 0 )
 	{
@@ -579,11 +589,11 @@ int look_at( void )
 	while( 1 )
 	{
 		draw_main_screen();
-		attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+		attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
 		mvaddch( cy+2, cx, mvinch( cy+2, cx ) & 0xFF );
 
 		move( 0, 0 ); clrtoeol();
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		if( player->lightmap[player->z][cx][cy] > 0.0f )
 		{
 			info = bufnew( "Look: " );
@@ -696,11 +706,11 @@ int fire_at( void )
 		target = NULL;
 
 		draw_main_screen();
-		attrset( COLOR_PAIR( COLOR_WHITE ) | A_REVERSE );
+		attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
 		mvaddch( cy+2, cx, mvinch( cy+2, cx ) & 0xFF );
 
 		move( 0, 0 ); clrtoeol();
-		attrset( COLOR_PAIR( COLOR_WHITE ) );
+		attrset( COLOR_PAIR( C_WHITE ) );
 		if( player->lightmap[player->z][cx][cy] > 0.0f )
 		{
 			info = bufnew( "Fire: " );

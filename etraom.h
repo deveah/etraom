@@ -32,6 +32,15 @@
 
 #define LINKFLAG_USED				(1<<0)
 
+#define C_BLACK						1
+#define C_RED						2
+#define C_GREEN						3
+#define C_YELLOW					4
+#define C_BLUE						5
+#define C_MAGENTA					6
+#define C_CYAN						7
+#define C_WHITE						8
+
 enum item_type
 {
 	ITEMTYPE_NONE,

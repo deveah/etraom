@@ -14,7 +14,7 @@ entity_t *alloc_entity( buf_t *name )
 
 	e->name = bufcpy( name );
 	e->face = 'z';
-	e->color = COLOR_PAIR( COLOR_WHITE );
+	e->color = COLOR_PAIR( C_WHITE );
 	e->flags = 0;
 
 	e->lightmap = (float***) malloc( sizeof(float**) * MAX_LEVELS );
