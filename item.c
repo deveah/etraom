@@ -30,7 +30,17 @@ void free_item( item_t *i )
 		bufdestroy( i->name );
 
 		if( i->specific )
+		{
+			if( i->type == ITEMTYPE_WEAPON )
+			{
+				weapon_t *w = (weapon_t*)i->specific;
+
+				if( w->ammo_type )
+					free_item( w->ammo_type );
+			}
+
 			free( i->specific );
+		}
 
 		free( i );
 	}
@@ -46,6 +56,7 @@ item_t *clone_item( item_t *i )
 	ci->face = i->face;
 	ci->color = i->color;
 	ci->quantity = i->quantity;
+	ci->quality = i->quality;
 	ci->type = i->type;
 	
 	ci->specific = NULL;
@@ -53,6 +64,10 @@ item_t *clone_item( item_t *i )
 	{
 		ci->specific = malloc( sizeof(weapon_t) );
 		memcpy( i->specific, ci->specific, sizeof(weapon_t) );
+
+		weapon_t *w = (weapon_t*)i->specific;
+		weapon_t *cw = (weapon_t*)ci->specific;
+		cw->ammo_type = clone_item( w->ammo_type );
 	}
 	if( i->type == ITEMTYPE_ARMOR )
 	{

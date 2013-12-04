@@ -180,14 +180,38 @@ int draw_main_screen( void )
 
 	bufdestroy( msgline );
 
+	move( 23, 0 ); clrtoeol();
+	move( 24, 0 ); clrtoeol();
+
 	attron( COLOR_PAIR( C_WHITE ) );
 	mvprintw( 23, 0, "%s (%i/%i)", player->name->data, player->hp, player->max_hp );
 
 	if( player->in_hand )
-		mvprintw( 23, 40, "w: %s (unimplemented: ammo)", player->in_hand->name->data );
+	{
+		if( player->in_hand->type == ITEMTYPE_WEAPON )
+		{
+			weapon_t *w = (weapon_t*)player->in_hand->specific;
+			if( w->clip_size > 0 )
+			{
+				mvprintw( 23, 40, "w: %s (%i/%i) (%s)", player->in_hand->name->data,
+					w->ammo_loaded, count_ammo( player->inventory, w->ammo_type ),
+					w->ammo_type->name->data );
+			}
+			else
+			{
+				mvprintw( 23, 40, "w: %s", player->in_hand->name->data );
+			}
+		}
+		else
+		{
+			mvprintw( 23, 40, "w: %s", player->in_hand->name->data );
+		}
+	}
 	else
+	{
 		mvprintw( 23, 40, "w: -" );
-	
+	}
+
 	if( player->worn )
 	{
 		mvprintw( 24, 40, "a: %s (AC:%i)", player->worn->name->data,
@@ -231,9 +255,27 @@ int draw_inventory_screen( entity_t *e )
 
 		if( e->in_hand )
 		{
-			mvprintw( 1, 9, "[ ] %s (unimplemented: ammo)", e->in_hand->name->data );
-			attrset( e->in_hand->color );
-			mvaddch( 1, 10, e->in_hand->face );
+			if( e->in_hand->type == ITEMTYPE_WEAPON )
+			{
+				weapon_t *w = (weapon_t*)e->in_hand->specific;
+				if( w->clip_size > 0 )
+				{
+					mvprintw( 1, 9, "[ ] %s (%i/%i) (%s)", e->in_hand->name->data,
+						w->ammo_loaded, count_ammo( e->inventory, w->ammo_type ),
+						w->ammo_type->name->data );
+				}
+				else
+				{
+					mvprintw( 1, 9, "[ ] %s", player->in_hand->name->data );
+				}
+
+				attrset( e->in_hand->color );
+				mvaddch( 1, 10, e->in_hand->face );
+			}
+			else
+			{
+				mvprintw( 23, 40, "w: %s", player->in_hand->name->data );
+			}
 		}
 		else
 		{
@@ -245,7 +287,7 @@ int draw_inventory_screen( entity_t *e )
 
 		if( e->worn )
 		{
-			mvprintw( 2, 9, "[ ] %s (unimplemented: AC)", e->worn->name->data );
+			mvprintw( 2, 9, "[ ] %s (AC:%i)", e->worn->name->data, get_item_ac( e->worn ) );
 			attrset( e->worn->color );
 			mvaddch( 2, 10, e->worn->face );
 		}

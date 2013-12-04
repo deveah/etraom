@@ -10,8 +10,6 @@ I.		Infrastructure
 		[ ] range
 	[ ] consumable struct
 	[x] armor struct
-	[x] ammo struct
-		* more fields?
 	[ ] links can obscure items on the ground
 		* disallow placement of items on links
 	[ ] effects
@@ -34,7 +32,7 @@ II.		Mechanics
 			[ ] allow the player to commit suicide?
 			[ ] ammo consumption
 			[ ] ammo types - fixed?
-			[ ] clip distribution
+			[x] clip distribution
 			[ ] bullets should follow a line atk->def
 		[ ] distribution between physical and armor damage
 		* damage should be either melee-dealt or bullet-dealt

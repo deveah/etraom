@@ -5,7 +5,7 @@
 #ifndef _ETRAOM_H_
 #define _ETRAOM_H_
 
-#define ETRAOM_VERSION				"0.01"
+#define ETRAOM_VERSION				"0.0.1"
 #define MAX_STRING_LENGTH			256
 #define MAX_LEVELS					10
 
@@ -63,13 +63,6 @@ enum weapon_type
 	WEAPONTYPE_MELEE,
 	WEAPONTYPE_HANDGUN,
 	WEAPONTYPE_MAX
-};
-
-enum ammo_type
-{
-	AMMOTYPE_NONE,
-	AMMOTYPE_BULLET,
-	AMMOTYPE_MAX
 };
 
 typedef struct
@@ -189,7 +182,8 @@ typedef struct
 	int accuracy;
 	int min_damage, max_damage;
 
-	int ammo_type;
+	item_t *ammo_type;
+	int ammo_loaded, clip_size;
 	
 	/*int neffects;
 	int effect[EFFECT_MAX];*/
@@ -200,12 +194,6 @@ typedef struct
 	/* TODO different responses to different damage types? */
 	int ac;
 } armor_t;
-
-typedef struct
-{
-	/* TODO extra properties? */
-	int type;
-} ammo_t;
 
 extern FILE *logfile;
 
@@ -305,6 +293,7 @@ int draw_pick_up_screen( entity_t *e );
 point_t input_direction( char *msg );
 int draw_message_buffer( void );
 int fire_at( void );
+int look_at( void );
 
 /* log.c */
 int open_logfile( void );
@@ -349,14 +338,14 @@ int put_down_weapon( entity_t *e );
 int take_off_armor( entity_t *e );
 int wield_item( entity_t *e, item_t *i );
 int wear_item( entity_t *e, item_t *i );
-int look_at( void );
+int reload_weapon( entity_t *e );
+int unload_weapon( entity_t *e );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
 int ranged_attack( entity_t *atk, entity_t *def );
 int get_item_ac( item_t *i );
-int count_ammo( list_t *li, int ammo_type );
-void consume_ammo( list_t *li, int ammo_type, int q );
+int count_ammo( list_t *li, item_t *a );
 
 /* link.c */
 link_t *alloc_link( void );

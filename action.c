@@ -225,11 +225,6 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 			ii->specific = malloc( sizeof(armor_t) );
 			memcpy( ii->specific, i->specific, sizeof(armor_t) );
 		}
-		if( i->type == ITEMTYPE_AMMO )
-		{
-			ii->specific = malloc( sizeof(ammo_t) );
-			memcpy( ii->specific, i->specific, sizeof(ammo_t) );
-		}
 		/* TODO handle other item types */
 
 		i->quantity -= quantity;
@@ -314,11 +309,6 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 			{
 				ii->specific = malloc( sizeof(armor_t) );
 				memcpy( ii->specific, i->specific, sizeof(armor_t) );
-			}
-			if( i->type == ITEMTYPE_AMMO )
-			{
-				ii->specific = malloc( sizeof(ammo_t) );
-				memcpy( ii->specific, i->specific, sizeof(ammo_t) );
 			}
 			/* TODO handle other item types */
 
@@ -424,6 +414,102 @@ int wear_item( entity_t *e, item_t *i )
 	bufdestroy( msg );
 
 	/* TODO: can this fail? */
+	return 1;
+}
+
+int reload_weapon( entity_t *e )
+{
+	list_element *el = e->inventory->head;
+	
+	if( e->in_hand->type != ITEMTYPE_WEAPON )
+	{
+		buf_t *msg = bufnew( "You can't reload that." );
+		push_message( msg );
+		bufdestroy( msg );
+		return 0;
+	}
+
+	weapon_t *w = (weapon_t*)e->in_hand->specific;
+
+	/* weapons that consume no ammo have 0 clip size */
+	if( w->clip_size == 0 )
+	{
+		buf_t *msg = bufnew( "This weapon doesn't require ammo." );
+		push_message( msg );
+		bufdestroy( msg );
+		return 0;
+	}
+
+	while( el )
+	{
+		item_t *i = (item_t*)el->data;
+		
+		if( items_alike( i, w->ammo_type ) )
+		{
+			int q = w->clip_size - w->ammo_loaded;
+
+			if( i->quantity > q )
+			{
+				int q = w->clip_size - w->ammo_loaded;
+				i->quantity -= q;
+				w->ammo_loaded += q;
+			}
+			else
+			{
+				w->ammo_loaded += i->quantity;
+
+				int j = list_find( e->inventory, (void*)i );
+				list_remove_index( e->inventory, j );
+				free_item( i );
+			}
+			
+			buf_t *msg = bufnew( "You reload your weapon." );
+			push_message( msg );
+			bufdestroy( msg );
+			return 1;
+		}
+
+		el = el->next;
+	}
+	
+	buf_t *msg = bufnew( "You're out of ammo!" );
+	push_message( msg );
+	bufdestroy( msg );
+
+	return 0;
+}
+
+int unload_weapon( entity_t *e )
+{	
+	if( e->in_hand->type != ITEMTYPE_WEAPON )
+	{
+		buf_t *msg = bufnew( "You can't unload that." );
+		push_message( msg );
+		bufdestroy( msg );
+		return 0;
+	}
+
+	weapon_t *w = (weapon_t*)e->in_hand->specific;
+
+	/* weapons that consume no ammo have 0 clip size */
+	if( ( w->clip_size == 0 ) || ( w->ammo_loaded == 0 ) )
+	{
+		buf_t *msg = bufnew( "This weapon doesn't have any ammo loaded." );
+		push_message( msg );
+		bufdestroy( msg );
+		return 0;
+	}
+
+	item_t *i = clone_item( w->ammo_type );
+	i->quantity = w->ammo_loaded;
+	w->ammo_loaded = 0;
+
+	inventory_add_item( e, i );
+
+	buf_t *msg = bufnew( "You unload your weapon." );
+	push_message( msg );
+	bufdestroy( msg );
+
 	return 1;
 }
 

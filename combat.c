@@ -19,7 +19,7 @@ int melee_attack( entity_t *atk, entity_t *def )
 			}
 			else
 			{
-				/* XXX TODO: ranged weapons that also do melee damage? */
+				/* TODO: ranged weapons that also do melee damage? */
 				damage = 0;
 			}
 		}
@@ -80,14 +80,14 @@ int ranged_attack( entity_t *atk, entity_t *def )
 			/* should include all non-melee weapon types */
 			if( w->type == WEAPONTYPE_HANDGUN )
 			{
-				if( count_ammo( atk->inventory, w->ammo_type ) > 0 )
+				if( w->ammo_loaded >= 1 )
 				{
 					/* TODO: different ammo consumption? */
-					consume_ammo( atk->inventory, w->ammo_type, 1 );
+					w->ammo_loaded -= 1;
 				}
 				else
 				{
-					buf_t *msg = bufnew( "You don't have enough ammo!" );
+					buf_t *msg = bufnew( "The clip is empty!" );
 					push_message( msg );
 					bufdestroy( msg );
 					return 0;
@@ -168,54 +168,23 @@ int get_item_ac( item_t *i )
 	}
 }
 
-int count_ammo( list_t *li, int ammo_type )
+int count_ammo( list_t *li, item_t *a )
 {
 	list_element *el = li->head;
-	int c = 0;
+	int n = 0;
 
 	while( el )
 	{
 		item_t *i = (item_t*)el->data;
-		if( i->type == ITEMTYPE_AMMO )
+
+		if( items_alike( a, i ) )
 		{
-			ammo_t *a = (ammo_t*)i->specific;
-			if( a->type == ammo_type )
-				c += i->quantity;
-		}
-		el = el->next;
-	}
-
-	return c;
-}
-
-void consume_ammo( list_t *li, int ammo_type, int q )
-{
-	list_element *el = li->head;
-	int j = 0;
-
-	while( el )
-	{
-		item_t *i = (item_t*)el->data;
-		if( i->type == ITEMTYPE_AMMO )
-		{
-			ammo_t *a = (ammo_t*)i->specific;
-			if( a->type == ammo_type )
-			{
-				i->quantity -= q;
-
-				/* theoretically, it shouldn't reach negative values */
-				if( i->quantity == 0 )
-				{
-					free_item( i );
-					list_remove_index( li, j );
-				}
-
-				return;
-			}
+			n += i->quantity;
 		}
 
 		el = el->next;
-		j++;
 	}
+
+	return n;
 }
 

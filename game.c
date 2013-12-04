@@ -69,6 +69,22 @@ void new_game( unsigned int seed )
 	player->hp = 5;
 	player->max_hp = 5;
 
+	/* XXX bullet */
+	buf_t *ammo_name = bufnew( "Bullet" );
+	item_t *bullet = alloc_item( ammo_name );
+	bufdestroy( ammo_name );
+
+	bullet->face = '=';
+	bullet->color = COLOR_PAIR( C_WHITE );
+	bullet->quantity = 10;
+	bullet->quality = 1.0f;
+	bullet->place = ITEMPLACE_ENTITY;
+	bullet->type = ITEMTYPE_AMMO;
+	bullet->flags = ITEMFLAG_STACKABLE | ITEMFLAG_PICKABLE;
+
+	list_add_head( player->inventory, (void*)bullet );
+
+	/* XXX sword */
 	buf_t *melee_name = bufnew( "Sword" );
 	item_t *melee = alloc_item( melee_name );
 	bufdestroy( melee_name );
@@ -84,11 +100,14 @@ void new_game( unsigned int seed )
 	melee->specific = (void*)mweapon;
 	mweapon->min_damage = 1;
 	mweapon->max_damage = 4;
-	mweapon->ammo_type = AMMOTYPE_NONE;
+	mweapon->clip_size = 0;
+	mweapon->ammo_loaded = 0;
+	mweapon->ammo_type = NULL;
 	mweapon->type = WEAPONTYPE_MELEE;
 
 	list_add_head( player->inventory, melee );
 
+	/* XXX pistol */
 	buf_t *weapon_name = bufnew( "Pistol" );
 	player->in_hand = alloc_item( weapon_name );
 	bufdestroy( weapon_name );
@@ -104,7 +123,9 @@ void new_game( unsigned int seed )
 	player->in_hand->specific = (void*)weapon;
 	weapon->min_damage = 2;
 	weapon->max_damage = 6;
-	weapon->ammo_type = AMMOTYPE_BULLET;
+	weapon->clip_size = 5;
+	weapon->ammo_loaded = 5;
+	weapon->ammo_type = clone_item( bullet );
 	weapon->type = WEAPONTYPE_HANDGUN;
 
 	buf_t *armor_name = bufnew( "Leather jacket" );
@@ -121,23 +142,6 @@ void new_game( unsigned int seed )
 	armor_t *armor = malloc( sizeof(armor_t) );
 	player->worn->specific = (void*)armor;
 	armor->ac = 5;
-
-	buf_t *ammo_name = bufnew( "Bullet" );
-	item_t *bullet = alloc_item( ammo_name );
-	bufdestroy( ammo_name );
-
-	bullet->face = '.';
-	bullet->color = COLOR_PAIR( C_WHITE );
-	bullet->quantity = 10;
-	bullet->quality = 1.0f;
-	bullet->place = ITEMPLACE_ENTITY;
-	bullet->type = ITEMTYPE_AMMO;
-	bullet->flags = ITEMFLAG_STACKABLE | ITEMFLAG_PICKABLE;
-	ammo_t *ammo = malloc( sizeof(ammo_t) );
-	ammo->type = AMMOTYPE_BULLET;
-	bullet->specific = (void*)ammo;
-
-	list_add_head( player->inventory, (void*)bullet );
 
 	while( dungeon[player->z]->terrain[player->x][player->y] != &tile_floor )
 	{
@@ -312,6 +316,10 @@ int handle_key( int key )
 
 	case 'f':
 		return fire_at();
+	case 'r':
+		return reload_weapon( player );
+	case 'U':
+		return unload_weapon( player );
 
 	case 'M':
 		/* this shouldn't cost at all */
