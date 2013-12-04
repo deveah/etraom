@@ -9,6 +9,30 @@
 
 	Building requires curses. To build Etraom, just run the Makefile provided.
 
+	As the game (currently) has no help included, here are the controls:
+		movement via either vi-keys, numpad or arrows
+		[q] quit
+		[m] reveal current map - expect this to be removed in the future
+		[5] / [.] wait a turn
+		[>] follow stairs
+		[,] pick up item
+		[i] inventory screen
+		[o] open door
+		[c] close door
+		[x] look at
+		[f] fire ranged weapon
+		[r] reload weapon
+		[U] unload weapon
+		[M] show message buffer
+
+	A rough list of features to be expected for version 0.1:
+		* win condition
+		* fully functional combat - melee and ranged
+		* diverse enemies
+		* diverse environments
+		* random weapon generator
+		* tons of loot, including tons of trash
+
 	Etraom is released under the Simplified BSD License. See LICENSE for
 	details.
 

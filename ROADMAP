@@ -10,6 +10,7 @@ I.		Infrastructure
 		[ ] range
 	[ ] consumable struct
 	[x] armor struct
+		[ ] separate resist ratios for different effects
 	[ ] links can obscure items on the ground
 		* disallow placement of items on links
 	[ ] effects
