@@ -7,7 +7,6 @@ I.		Infrastructure
 	[x] weapon struct
 		[x] damage
 		[ ] accuracy
-		[ ] range
 	[ ] consumable struct
 	[x] armor struct
 		[ ] separate resist ratios for different effects
@@ -21,9 +20,14 @@ I.		Infrastructure
 			effect[EFFECT_BURNING] etc.
 	[x] showing messages should be moved in the function responsible for the
 		action in cause, if possible
-	[x] corpses
-	[x] player death
 	[ ] make item stacks on the floor stand out, maybe A_REVERSE
+	[x] developer mode
+		* logging enabled, no title screen for fast build-run cycle
+		[ ] immortality?
+		[ ] extra info, ie. when looking at stuff
+	[x] title screen
+		[ ] ask for the character name
+	[ ] classes?
 
 II.		Mechanics
 
@@ -31,14 +35,15 @@ II.		Mechanics
 		[x] melee
 		[x] ranged
 			[ ] allow the player to commit suicide?
-			[ ] ammo consumption
-			[ ] ammo types - fixed?
+			[x] ammo consumption
+			[x] ammo types - fixed?
+				* no, highly dinamic; ammo types can even be procedurally
+					generated
 			[x] clip distribution
-			[ ] bullets should follow a line atk->def
-		[ ] distribution between physical and armor damage
-		* damage should be either melee-dealt or bullet-dealt
-		* weapons can also have a chance to trigger a certain effect
-		* ex.: Flaming Club of Doom (damage: 2-4, chance to light on fire: 20%)
+			[x] bullets should follow a line atk->def
+			[ ] rethink ranged_attack function
+				* it's logically wrong and also not poetic as a function.
+		[ ] damage types
 	[ ] attributes
 	[ ] skills
 	[ ] levelling
@@ -56,8 +61,6 @@ III.	Map generators
 IV.		UI
 
 	[x] message log
-	[x] single inventory menu for all actions
-	[x] look command
 	[ ] change screen layout (?)
 		* two-line message area, removing the need of using --MORE--
 		* map size would be reduced to 80x21

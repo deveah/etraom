@@ -41,6 +41,9 @@
 #define C_CYAN						7
 #define C_WHITE						8
 
+/* developer mode should skip the title screen and have logging enabled. */
+#define GAMEFLAG_DEVELOPER			(1<<0)
+
 enum item_type
 {
 	ITEMTYPE_NONE,
@@ -195,6 +198,8 @@ typedef struct
 	int ac;
 } armor_t;
 
+extern int game_flags;
+
 extern FILE *logfile;
 
 extern int running;
@@ -287,6 +292,7 @@ void make_random_objects( int n );
 /* ui.c */
 int init_ui( void );
 int terminate_ui( void );
+void draw_title_screen( void );
 int draw_main_screen( void );
 int draw_inventory_screen( entity_t *e );
 int draw_pick_up_screen( entity_t *e );

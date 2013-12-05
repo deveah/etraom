@@ -10,6 +10,9 @@ FILE *logfile = NULL;
 
 int open_logfile( void )
 {
+	if( !( game_flags & GAMEFLAG_DEVELOPER ) )
+		return 1;
+
 	logfile = fopen( "./log", "w" );
 
 	if( !logfile )

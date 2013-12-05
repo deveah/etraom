@@ -219,6 +219,9 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 		{
 			ii->specific = malloc( sizeof(weapon_t) );
 			memcpy( ii->specific, i->specific, sizeof(weapon_t) );
+			
+			weapon_t *w = (weapon_t*)ii->specific;
+			w->ammo_type = clone_item( i->specific );
 		}
 		if( i->type == ITEMTYPE_ARMOR )
 		{
@@ -304,6 +307,9 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 			{
 				ii->specific = malloc( sizeof(weapon_t) );
 				memcpy( ii->specific, i->specific, sizeof(weapon_t) );
+
+				weapon_t *w = (weapon_t*)ii->specific;
+				w->ammo_type = clone_item( i->specific );
 			}
 			if( i->type == ITEMTYPE_ARMOR )
 			{

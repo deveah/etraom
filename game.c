@@ -5,6 +5,8 @@
 
 #include "etraom.h"
 
+int game_flags = 0;
+
 int running = 0;
 int global_turns = 0;
 int player_turns = 0;
@@ -125,6 +127,7 @@ void new_game( unsigned int seed )
 	weapon->max_damage = 6;
 	weapon->clip_size = 5;
 	weapon->ammo_loaded = 5;
+	weapon->accuracy = 0.25;
 	weapon->ammo_type = clone_item( bullet );
 	weapon->type = WEAPONTYPE_HANDGUN;
 
@@ -163,8 +166,33 @@ void new_game( unsigned int seed )
 
 int init_game( int argc, char** argv )
 {
-	(void) argc;
-	(void) argv;
+	int i;
+	for( i = 1; i < argc; i++ )
+	{
+		if( strlen( argv[i] ) < 2 )
+		{
+			printf( "Invalid commandline arguments." );
+			exit( 0 );
+		}
+
+		if( argv[i][0] == '-' )
+		{
+			if( argv[i][1] == 'd' )
+			{
+				game_flags |= GAMEFLAG_DEVELOPER;
+			}
+			else
+			{
+				printf( "Invalid commandline arguments." );
+				exit( 0 );
+			}
+		}
+		else
+		{
+			printf( "Invalid commandline arguments." );
+			exit( 0 );
+		}
+	}
 
 	if( !init_ui() )
 	{
@@ -185,6 +213,8 @@ int init_game( int argc, char** argv )
 		log_add( "FATAL: Couldn't open entity data file.\n" );
 		exit( 0 );
 	}
+
+	draw_title_screen();
 
 	new_game( time( 0 ) );
 

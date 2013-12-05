@@ -54,6 +54,53 @@ int terminate_ui( void )
 	return 1;
 }
 
+void draw_title_screen( void )
+{
+	char *title[] = {
+		"@@@@@@@@ @@@@@@@ @@@@@@@   @@@@@@   @@@@@@  @@@@@@@@@@ ",
+		"@@!        @@!   @@!  @@@ @@!  @@@ @@!  @@@ @@! @@! @@!",
+		"@!!!:!     @!!   @!@!!@!  @!@!@!@! @!@  !@! @!! !!@ @!@",
+		"!!:        !!:   !!: :!!  !!:  !!! !!:  !!! !!:     !!:",
+		": :: :::    :     :   : :  :   : :  : :. :   :      :  "
+	};
+
+	int i, j;
+
+	if( game_flags & GAMEFLAG_DEVELOPER )
+	{
+		return;
+	}
+
+	for( j = 0; j < 5; j++ )
+	{
+		for( i = 0; i < 55; i++ )
+		{
+			switch( title[j][i] )
+			{
+			case '@':
+			case '!':
+				attrset( COLOR_PAIR( C_GREEN ) );
+				break;
+			case ':':
+			case '.':
+				attrset( COLOR_PAIR( C_YELLOW ) );
+				break;
+			default:
+				attrset( COLOR_PAIR( C_WHITE ) );
+			}
+
+			mvaddch( 8 + j, 12+i, title[j][i] );
+		}
+	}
+
+	attrset( COLOR_PAIR( C_BLACK ) | A_BOLD );
+	mvprintw( 14, 12, "A science-fiction roguelike." );
+	mvprintw( 15, 12, "http://github.com/deveah/etraom" );
+	mvprintw( 16, 12, "See LICENSE for licensing information." );
+
+	getch();
+}
+
 int draw_main_screen( void )
 {
 	int i, j;
