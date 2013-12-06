@@ -786,14 +786,11 @@ int fire_at( void )
 {
 	int k = 0;
 	int cx = player->x, cy = player->y;
-	entity_t *target = NULL;
 
 	buf_t *info;
 
 	while( 1 )
 	{
-		target = NULL;
-
 		draw_main_screen();
 		attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
 		mvaddch( cy+2, cx, mvinch( cy+2, cx ) & 0xFF );
@@ -808,7 +805,6 @@ int fire_at( void )
 			if( e )
 			{
 				bufcat( info, e->name );
-				target = e;
 			}
 
 			mvprintw( 0, 0, info->data );
@@ -848,17 +844,8 @@ int fire_at( void )
 				cx++;
 			break;
 		case 'f':
-			if( target )
-			{
-				ranged_attack( player, target );
-				return 1;
-			}
-			else
-			{
-				buf_t *msg = bufnew( "Okay, then." );
-				push_message( msg );
-				bufdestroy( msg );
-			}
+			return ranged_attack( player, cx, cy );
+			break;
 		case 'q':
 			return 0;
 		}

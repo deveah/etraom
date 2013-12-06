@@ -41,8 +41,7 @@ II.		Mechanics
 					generated
 			[x] clip distribution
 			[x] bullets should follow a line atk->def
-			[ ] rethink ranged_attack function
-				* it's logically wrong and also not poetic as a function.
+			[x] rethink ranged_attack function
 		[ ] damage types
 	[ ] attributes
 	[ ] skills

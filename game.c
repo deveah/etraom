@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include <curses.h>
 
 #include "etraom.h"
@@ -127,7 +128,7 @@ void new_game( unsigned int seed )
 	weapon->max_damage = 6;
 	weapon->clip_size = 5;
 	weapon->ammo_loaded = 5;
-	weapon->accuracy = 0.25;
+	weapon->accuracy = 0.9;
 	weapon->ammo_type = clone_item( bullet );
 	weapon->type = WEAPONTYPE_HANDGUN;
 
@@ -287,7 +288,10 @@ int handle_key( int key )
 		running = 0;
 		break;
 	case 'm':
-		reveal_map( player->z );
+		if( game_flags & GAMEFLAG_DEVELOPER )
+		{
+			reveal_map( player->z );
+		}
 		break;
 
 	case '4':

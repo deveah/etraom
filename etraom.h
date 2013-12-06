@@ -349,9 +349,10 @@ int unload_weapon( entity_t *e );
 
 /* combat.c */
 int melee_attack( entity_t *atk, entity_t *def );
-int ranged_attack( entity_t *atk, entity_t *def );
+int ranged_attack( entity_t *atk, int tx, int ty );
 int get_item_ac( item_t *i );
 int count_ammo( list_t *li, item_t *a );
+void take_damage( entity_t *e, weapon_t *w );
 
 /* link.c */
 link_t *alloc_link( void );
