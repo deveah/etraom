@@ -10,9 +10,7 @@
 #define MAX_LEVELS					10
 
 #define ENTITIES_FILE				"data/entities"
-#define ITEMS_FILE					"data/items"
-#define WEAPONS_FILE				"data/weapons"
-#define ARMORS_FILE					"data/armors"
+#define AMMOTYPES_FILE				"data/ammotypes"
 
 #define MAP_WIDTH					80
 #define MAP_HEIGHT					21
@@ -211,6 +209,7 @@ extern map_t **dungeon;
 extern int main_seed;
 
 extern list_t *entity_type_list;
+extern list_t *ammo_type_list;
 
 extern list_t *message_list;
 extern list_t *entity_list;
@@ -223,8 +222,10 @@ int term_w, term_h;
 
 /* parser.c */
 int parse_color( int c );
-int parse_entities( char *fn );
+int parse_entity_types( char *fn );
 void free_entity_types( void );
+int parse_ammo_types( char *fn );
+void free_ammo_types( void );
 
 /* util.c */
 int distance( int x1, int y1, int x2, int y2 );

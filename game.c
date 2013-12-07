@@ -72,19 +72,8 @@ void new_game( unsigned int seed )
 	player->hp = 5;
 	player->max_hp = 5;
 
-	/* XXX bullet */
-	buf_t *ammo_name = bufnew( "Bullet" );
-	item_t *bullet = alloc_item( ammo_name );
-	bufdestroy( ammo_name );
-
-	bullet->face = '=';
-	bullet->color = COLOR_PAIR( C_WHITE );
+	item_t *bullet = clone_item( (item_t*)list_get_index( ammo_type_list, 1 ) );
 	bullet->quantity = 10;
-	bullet->quality = 1.0f;
-	bullet->place = ITEMPLACE_ENTITY;
-	bullet->type = ITEMTYPE_AMMO;
-	bullet->flags = ITEMFLAG_STACKABLE | ITEMFLAG_PICKABLE;
-
 	list_add_head( player->inventory, (void*)bullet );
 
 	/* XXX sword */
@@ -129,7 +118,7 @@ void new_game( unsigned int seed )
 	weapon->clip_size = 5;
 	weapon->ammo_loaded = 5;
 	weapon->accuracy = 0.9;
-	weapon->ammo_type = clone_item( bullet );
+	weapon->ammo_type = clone_item( (item_t*)list_get_index( ammo_type_list, 1 ) );
 	weapon->type = WEAPONTYPE_HANDGUN;
 
 	buf_t *armor_name = bufnew( "Leather jacket" );
@@ -209,9 +198,15 @@ int init_game( int argc, char** argv )
 	item_list = alloc_list();
 	link_list = alloc_list();
 
-	if( parse_entities( ENTITIES_FILE ) == -1 )
+	if( parse_entity_types( ENTITIES_FILE ) == -1 )
 	{
 		log_add( "FATAL: Couldn't open entity data file.\n" );
+		exit( 0 );
+	}
+
+	if( parse_ammo_types( AMMOTYPES_FILE ) == -1 )
+	{
+		log_add( "FATAL: Couldn't open ammo type data file.\n" );
 		exit( 0 );
 	}
 
@@ -247,6 +242,7 @@ int terminate_game( void )
 	free_list( link_list );
 
 	free_entity_types();
+	free_ammo_types();
 
 	log_add( "Done terminating game.\n" );
 

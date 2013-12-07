@@ -7,6 +7,7 @@
 #include "etraom.h"
 
 list_t *entity_type_list = NULL;
+list_t *ammo_type_list = NULL;
 
 /*	color code parser (assures portability)
 	color can be:
@@ -69,7 +70,7 @@ int parse_color( int c )
 
 	entry format is: <name> <face> <color> <hp> <agility>
 */
-int parse_entities( char *fn )
+int parse_entity_types( char *fn )
 {
 	char *name = malloc( MAX_STRING_LENGTH * sizeof(char) );
 	char face;
@@ -77,18 +78,20 @@ int parse_entities( char *fn )
 	int hp;
 	int agility;
 	int r;
-	int nentities = 0;
+	int nentitytypes = 0;
 	int i, l;
 
 	entity_t *e = NULL;
 
 	log_add( "[parse_entities] Parsing entities...\n" );
-	fflush( logfile );
 
 	FILE *f = fopen( fn, "r" );
 	
 	if( !f )
+	{
+		free( name );
 		return -1;
+	}
 
 	entity_type_list = alloc_list();
 
@@ -106,7 +109,7 @@ int parse_entities( char *fn )
 		if( feof( f ) )
 		{
 			free( name );
-			return nentities;
+			return nentitytypes;
 		}
 
 		if( r < 5 )
@@ -149,16 +152,14 @@ int parse_entities( char *fn )
 
 		list_add_tail( entity_type_list, (void*)e );
 
-		nentities++;
+		nentitytypes++;
 	}
 	while( !feof( f ) );
 
-	nentities--;
-
-	log_add( "[parse_entities] Done parsing entities.\n" );
+	nentitytypes--;
 
 	free( name );
-	return nentities;
+	return nentitytypes;
 }
 
 void free_entity_types( void )
@@ -173,5 +174,105 @@ void free_entity_types( void )
 	}
 
 	free_list( entity_type_list );
+}
+
+int parse_ammo_types( char *fn )
+{
+	char *name = malloc( MAX_STRING_LENGTH * sizeof(char) );
+	char face;
+	int color;
+	int r, l, j;
+	int nammotypes = 0;
+
+	item_t *i = NULL;
+
+	log_add( "[parse_ammo_types] Parsing ammo types...\n" );
+
+	FILE *f = fopen( fn, "r" );
+	if( !f )
+	{
+		free( name );
+		return -1;
+	}
+
+	ammo_type_list = alloc_list();
+
+	do
+	{
+		r = fscanf( f, "%s %c %i",
+			name,
+			&face,
+			&color
+		);
+
+		if( feof( f ) )
+		{
+			free( name );
+			return nammotypes;
+		}
+
+		if( r < 3 )
+		{
+			free( name );
+			return -1;
+		}
+		
+		l = strlen( name );
+		for( j = 0; j < l; j++ )
+		{
+			if( name[j] == '+' )
+			{
+				name[j] = ' ';
+				continue;
+			}
+
+			if( name[j] == ' ' )
+				break;
+		}
+
+		log_add( "[parse_ammo_types] Parsed %s(%c): color %i\n",
+			name,
+			face,
+			color
+		);
+
+		buf_t *aname = bufnew( name );
+		i = alloc_item( aname );
+		bufdestroy( aname );
+
+		i->face = face;
+		i->color = parse_color( color );
+		i->type = ITEMTYPE_AMMO;
+		i->specific = NULL;
+		i->quantity = 0;
+		i->quality = 1.0f;
+		i->flags = ITEMFLAG_PICKABLE | ITEMFLAG_STACKABLE;
+
+		list_add_tail( ammo_type_list, (void*)i );
+
+		nammotypes++;
+	}
+	while( !feof( f ) );
+
+	nammotypes--;
+	
+	free( name );
+	return nammotypes;
+}
+
+void free_ammo_types( void )
+{
+	list_element *el = ammo_type_list->head;
+
+	while( el )
+	{
+		item_t *i = (item_t*)el->data;
+
+		free_item( i );
+
+		el = el->next;
+	}
+
+	free_list( ammo_type_list );
 }
 
