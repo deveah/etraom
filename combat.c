@@ -181,7 +181,7 @@ int ranged_attack( entity_t *atk, int tx, int ty )
 	}
 
 	refresh();
-	usleep( 100000 );
+	msleep( 100 );
 
 	return 1;
 }

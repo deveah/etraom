@@ -228,6 +228,7 @@ void free_entity_types( void );
 
 /* util.c */
 int distance( int x1, int y1, int x2, int y2 );
+void msleep( int ms );
 
 /* sight.c */
 void reveal_map( int n );

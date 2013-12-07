@@ -812,7 +812,7 @@ int fire_at( void )
 		}
 		else
 		{
-			mvprintw( 0, 0, "Fire: You can't shoot there." );
+			mvprintw( 0, 0, "Fire: You can't see over there." );
 		}
 
 		k = getch();
