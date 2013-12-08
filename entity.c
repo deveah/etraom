@@ -26,6 +26,7 @@ entity_t *alloc_entity( buf_t *name )
 
 	e->in_hand = NULL;
 	e->worn = NULL;
+	e->natural = NULL;
 
 	for( i = 0; i < MAX_LEVELS; i++ )
 	{
@@ -87,6 +88,8 @@ void free_entity( entity_t *e )
 			free_item( e->in_hand );
 		if( e->worn )
 			free_item( e->worn );
+		if( e->natural )
+			free( e->natural );
 
 		if( e->ai )
 			free_ai( e->ai );
@@ -200,15 +203,12 @@ void entity_die( entity_t *e )
 		return;
 	}
 
-	buf_t *msg = bufnew( "The " );
-	bufcat( msg, e->name );
-	bufcats( msg, " dies!" );
+	buf_t *msg = bufprintf( "The %s dies!", e->name->data );
 	push_message( msg );
 	bufdestroy( msg );
 
 	/* place corpse */
-	buf_t *b = bufnew( e->name->data );
-	bufcats( b, " corpse" );
+	buf_t *b = bufprintf( "%s corpse", e->name->data );
 	item_t *c = alloc_item( b );
 	bufdestroy( b );
 	c->face = '%';

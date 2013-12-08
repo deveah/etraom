@@ -96,6 +96,7 @@ void new_game( unsigned int seed )
 	mweapon->ammo_loaded = 0;
 	mweapon->ammo_type = NULL;
 	mweapon->type = WEAPONTYPE_MELEE;
+	mweapon->attack_name = ATTACK_SWORD;
 
 	list_add_head( player->inventory, melee );
 
@@ -120,6 +121,7 @@ void new_game( unsigned int seed )
 	weapon->accuracy = 0.9;
 	weapon->ammo_type = clone_item( (item_t*)list_get_index( ammo_type_list, 1 ) );
 	weapon->type = WEAPONTYPE_HANDGUN;
+	weapon->attack_name = ATTACK_FIREARM;
 
 	buf_t *armor_name = bufnew( "Leather jacket" );
 	player->worn = alloc_item( armor_name );
@@ -135,6 +137,15 @@ void new_game( unsigned int seed )
 	armor_t *armor = malloc( sizeof(armor_t) );
 	player->worn->specific = (void*)armor;
 	armor->ac = 5;
+
+	player->natural = malloc( sizeof(weapon_t) );
+	player->natural->min_damage = 2;
+	player->natural->max_damage = 4;
+	player->natural->clip_size = 0;
+	player->natural->ammo_loaded = 0;
+	player->natural->accuracy = 0.9;
+	player->natural->ammo_type = NULL;
+	player->natural->attack_name = ATTACK_FISTS;
 
 	while( dungeon[player->z]->terrain[player->x][player->y] != &tile_floor )
 	{
@@ -382,6 +393,15 @@ void make_random_entities( int n )
 
 		/* TODO: place entities on not only the first floor */
 		e->z = 0;
+
+		e->natural = malloc( sizeof(weapon_t) );
+		e->natural->min_damage = 1;
+		e->natural->max_damage = 3;
+		e->natural->clip_size = 0;
+		e->natural->ammo_loaded = 0;
+		e->natural->accuracy = 0.9;
+		e->natural->ammo_type = NULL;
+		e->natural->attack_name = ATTACK_BITE;
 
 		do
 		{

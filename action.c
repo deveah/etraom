@@ -187,9 +187,7 @@ int pick_up_item( entity_t *e, item_t *i, int quantity )
 		return 0;
 	}
 
-	buf_t *msg = bufnew( "You pick up " );
-	bufcat( msg, i->name );
-	bufcats( msg, "." );
+	buf_t *msg = bufprintf( "You pick up %s.", i->name->data );
 	push_message( msg );
 	bufdestroy( msg );
 
@@ -324,9 +322,7 @@ int drop_item( entity_t *e, item_t *i, int quantity )
 		i->quantity -= quantity;
 	}
 
-	buf_t *msg = bufnew( "You drop " );
-	bufcat( msg, i->name );
-	bufcats( msg, "." );
+	buf_t *msg = bufprintf( "You drop %s.", i->name->data );
 	push_message( msg );
 	bufdestroy( msg );
 
@@ -392,9 +388,7 @@ int wield_item( entity_t *e, item_t *i )
 	
 	e->in_hand = i;
 
-	buf_t *msg = bufnew( "You now wield " );
-	bufcat( msg, i->name );
-	bufcats( msg, "." );
+	buf_t *msg = bufprintf( "You now wield %s.", i->name->data );
 	push_message( msg );
 	bufdestroy( msg );
 
@@ -413,9 +407,7 @@ int wear_item( entity_t *e, item_t *i )
 
 	e->worn = i;
 	
-	buf_t *msg = bufnew( "You now wear " );
-	bufcat( msg, i->name );
-	bufcats( msg, "." );
+	buf_t *msg = bufprintf( "You now wear %s.", i->name->data );
 	push_message( msg );
 	bufdestroy( msg );
 

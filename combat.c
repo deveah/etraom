@@ -8,23 +8,20 @@ int melee_attack( entity_t *atk, entity_t *def )
 {
 	if( !atk->in_hand )
 	{
-		/* TODO: unarmed damage? */
 		if( atk == player )
 		{
-			buf_t *msg = bufnew( "You hit the " );
-			bufcat( msg, def->name );
-			bufcats( msg, " with your fists, but deal no damage." );
+			buf_t *msg = bufprintf( "You %s the %s.", atk->natural->attack_name, def->name->data );
 			push_message( msg );
 			bufdestroy( msg );
 		}
 		else if( def == player )
 		{
-			buf_t *msg = bufnew( "The " );
-			bufcat( msg, atk->name );
-			bufcats( msg, " hits you for no damage!" );
+			buf_t *msg = bufprintf( "The %s %ss you.", atk->name->data, atk->natural->attack_name );
 			push_message( msg );
 			bufdestroy( msg );
 		}
+
+		take_damage( def, atk->natural );
 
 		return 1;
 	}
@@ -56,17 +53,13 @@ int melee_attack( entity_t *atk, entity_t *def )
 
 	if( atk == player )
 	{
-		buf_t *msg = bufnew( "You hit the " );
-		bufcat( msg, def->name );
-		bufcats( msg, "!" );
+		buf_t *msg = bufprintf( "You hit the %s!", def->name->data );
 		push_message( msg );
 		bufdestroy( msg );
 	}
 	else if( def == player )
 	{
-		buf_t *msg = bufnew( "The " );
-		bufcat( msg, atk->name );
-		bufcats( msg, " hits you!" );
+		buf_t *msg = bufprintf( "The %s hits you!", atk->name->data );
 		push_message( msg );
 		bufdestroy( msg );
 	}
@@ -187,9 +180,7 @@ int ranged_attack( entity_t *atk, int tx, int ty )
 		{
 			if( atk == player )
 			{
-				buf_t *msg = bufnew( "You hit the " );
-				bufcat( msg, e->name );
-				bufcats( msg, "." );
+				buf_t *msg = bufprintf( "You hit the %s!", e->name->data );
 				push_message( msg );
 				bufdestroy( msg );
 			}

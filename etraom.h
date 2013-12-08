@@ -41,6 +41,11 @@
 #define C_CYAN						7
 #define C_WHITE						8
 
+#define ATTACK_SWORD				"cut"
+#define ATTACK_FIREARM				"shoot"
+#define ATTACK_FISTS				"punch"
+#define ATTACK_BITE					"bite"
+
 /* developer mode should skip the title screen and have logging enabled. */
 #define GAMEFLAG_DEVELOPER			(1<<0)
 
@@ -167,6 +172,27 @@ typedef struct
 
 typedef struct
 {
+	int type;
+	int accuracy;
+	int min_damage, max_damage;
+
+	item_t *ammo_type;
+	int ammo_loaded, clip_size;
+
+	char *attack_name;
+
+	/*int neffects;
+	int effect[EFFECT_MAX];*/
+} weapon_t;
+
+typedef struct
+{
+	/* TODO different responses to different damage types? */
+	int ac;
+} armor_t;
+
+typedef struct
+{
 	buf_t *name;
 	int face, color;
 
@@ -182,6 +208,8 @@ typedef struct
 	list_t *inventory;
 	item_t *worn, *in_hand;
 
+	weapon_t *natural;
+
 	ai_t *ai;
 
 	int flags;
@@ -195,25 +223,6 @@ typedef struct
 	int face, color;
 	int flags;
 } link_t;
-
-typedef struct
-{
-	int type;
-	int accuracy;
-	int min_damage, max_damage;
-
-	item_t *ammo_type;
-	int ammo_loaded, clip_size;
-	
-	/*int neffects;
-	int effect[EFFECT_MAX];*/
-} weapon_t;
-
-typedef struct
-{
-	/* TODO different responses to different damage types? */
-	int ac;
-} armor_t;
 
 extern int game_flags;
 
@@ -296,6 +305,7 @@ buf_t *bufnew( char *str );
 void bufcats( buf_t *b, char *s );
 void bufcat( buf_t *dest, buf_t *src );
 buf_t *bufcpy( buf_t *src );
+buf_t *bufprintf( char* format, ... );
 void bufdestroy( buf_t *b );
 
 /* list.c */

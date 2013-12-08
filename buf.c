@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "etraom.h"
 
@@ -87,13 +88,20 @@ buf_t *bufcpy( buf_t *src )
 	return b;
 }
 
-void bufprintf( buf_t *b, char* format, ... )
+buf_t *bufprintf( char* format, ... )
 {
-	/* TODO */
-	/* malloc a temp string, snprintf on it, replace buf data with it, free it */
+	va_list args;
+	char *str = malloc( MAX_STRING_LENGTH * sizeof(char) );
+	buf_t *b;
 
-	(void) b;
-	(void) format;
+	va_start( args, format );
+	vsprintf( str, format, args );
+	va_end( args );
+
+	b = bufnew( str );
+
+	free( str );
+	return b;
 }
 
 void bufdestroy( buf_t *b )

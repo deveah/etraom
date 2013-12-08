@@ -4,6 +4,7 @@
 
 I.		Infrastructure
 
+	[x] bufprintf
 	[x] weapon struct
 		[x] damage
 		[ ] accuracy
@@ -34,7 +35,6 @@ II.		Mechanics
 
 	[ ] combat
 		[x] melee
-			[ ] natural/unarmed attacks
 		[x] ranged
 			[ ] allow the player to commit suicide?
 			[x] ammo consumption
@@ -45,6 +45,9 @@ II.		Mechanics
 			[x] bullets should follow a line atk->def
 			[x] rethink ranged_attack function
 		[ ] damage types
+		[ ] natural attacks
+			[x] melee
+			[ ] ranged?
 	[ ] attributes
 	[ ] skills
 	[ ] levelling
