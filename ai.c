@@ -36,8 +36,10 @@ int run_ai( entity_t *e )
 		e->ai->lx = player->x;
 		e->ai->ly = player->y;
 		e->ai->lz = player->z;
+
 		/* seeing an enemy triggers an alert */
-		e->ai->flags |= AIFLAG_ALERT;
+		if( !( e->ai->flags & AIFLAG_ALERT ) )
+			e->ai->flags |= AIFLAG_ALERT;
 	}
 
 	switch( e->ai->type )
@@ -47,7 +49,7 @@ int run_ai( entity_t *e )
 	case AITYPE_BASICMELEE:
 		return basic_melee_ai( e );
 	default:
-		return 0;
+		return 1;
 	}
 }
 
@@ -78,7 +80,7 @@ int dumb_ai( entity_t *e )
 
 int basic_melee_ai( entity_t *e )
 {
-	int dx, dy;
+	int dx = 0, dy = 0;
 
 	/* do nothing if not alert */
 	if( !( e->ai->flags & AIFLAG_ALERT ) )
@@ -86,7 +88,8 @@ int basic_melee_ai( entity_t *e )
 		return 1;
 	}
 
-	if( distance( e->x, e->y, player->x, player->y ) == 1 )
+	if( ( e->z == player->z ) &&
+		( distance( e->x, e->y, player->x, player->y ) == 1 ) )
 	{
 		melee_attack( e, player );
 		return 1;
@@ -94,8 +97,19 @@ int basic_melee_ai( entity_t *e )
 	else
 	{
 		/* tries to go to the last place it's seen an enemy */
-		dx = ( e->x > e->ai->lx ) ? -1 : 1;
-		dy = ( e->y > e->ai->ly ) ? -1 : 1;
+		if( e->x > e->ai->lx )
+			dx = -1;
+		else if( e->x < e->ai->lx )
+			dx = 1;
+		else
+			dx = 0;
+
+		if( e->y > e->ai->ly )
+			dy = -1;
+		else if( e->y < e->ai->ly )
+			dy = 1;
+		else
+			dy = 0;
 
 		if( is_legal( e->x+dx, e->y ) &&
 			!( dungeon[e->z]->terrain[e->x+dx][e->y]->flags & TILEFLAG_SOLID ) &&

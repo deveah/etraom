@@ -28,6 +28,8 @@ entity_t *alloc_entity( buf_t *name )
 	e->worn = NULL;
 	e->natural = NULL;
 
+	e->ai = NULL;
+
 	for( i = 0; i < MAX_LEVELS; i++ )
 	{
 		e->lightmap[i] = (float**) malloc( sizeof(float*) * MAP_WIDTH );
@@ -116,7 +118,8 @@ entity_t *clone_entity( entity_t *e )
 	ce->y = e->y;
 	ce->z = e->z;
 
-	clone_lightmap( ce, e );
+	/* TODO: should clone lightmap? */
+	/* clone_lightmap( ce, e ); */
 
 	/* TODO: should clone inventory? */
 
