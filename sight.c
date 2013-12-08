@@ -33,6 +33,26 @@ void clear_lightmap( entity_t *e, int n )
 	}
 }
 
+void clone_lightmap( entity_t *dest, entity_t *src )
+{
+	int i, j, k;
+
+	dest->lightmap = (float***) malloc( sizeof(float**) * MAX_LEVELS );
+
+	for( i = 0; i < MAX_LEVELS; i++ )
+	{
+		dest->lightmap[i] = (float**) malloc( sizeof(float*) * MAP_WIDTH );
+		for( j = 0; j < MAP_WIDTH; j++ )
+		{
+			dest->lightmap[i][j] = (float*) malloc( sizeof(float) * MAP_HEIGHT );
+			for( k = 0; k < MAP_HEIGHT; k++ )
+			{
+				dest->lightmap[i][j][k] = src->lightmap[i][j][k];
+			}
+		}
+	}
+}
+
 int do_ray( entity_t *e, int x2, int y2 )
 {
 	int x1 = e->x, y1 = e->y;

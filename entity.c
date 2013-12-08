@@ -88,6 +88,9 @@ void free_entity( entity_t *e )
 		if( e->worn )
 			free_item( e->worn );
 
+		if( e->ai )
+			free_ai( e->ai );
+
 		bufdestroy( e->name );
 		free( e );
 		log_add( "[free_entity] Freed entity 0x%08x.\n", e );
@@ -110,7 +113,7 @@ entity_t *clone_entity( entity_t *e )
 	ce->y = e->y;
 	ce->z = e->z;
 
-	/* TODO: should clone lightmap? */
+	clone_lightmap( ce, e );
 
 	/* TODO: should clone inventory? */
 
@@ -144,9 +147,10 @@ void entity_act( entity_t *e )
 		log_add( "[entity_act] Act: 0x%08x('%s').\n", e, e->name->data );
 		log_add( "[entity_act]\tentity has agility %i and ap %i.\n", e->agility, e->ap );
 
+		do_fov( e, 5 );
+		
 		if( e->flags & ENTITYFLAG_PLAYERCONTROL )
 		{
-			do_fov( e, 5 );
 			draw_main_screen();
 			
 			key = getch();
@@ -162,7 +166,7 @@ void entity_act( entity_t *e )
 		}
 		else
 		{
-			if( entity_dumb_ai( e ) )
+			if( run_ai( e ) )
 				e->ap -= 10;
 		}
 	}
@@ -223,30 +227,5 @@ void entity_die( entity_t *e )
 	int i = list_find( entity_list, (void*)e );
 	list_remove_index( entity_list, i );
 	free_entity( e );
-}
-
-int entity_dumb_ai( entity_t *e )
-{
-	int rx, ry;
-	int tries = 0;
-
-	while( 1 )
-	{
-		tries++;
-		/* skip a turn if there's no viable output */
-		if( tries > 100 )
-			return 1;
-
-		rx = rand()%3 - 1;
-		ry = rand()%3 - 1;
-	
-		if( ( rx*rx + ry*ry > 0 ) &&
-			( is_legal( e->x+rx, e->y+ry ) ) &&
-			!( dungeon[e->z]->terrain[e->x+rx][e->y+ry]->flags & TILEFLAG_SOLID ) &&
-			( !entity_find_by_position( e->x+rx, e->y+ry, e->z ) ) )
-			break;
-	}
-
-	return move_relative( e, rx, ry );
 }
 

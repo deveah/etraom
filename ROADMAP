@@ -28,11 +28,13 @@ I.		Infrastructure
 	[x] title screen
 		[ ] ask for the character name
 	[ ] classes?
+	[x] ai struct
 
 II.		Mechanics
 
 	[ ] combat
 		[x] melee
+			[ ] natural/unarmed attacks
 		[x] ranged
 			[ ] allow the player to commit suicide?
 			[x] ammo consumption
@@ -51,6 +53,11 @@ II.		Mechanics
 		[ ] ranged
 		* cost - useful for levelling items
 		* special weapons have lesser chances of spawning
+	[ ] ai
+		[x] dumb
+		[x] basic melee approach-and-hit
+		[ ] approach-hit-flee
+		[ ] ranged ai?
 
 III.	Map generators
 

@@ -390,6 +390,8 @@ void make_random_entities( int n )
 		}
 		while( dungeon[e->z]->terrain[e->x][e->y] != &tile_floor );
 
+		e->ai = alloc_ai( AITYPE_BASICMELEE );
+
 		list_add_head( entity_list, (void*)e );
 	}
 }

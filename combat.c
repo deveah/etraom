@@ -17,6 +17,15 @@ int melee_attack( entity_t *atk, entity_t *def )
 			push_message( msg );
 			bufdestroy( msg );
 		}
+		else if( def == player )
+		{
+			buf_t *msg = bufnew( "The " );
+			bufcat( msg, atk->name );
+			bufcats( msg, " hits you for no damage!" );
+			push_message( msg );
+			bufdestroy( msg );
+		}
+
 		return 1;
 	}
 
@@ -45,11 +54,22 @@ int melee_attack( entity_t *atk, entity_t *def )
 		return 0;
 	}
 
-	buf_t *msg = bufnew( "You hit the " );
-	bufcat( msg, def->name );
-	bufcats( msg, "!" );
-	push_message( msg );
-	bufdestroy( msg );
+	if( atk == player )
+	{
+		buf_t *msg = bufnew( "You hit the " );
+		bufcat( msg, def->name );
+		bufcats( msg, "!" );
+		push_message( msg );
+		bufdestroy( msg );
+	}
+	else if( def == player )
+	{
+		buf_t *msg = bufnew( "The " );
+		bufcat( msg, atk->name );
+		bufcats( msg, " hits you!" );
+		push_message( msg );
+		bufdestroy( msg );
+	}
 
 	take_damage( def, wpn );
 

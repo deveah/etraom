@@ -30,6 +30,8 @@
 
 #define LINKFLAG_USED				(1<<0)
 
+#define AIFLAG_ALERT				(1<<0)
+
 #define C_BLACK						1
 #define C_RED						2
 #define C_GREEN						3
@@ -64,6 +66,13 @@ enum weapon_type
 	WEAPONTYPE_MELEE,
 	WEAPONTYPE_HANDGUN,
 	WEAPONTYPE_MAX
+};
+
+enum ai_type
+{
+	AITYPE_DUMB,
+	AITYPE_BASICMELEE,
+	AITYPE_MAX
 };
 
 typedef struct
@@ -117,6 +126,14 @@ extern tile_t
 
 typedef struct
 {
+	int type;
+	/* coordinates of last seen enenmy */
+	int lx, ly, lz;
+	int flags;
+} ai_t;
+
+typedef struct
+{
 	buf_t *name;
 	int width, height;
 
@@ -164,6 +181,8 @@ typedef struct
 
 	list_t *inventory;
 	item_t *worn, *in_hand;
+
+	ai_t *ai;
 
 	int flags;
 } entity_t;
@@ -220,6 +239,13 @@ extern entity_t *player; /* shortcut to player struct */
 /* terminal width/height */
 int term_w, term_h;
 
+/* ai.c */
+ai_t *alloc_ai( int type );
+void free_ai( ai_t *a );
+int run_ai( entity_t *e );
+int dumb_ai( entity_t *e );
+int basic_melee_ai( entity_t *e );
+
 /* parser.c */
 int parse_color( int c );
 int parse_entity_types( char *fn );
@@ -234,6 +260,7 @@ void msleep( int ms );
 /* sight.c */
 void reveal_map( int n );
 void clear_lightmap( entity_t *e, int n );
+void clone_lightmap( entity_t *dest, entity_t *src );
 void do_fov( entity_t *e, int radius );
 int do_ray( entity_t *e, int x2, int y2 );
 
