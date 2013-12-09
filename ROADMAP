@@ -38,12 +38,6 @@ II.		Mechanics
 		[x] ranged
 			[ ] allow the player to commit suicide?
 			[x] ammo consumption
-			[x] ammo types - fixed?
-				* no, highly dinamic; ammo types can even be procedurally
-					generated
-			[x] clip distribution
-			[x] bullets should follow a line atk->def
-			[x] rethink ranged_attack function
 		[ ] damage types
 		[ ] natural attacks
 			[x] melee
@@ -61,15 +55,21 @@ II.		Mechanics
 		[x] basic melee approach-and-hit
 		[ ] approach-hit-flee
 		[ ] ranged ai?
+	[ ] symmetric FOV
+		* demolish that corner picking
 
 III.	Map generators
 
 	[ ] dla
 	[ ] cooridor diffusion
+	[ ] bsp
 
 IV.		UI
 
 	[x] message log
+	[ ] colored messages
+		* red for warnings
+		* white for normal text
 	[ ] change screen layout (?)
 		* two-line message area, removing the need of using --MORE--
 		* map size would be reduced to 80x21

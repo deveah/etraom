@@ -271,7 +271,7 @@ void reveal_map( int n );
 void clear_lightmap( entity_t *e, int n );
 void clone_lightmap( entity_t *dest, entity_t *src );
 void do_fov( entity_t *e, int radius );
-int do_ray( entity_t *e, int x2, int y2 );
+int do_ray( int z, int x1, int y1, int x2, int y2 );
 
 /* entity.c */
 entity_t *alloc_entity( buf_t *name );

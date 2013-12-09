@@ -49,9 +49,8 @@ void clone_lightmap( entity_t *dest, entity_t *src )
 	}
 }
 
-int do_ray( entity_t *e, int x2, int y2 )
+int do_ray( int z, int x1, int y1, int x2, int y2 )
 {
-	int x1 = e->x, y1 = e->y;
 	int cx = x1, cy = y1;
 	int dx, dy, sx, sy;
 	float err, e2;
@@ -68,10 +67,6 @@ int do_ray( entity_t *e, int x2, int y2 )
 		if( ( cx == x2 ) && ( cy == y2 ) )
 			return 1;
 
-		if(	( is_legal( cx, cy ) ) &&
-			( dungeon[e->z]->terrain[cx][cy]->flags & TILEFLAG_OPAQUE ) )
-			return 0;
-
 		e2 = 2 * err;
 		if( e2 > -dy )
 		{
@@ -83,6 +78,10 @@ int do_ray( entity_t *e, int x2, int y2 )
 			err += dx;
 			cy += sy;
 		}
+
+		if(	( is_legal( cx, cy ) ) &&
+			( dungeon[z]->terrain[cx][cy]->flags & TILEFLAG_OPAQUE ) )
+			return 0;
 	}
 
 	return 1;
@@ -97,9 +96,9 @@ void do_fov( entity_t *e, int radius )
 	for( i = e->x-radius; i <= e->x+radius; i++ )
 		for( j = e->y-radius; j <= e->y+radius; j++ )
 		{
-			if( ( is_legal( i, j ) ) &&
+			if( is_legal( i, j ) &&
 				( distance( e->x, e->y, i, j ) <= radius ) &&
-				( do_ray( e, i, j ) ) )
+				do_ray( e->z, e->x, e->y, i, j ) )
 				e->lightmap[e->z][i][j] = 1.0f;
 		}
 }
