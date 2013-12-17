@@ -82,10 +82,10 @@ int basic_melee_ai( entity_t *e )
 {
 	int dx = 0, dy = 0;
 
-	/* do nothing if not alert */
+	/* roam if not alert */
 	if( !( e->ai->flags & AIFLAG_ALERT ) )
 	{
-		return 1;
+		return dumb_ai( e );
 	}
 
 	if( ( e->z == player->z ) &&

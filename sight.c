@@ -67,21 +67,24 @@ int do_ray( int z, int x1, int y1, int x2, int y2 )
 		if( ( cx == x2 ) && ( cy == y2 ) )
 			return 1;
 
+		if(	( is_legal( cx, cy ) ) &&
+			( dungeon[z]->terrain[cx][cy]->flags & TILEFLAG_OPAQUE ) )
+			return 0;
+
 		e2 = 2 * err;
+
 		if( e2 > -dy )
 		{
 			err -= dy;
 			cx += sx;
 		}
+		
 		if( e2 < dx )
 		{
 			err += dx;
 			cy += sy;
 		}
 
-		if(	( is_legal( cx, cy ) ) &&
-			( dungeon[z]->terrain[cx][cy]->flags & TILEFLAG_OPAQUE ) )
-			return 0;
 	}
 
 	return 1;
