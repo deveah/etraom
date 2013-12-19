@@ -3,7 +3,7 @@ CC=gcc
 CFLAGS=-ansi -Wall -Wextra -g
 LIBS=-lcurses -lm
 
-SOURCES=$(wildcard *.c)
+SOURCES=$(wildcard src/*.c)
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=etraom
 
