@@ -270,7 +270,7 @@ int game_loop( void )
 	while( running )
 	{
 		e = entity_list->head;
-		while( e )
+		while( e && running )
 		{
 			entity_act( (entity_t*)e->data );
 			e = e->next;

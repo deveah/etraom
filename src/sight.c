@@ -118,7 +118,7 @@ void do_fov( entity_t *e, int radius )
 	float ox, oy;
 	float x, y;
 	
-	int a = 45;
+	int a = 10;
 
 	clear_lightmap( e, e->z );
 
