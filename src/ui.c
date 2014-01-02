@@ -784,73 +784,19 @@ int look_at( void )
 
 int fire_at( void )
 {
-	int k = 0;
-	int cx = player->x, cy = player->y;
+	point_t p;
 
-	buf_t *info;
+	p = input_direction( "Fire where?" );
 
-	while( 1 )
+	if( ( p.x == 0 ) && ( p.y == 0 ) )
 	{
-		draw_main_screen();
-		attrset( COLOR_PAIR( C_WHITE ) | A_REVERSE );
-		mvaddch( cy+2, cx, mvinch( cy+2, cx ) & 0xFF );
+		buf_t *msg = bufnew( "Okay, then." );
+		push_message( msg );
+		bufdestroy( msg );
 
-		move( 0, 0 ); clrtoeol();
-		attrset( COLOR_PAIR( C_WHITE ) );
-		if( player->lightmap[player->z][cx][cy] > 0.0f )
-		{
-			info = bufnew( "Fire: " );
-
-			entity_t *e = entity_find_by_position( cx, cy, player->z );
-			if( e )
-			{
-				bufcat( info, e->name );
-			}
-
-			mvprintw( 0, 0, info->data );
-			bufdestroy( info );
-		}
-		else
-		{
-			mvprintw( 0, 0, "Fire: You can't see over there." );
-		}
-
-		k = getch();
-
-		switch( k )
-		{
-		case 'h':
-		case '4':
-		case KEY_LEFT:
-			if( cx > 0 )
-				cx--;
-			break;
-		case 'j':
-		case '2':
-		case KEY_DOWN:
-			if( cy < MAP_HEIGHT-1 )
-				cy++;
-			break;
-		case 'k':
-		case '8':
-		case KEY_UP:
-			if( cy > 0 )
-				cy--;
-			break;
-		case 'l':
-		case '6':
-		case KEY_RIGHT:
-			if( cx < MAP_WIDTH-1 )
-				cx++;
-			break;
-		case 'f':
-			return ranged_attack( player, cx, cy );
-			break;
-		case 'q':
-			return 0;
-		}
+		return 0;
 	}
 
-	return 1;
+	return ranged_attack( player, p.x, p.y );
 }
 

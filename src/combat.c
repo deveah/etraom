@@ -69,13 +69,11 @@ int melee_attack( entity_t *atk, entity_t *def )
 	return 1;
 }
 
+/* TODO: accuracy */
 int ranged_attack( entity_t *atk, int tx, int ty )
 {
-	int x1 = atk->x, y1 = atk->y;
-	int cx = x1, cy = y1;
-	int x2 = tx, y2 = ty;
-	int dx, dy, sx, sy;
-	float err, e2;
+	weapon_t *wpn;
+	int cx = atk->x, cy = atk->y;
 
 	if( !atk->in_hand )
 	{
@@ -99,7 +97,7 @@ int ranged_attack( entity_t *atk, int tx, int ty )
 		return 0;
 	}
 
-	weapon_t *wpn = (weapon_t*)atk->in_hand->specific;
+	wpn = (weapon_t*)atk->in_hand->specific;
 
 	if( wpn->type != WEAPONTYPE_HANDGUN )
 	{
@@ -132,63 +130,32 @@ int ranged_attack( entity_t *atk, int tx, int ty )
 		bufdestroy( msg );
 	}
 
-	/* hit or miss, decided by the weapon's accuracy */
-	if( rand()%100 < (int)( wpn->accuracy * 100.0f ) )
-	{
-		x2 += rand()%3 - 1;
-		y2 += rand()%3 - 1;
-	}
-
-	dx = abs( x2-x1 );
-	dy = abs( y2-y1 );
-
-	if( x1 < x2 ) sx = 1; else sx = -1;
-	if( y1 < y2 ) sy = 1; else sy = -1;
-
-	err = dx - dy;
-
 	while( 1 )
 	{
-		if( !is_legal( cx, cy ) )
-		{
-			break;
-		}
-
-		if( dungeon[atk->z]->terrain[cx][cy]->flags & TILEFLAG_SOLID )
-		{
-			break;
-		}
-
-		e2 = 2 * err;
-
-		if( e2 > -dy )
-		{
-			err -= dy;
-			cx += sx;
-		}
-		if( e2 < dx )
-		{
-			err += dx;
-			cy += sy;
-		}
+		cx += tx;
+		cy += ty;
 		
-		attrset( COLOR_PAIR( C_RED ) | A_BOLD );
+		if( is_legal( cx, cy ) &&
+			( dungeon[atk->z]->terrain[cx][cy]->flags &= TILEFLAG_SOLID ) )
+		{
+			/* you hit something solid */
+			break;
+		}
+	
+		attrset( COLOR_PAIR( C_RED ) );
 		mvaddch( cy+2, cx, '*' );
 
 		entity_t *e = entity_find_by_position( cx, cy, atk->z );
 		if( e )
 		{
-			if( atk == player )
-			{
-				buf_t *msg = bufprintf( "You hit the %s!", e->name->data );
-				push_message( msg );
-				bufdestroy( msg );
-			}
+			buf_t *msg = bufprintf( "You hit the %s!", e->name->data );
+			push_message( msg );
+			bufdestroy( msg );
 
 			take_damage( e, wpn );
+
 			break;
 		}
-
 	}
 
 	refresh();
