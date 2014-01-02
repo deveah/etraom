@@ -136,7 +136,7 @@ int ranged_attack( entity_t *atk, int tx, int ty )
 		cy += ty;
 		
 		if( is_legal( cx, cy ) &&
-			( dungeon[atk->z]->terrain[cx][cy]->flags &= TILEFLAG_SOLID ) )
+			( dungeon[atk->z]->terrain[cx][cy]->flags & TILEFLAG_SOLID ) )
 		{
 			/* you hit something solid */
 			break;
